@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>最小二乗法 - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/algorithm/least-squares-method/" />
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/least-squares-method/index.html&amp;ttl=最小二乗法" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/least-squares-method/index.html&amp;ttl=最小二乗法" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#leastsquare">最小二乗法</a></li><li><a href="#linear">線形回帰</a></li><li><a href="#genaral">もっと複雑な関数で近似</a></li><li><a href="#svg">実際にやってみる</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>最小二乗法</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;最小二乗法</navi>
+			<div class="contentswrap">
+			
+
+
+
+<h2 id="leastsquare">最小二乗法</h2>
+<p>
+最小二乗法(最小自乗法とも書く)は、実験データのような誤差を含む値から、
+それにフィットするような関数を求める手法の一つです。
+</p>
+<p>
+例えば等速直線運動運動の観測実験を行なった結果、
+次のような実験データが得られたとします。
+</p>
+<table border="1">
+<caption>実験結果</caption>
+<tr><th>時間(s)</th><th>位置(m)</th></tr>
+<tr><td>0.0</td><td>1.0</td></tr>
+<tr><td>1.0</td><td>2.3</td></tr>
+<tr><td>2.0</td><td>3.4</td></tr>
+<tr><td>3.0</td><td>4.4</td></tr>
+<tr><td>4.0</td><td>5.9</td></tr>
+<tr><td>5.0</td><td>7.0</td></tr>
+</table>
+<p>
+この実験結果を時間をx軸、位置をy軸にとってグラフにプロットすると次のようになります。
+<div><object data="./lsm1.svg" type="image/svg+xml" ><img src="./lsm1.png"  alt="実験結果"/></object></div>
+この運動は等速直線運動なので、すべての点を通る直線が一本引けるはずです。
+このような直線を引ければ、速度や初期位置がわかるので、いろいろと便利です。
+</p>
+<p>
+しかし現実にはどうしても測定誤差が発生してしまうため、
+どんなに頑張って直線を引いても、図のようにデータポイントと直線は少しずれてしまいます。
+仕方がないので、できるだけデータポイントから外れないような直線を引くことにしましょう。
+最小二乗法はこのような直線を引く代表的な手法の一つです。
+</p>
+
+<h2 id="linear">線形回帰</h2>
+<p>
+「できるだけデータポイントから外れない」とはどういうことでしょう？
+もう少し数学的に表してみることにします。
+</p>
+<p>
+i番目のデータポイントを<object data="./ce6988121342d90ff4c10d6cf2959c29.svg" type="image/svg+xml" standby="$(x_i, y_i)$" style="width:37pt;height:13pt;" class="equation"><img src="./ce6988121342d90ff4c10d6cf2959c29.gif" alt="$(x_i, y_i)$" width="33" height="12" class="equation" /></object>、求めたい直線を<object data="./621ba49f56b99ea87bec2df30fa722ad.svg" type="image/svg+xml" standby="$y=ax+b$" style="width:57pt;height:12pt;" class="equation"><img src="./621ba49f56b99ea87bec2df30fa722ad.gif" alt="$y=ax+b$" width="55" height="10" class="equation" /></object>と
+定義します。データポイントの数はnとします。
+<div><object data="./lsm2.svg" type="image/svg+xml" ><img src="./lsm2.png"  alt="誤差"/></object></div>
+すると、実際の測定値と予想される理論値との誤差を<object data="./94b0cc335c518f81ecf058f720a702f3.svg" type="image/svg+xml" standby="$y_i-(ax_i+b)$" style="width:72pt;height:13pt;" class="equation"><img src="./94b0cc335c518f81ecf058f720a702f3.gif" alt="$y_i-(ax_i+b)$" width="69" height="12" class="equation" /></object>と表すことができます。
+この誤差を小さくすればデータポイントと直線が近くなりそうです。
+</p>
+<p>
+一つのデータポイントにだけ近づけても仕方がないのでこの誤差の総和を取ります。
+しかし、ただ単純に足すだけだとプラスとマイナスが打ち消しあってしまいます。
+絶対値を取ってから足すのもいいのですが、絶対値というのは数学的に少し扱いが難しいので、
+二乗して総和をとることにしましょう。
+</p>
+<object data="./c1a5f8a9beeedd70e4633d71aea319af.svg" type="image/svg+xml" standby="\[J=\sum_{i=1}^n (y_i-(ax_i+b))^2\]" style="width:127pt;height:34pt;" class="eqn"><img src="./c1a5f8a9beeedd70e4633d71aea319af.gif" alt="\[J=\sum_{i=1}^n (y_i-(ax_i+b))^2\]" width="126" height="33" class="eqn" /></object>
+<p>
+このJを最小化することが最小二乗法の目標です。
+</p>
+<p>
+Jを最小にするには「極値となる点では、微分した結果が0になる」ということを
+利用します。Jは下に凸な二次関数なのでこれで最小値が求まるはずです。
+今具体的に求めたいのはaとbの値なので、それぞれについて偏微分してみましょう。
+</p>
+<object data="./80a85b076ff71026d817edb05288bc19.svg" type="image/svg+xml" standby="\begin{eqnarray*} \frac{\partial J}{\partial a} &amp;=&amp;-2\sum_{i=1}^nx_i(y_i-(ax_i+b))\\ \frac{\partial J}{\partial b} &amp;=&amp;-2\sum_{i=1}^n(y_i-(ax_i+b)) \end{eqnarray*}" style="width:161pt;height:74pt;" class="eqn"><img src="./80a85b076ff71026d817edb05288bc19.gif" alt="\begin{eqnarray*} \frac{\partial J}{\partial a} &amp;=&amp;-2\sum_{i=1}^nx_i(y_i-(ax_i+b))\\ \frac{\partial J}{\partial b} &amp;=&amp;-2\sum_{i=1}^n(y_i-(ax_i+b)) \end{eqnarray*}" width="158" height="73" class="eqn" /></object>
+<p>
+それぞれをイコール0と置いて整理すると、aとbに関する連立方程式となります。
+</p>
+<object data="./e876eb1cb8f7c12b58ce5d5b2df7080d.svg" type="image/svg+xml" standby="\begin{eqnarray*} a\sum_{i=1}^nx^2 + b\sum_{i=1}^nx_i &amp;=&amp;\sum_{i=1}^nx_iy_i\\ a\sum_{i=1}^nx^2 + bn &amp;=&amp;\sum_{i=1}^ny_i\\ \end{eqnarray*}" style="width:148pt;height:74pt;" class="eqn"><img src="./e876eb1cb8f7c12b58ce5d5b2df7080d.gif" alt="\begin{eqnarray*} a\sum_{i=1}^nx^2 + b\sum_{i=1}^nx_i &amp;=&amp;\sum_{i=1}^nx_iy_i\\ a\sum_{i=1}^nx^2 + bn &amp;=&amp;\sum_{i=1}^ny_i\\ \end{eqnarray*}" width="146" height="73" class="eqn" /></object>
+<p>
+あとはこれを消去法なり代入法なりクラメルの公式なりを使って解くだけです。
+結論だけ書くと次のようになります。
+</p>
+<object data="./fc4641ce01133781aaba07d54980d01c.svg" type="image/svg+xml" standby="\begin{eqnarray*} a&amp;=&amp;\frac{\displaystyle n\sum_{i=1}^nx_iy_i-\sum_{i=1}^nx_i\sum_{i=1}^ny_i} {\displaystyle n\sum_{i=1}^nx_i^2-\left(\sum_{i=1}^nx_i\right)^2}\\ b&amp;=&amp;\frac{\displaystyle\sum_{i=1}^nx_i^2\sum_{i=1}^nx_iy_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_iy_i} {\displaystyle n\sum_{i=1}^nx_i^2-\left(\sum_{i=1}^nx_i\right)^2}\\ \end{eqnarray*}" style="width:185pt;height:159pt;" class="eqn"><img src="./fc4641ce01133781aaba07d54980d01c.gif" alt="\begin{eqnarray*} a&amp;=&amp;\frac{\displaystyle n\sum_{i=1}^nx_iy_i-\sum_{i=1}^nx_i\sum_{i=1}^ny_i} {\displaystyle n\sum_{i=1}^nx_i^2-\left(\sum_{i=1}^nx_i\right)^2}\\ b&amp;=&amp;\frac{\displaystyle\sum_{i=1}^nx_i^2\sum_{i=1}^nx_iy_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_iy_i} {\displaystyle n\sum_{i=1}^nx_i^2-\left(\sum_{i=1}^nx_i\right)^2}\\ \end{eqnarray*}" width="184" height="158" class="eqn" /></object>
+
+<h2 id="genaral">もっと複雑な関数で近似</h2>
+<p>
+もっと複雑な関数で近似してみることを考えてみましょう。
+求めたい関数<object data="./7997339883ac20f551e7f35efff0a2b9.svg" type="image/svg+xml" standby="$f(x)$" style="width:25pt;height:13pt;" class="equation"><img src="./7997339883ac20f551e7f35efff0a2b9.gif" alt="$f(x)$" width="23" height="12" class="equation" /></object>がm個の既知の関数<object data="./7a139bed2899bd2b7f296202b31da967.svg" type="image/svg+xml" standby="$g_k(x)$" style="width:29pt;height:13pt;" class="equation"><img src="./7a139bed2899bd2b7f296202b31da967.gif" alt="$g_k(x)$" width="27" height="12" class="equation" /></object>の
+線形結合で表されているとします。
+</p>
+<object data="./396c3921a67334f3cf2d2b9b2752f43e.svg" type="image/svg+xml" standby="\[ f(x) = \sum_{k=1}^m a_kg_k(x) \]" style="width:100pt;height:34pt;" class="eqn"><img src="./396c3921a67334f3cf2d2b9b2752f43e.gif" alt="\[ f(x) = \sum_{k=1}^m a_kg_k(x) \]" width="98" height="34" class="eqn" /></object>
+<p>
+ここで、<object data="./888b6c2a06fc366952ac84a80c43f5f7.svg" type="image/svg+xml" standby="$a_k$" style="width:13pt;height:8pt;" class="equation"><img src="./888b6c2a06fc366952ac84a80c43f5f7.gif" alt="$a_k$" width="11" height="7" class="equation" /></object>は関数を決定するためのパラメータです。
+この<object data="./888b6c2a06fc366952ac84a80c43f5f7.svg" type="image/svg+xml" standby="$a_k$" style="width:13pt;height:8pt;" class="equation"><img src="./888b6c2a06fc366952ac84a80c43f5f7.gif" alt="$a_k$" width="11" height="7" class="equation" /></object>を求めることが最終目標です。
+</p>
+<p>
+<object data="./7997339883ac20f551e7f35efff0a2b9.svg" type="image/svg+xml" standby="$f(x)$" style="width:25pt;height:13pt;" class="equation"><img src="./7997339883ac20f551e7f35efff0a2b9.gif" alt="$f(x)$" width="23" height="12" class="equation" /></object>ですが、行列を使って次のように書くことができます。
+</p>
+<object data="./72e89535de9f48d78cd8cb8d10253c58.svg" type="image/svg+xml" standby="$f(x)=(g_1(x),g_2(x),\cdots,g_m(x))(a_1,a_2,\cdots,a_m)^T$" style="width:254pt;height:15pt;" class="eqn"><img src="./72e89535de9f48d78cd8cb8d10253c58.gif" alt="$f(x)=(g_1(x),g_2(x),\cdots,g_m(x))(a_1,a_2,\cdots,a_m)^T$" width="252" height="13" class="eqn" /></object>
+<p>
+これを縦にn個だけ並べれば、<object data="./2253a2da1c70a0e566b934acaa99c323.svg" type="image/svg+xml" standby="$x=x_i$" style="width:34pt;height:8pt;" class="equation"><img src="./2253a2da1c70a0e566b934acaa99c323.gif" alt="$x=x_i$" width="33" height="7" class="equation" /></object>における関数<object data="./7997339883ac20f551e7f35efff0a2b9.svg" type="image/svg+xml" standby="$f(x)$" style="width:25pt;height:13pt;" class="equation"><img src="./7997339883ac20f551e7f35efff0a2b9.gif" alt="$f(x)$" width="23" height="12" class="equation" /></object>の値を
+簡単に表すことが出来ます。
+</p>
+<object data="./211be4c77c8d589640cc2af43b128139.svg" type="image/svg+xml" standby="\begin{eqnarray*} \left(\begin{array}{c} f(x_1)\\f(x_2)\\\vdots\\f(x_n) \end{array}\right) &amp;=&amp; \left(\begin{array}{cccc} g_1(x_1) &amp; g_2(x_1) &amp; \cdots &amp; g_m(x_1) \\ g_1(x_2) &amp; g_2(x_2) &amp; \cdots &amp; g_m(x_2) \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ g_1(x_n) &amp; g_2(x_n) &amp; \cdots &amp; g_m(x_n) \\ \end{array}\right) \left(\begin{array}{c} a_1\\a_2\\\vdots\\a_m \end{array}\right) \\ &amp;=&amp;\bm{G}\bm{a} \end{eqnarray*}" style="width:318pt;height:79pt;" class="eqn"><img src="./211be4c77c8d589640cc2af43b128139.gif" alt="\begin{eqnarray*} \left(\begin{array}{c} f(x_1)\\f(x_2)\\\vdots\\f(x_n) \end{array}\right) &amp;=&amp; \left(\begin{array}{cccc} g_1(x_1) &amp; g_2(x_1) &amp; \cdots &amp; g_m(x_1) \\ g_1(x_2) &amp; g_2(x_2) &amp; \cdots &amp; g_m(x_2) \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ g_1(x_n) &amp; g_2(x_n) &amp; \cdots &amp; g_m(x_n) \\ \end{array}\right) \left(\begin{array}{c} a_1\\a_2\\\vdots\\a_m \end{array}\right) \\ &amp;=&amp;\bm{G}\bm{a} \end{eqnarray*}" width="309" height="79" class="eqn" /></object>
+<p>ここで、
+<object data="./8ca31d0b02ad3801a56b3477f18938ff.svg" type="image/svg+xml" standby="$\bm{a}=(a_1,a_2,\cdots,a_m)^T$" style="width:112pt;height:15pt;" class="eqn"><img src="./8ca31d0b02ad3801a56b3477f18938ff.gif" alt="$\bm{a}=(a_1,a_2,\cdots,a_m)^T$" width="110" height="13" class="eqn" /></object>
+<object data="./011b58aa3b5e0615eafc06a390825e7f.svg" type="image/svg+xml" standby="\[\bm{G}=\left(\begin{array}{cccc} g_1(x_1) &amp; g_2(x_1) &amp; \cdots &amp; g_m(x_1) \\ g_1(x_2) &amp; g_2(x_2) &amp; \cdots &amp; g_m(x_2) \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ g_1(x_n) &amp; g_2(x_n) &amp; \cdots &amp; g_m(x_n) \\ \end{array}\right)\]" style="width:216pt;height:66pt;" class="eqn"><img src="./011b58aa3b5e0615eafc06a390825e7f.gif" alt="\[\bm{G}=\left(\begin{array}{cccc} g_1(x_1) &amp; g_2(x_1) &amp; \cdots &amp; g_m(x_1) \\ g_1(x_2) &amp; g_2(x_2) &amp; \cdots &amp; g_m(x_2) \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ g_1(x_n) &amp; g_2(x_n) &amp; \cdots &amp; g_m(x_n) \\ \end{array}\right)\]" width="210" height="65" class="eqn" /></object>
+と置きました。
+</p>
+<p>
+実際に測定した値を<object data="./44d328927e0faa95fbd3b8857e41050b.svg" type="image/svg+xml" standby="$\bm{y}=(y_1,y_2,\cdots,y_n)^T$" style="width:108pt;height:15pt;" class="equation"><img src="./44d328927e0faa95fbd3b8857e41050b.gif" alt="$\bm{y}=(y_1,y_2,\cdots,y_n)^T$" width="106" height="13" class="equation" /></object>とすると
+誤差の総和Jは次のように表せます。
+</p>
+<object data="./462fe870ba0d6c45ba00761569ed5084.svg" type="image/svg+xml" standby="\begin{eqnarray*} J&amp;=&amp;(\bm{G}\bm{a}-\bm{y})^T(\bm{G}\bm{a}-\bm{y})\\ &amp;=&amp;\bm{a}^T\bm{G}^T\bm{G}\bm{a}-2\bm{a}^T\bm{G}^T\bm{y}+\bm{y}^T\bm{y} \end{eqnarray*}" style="width:175pt;height:33pt;" class="eqn"><img src="./462fe870ba0d6c45ba00761569ed5084.gif" alt="\begin{eqnarray*} J&amp;=&amp;(\bm{G}\bm{a}-\bm{y})^T(\bm{G}\bm{a}-\bm{y})\\ &amp;=&amp;\bm{a}^T\bm{G}^T\bm{G}\bm{a}-2\bm{a}^T\bm{G}^T\bm{y}+\bm{y}^T\bm{y} \end{eqnarray*}" width="172" height="32" class="eqn" /></object>
+<p>
+これを最小化するためにパラメータaについて偏微分し、0とと置きます。
+</p>
+<object data="./4d69994783f8cbae225ed666101e953c.svg" type="image/svg+xml" standby="\[\frac{\partial J}{\partial\bm{a}}=2\bm{G}^T\bm{G}\bm{a}-2\bm{G}^T\bm{y}=\bm{0}\]" style="width:145pt;height:26pt;" class="eqn"><img src="./4d69994783f8cbae225ed666101e953c.gif" alt="\[\frac{\partial J}{\partial\bm{a}}=2\bm{G}^T\bm{G}\bm{a}-2\bm{G}^T\bm{y}=\bm{0}\]" width="143" height="26" class="eqn" /></object>
+<p>
+整理すると、解かなければならない連立方程式は
+<object data="./6bb0bb688b9010a30663a706fa38d7a3.svg" type="image/svg+xml" standby="\[ \bm{G}^T\bm{G}\bm{a}=\bm{G}^T\bm{y} \]" style="width:79pt;height:14pt;" class="eqn"><img src="./6bb0bb688b9010a30663a706fa38d7a3.gif" alt="\[ \bm{G}^T\bm{G}\bm{a}=\bm{G}^T\bm{y} \]" width="77" height="14" class="eqn" /></object>
+となります。
+</p>
+
+<h2 id="svg">実際にやってみる</h2>
+<p>
+SVGを使ってグラフを描くJavascriptを作ってみました。
+黒い線が元の関数(直線, 2次関数, 三角関数から選択可)、
+赤い点が元関数にランダムノイズを加えたもの、
+青い線が最小二乗法によって求めた近似曲線です。
+</p>
+<p>
+SVGの描画には<a href="http://raphaeljs.com/">Raphaël</a>を
+行列計算に<a href="http://sylvester.jcoglan.com/">Sylvester</a>を使用しています。
+</p>
+
+<script type="text/javascript" src="../../../utils/jquery-1.4.2.min.js"> </script>
+<script type="text/javascript" src="../../../utils/raphael-min.js"></script>
+<script type="text/javascript" src="../../../utils/sylvester-min.js"></script>
+<script type="text/javascript" src="lsm.js"></script>
+
+<div id="Graph">
+</div>
+<div>
+元関数:
+<label><input type="radio" name="function" value="1" checked="checked" />一次関数</label>
+<label><input type="radio" name="function" value="2" />二次関数</label>
+<label><input type="radio" name="function" value="tri" />三角関数</label>
+</div>
+<div>
+誤差:
+<input type="range" id="error" max="20" min="0" />
+測定点の個数:
+<input type="range" id="number" max="100" min="2" value="10" />
+</div>
+<input type="hidden" id="parameter" value="" />
+<div>
+近似関数:
+<label><input type="radio" name="degree" value="1" checked="checked" />一次</label>
+<label><input type="radio" name="degree" value="2" />二次</label>
+<label><input type="radio" name="degree" value="3" />三次</label>
+<label><input type="radio" name="degree" value="4" />四次</label>
+<label><input type="radio" name="degree" value="5" />五次</label>
+<label><input type="radio" name="degree" value="10" />十次</label>
+<input type="button" id="refresh" value="更新" />
+</div>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

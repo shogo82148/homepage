@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>点と直線の距離を求める - Shogo Computing Laboratory</title>
+
+<style>
+.suffix-sorted {
+    color: red;
+}
+.suffix-end {
+    background: #88F;
+}
+.suffix-a {
+    background: #8F8;
+}
+.suffix-b {
+    background: #8FF;
+}
+.suffix-c {
+    background: #F88;
+}
+.suffix-d {
+    background: #F8F;
+}
+.suffix-r {
+    background: #FF8;
+}
+.suffix td:nth-child(1) {
+    width: 2ex;
+    text-align: right;
+}
+.suffix td:nth-child(2) {
+    text-align: right;
+}
+.suffix td:nth-child(3) {
+    width: 15ex;
+    text-align: left;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/geometry/point-line.html&amp;ttl=点と直線の距離を求める" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/geometry/point-line.html&amp;ttl=点と直線の距離を求める" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+
+
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#implicit">陰関数で表わす</a><ul><li><a href="#implicit-d">距離を求める</a></li><li><a href="#implicit-min">一番近い点を求める</a></li></ul></li><li><a href="#parametric">媒介変数表示で表わす</a><ul><li><a href="#parametric-d">距離を求める</a></li><li><a href="#parametric-min">一番近い点を求める</a></li></ul></li><li><a href="#svg">実際にやってみよう</a></li></ul>
+</div>
+
+
+<h1>点と直線の距離を求める</h1>
+<navi id="breadNavi"><a href="../../">HOME</a>&gt;&gt;<a href="../">メモ</a>&gt;&gt;<a href="./">図形処理の基礎</a>&gt;&gt;点と直線の距離を求める</navi>
+
+
+
+
+<h2 id="implicit">陰関数で表わす</h2>
+<h3 id="implicit-d">距離を求める</h3><p>
+直線の表し方にはいろいろありますが、ここでは最初に陰関数表示で考えてみます。
+陰関数表示というのはこんな感じ表示方法です。
+<img src="../../../memo/geometry/eqn/a6e32b93ff4140a833ce25fb1d21508e.gif" alt="\[ ax + by + c = 0 \]" width="81" height="10" class="eqn" />
+わかっているとは思いますが、<img src="../../../memo/geometry/eqn/95bae57e9104ccbd002c625bfe8434e1.gif" alt="$a$,$b$,$c$" width="23" height="10" class="equation" />が直線を表わすパラメータです。
+この直線と、点P<img src="../../../memo/geometry/eqn/0548f355baf6ca13d6f2d048e34bdc44.gif" alt="$(x_\mathrm{P}$,$y_\mathrm{P})$" width="37" height="12" class="equation" />との距離を考えてみます。
+</p>
+<p>
+と、言ってもいきなりこの直線との距離を考えるのは面倒なので、次のような原点を通る直線との距離を考えましょう。
+<img src="../../../memo/geometry/eqn/131497be4d3ef7bb13a5b063471d7ae5.gif" alt="\[ ax + by = 0 \]" width="61" height="10" class="eqn" />
+さて、この距離を考える問題ですが、ベクトルの内積を使うと簡単に解けてしまいます。
+ベクトル<img src="../../../memo/geometry/eqn/9ae0db411f871df6e68b51dcd1617045.gif" alt="$\overrightarrow{v}=(a,b)$" width="53" height="13" class="equation" />、直線上の位置ベクトルを<img src="../../../memo/geometry/eqn/c6ce90cc8726a60d757c8be4e1a9568f.gif" alt="$\overrightarrow{r}=(x,y)$" width="55" height="13" class="equation" />、
+点Pの位置ベクトルを<img src="../../../memo/geometry/eqn/43e7d68b82655f16bc76c95971eef0cf.gif" alt="$\overrightarrow{p}=(x_\mathrm{P},y_\mathrm{P})$" width="68" height="13" class="equation" />としましょう。
+そしてこの直線の方程式をよく見ると、内積の形をしており、次のように書き直せます。
+</p>
+<img src="../../../memo/geometry/eqn/d45fa9cfc793e65e129a962d7e5d608a.gif" alt="\[ \overrightarrow{v} \cdot \overrightarrow{r} = 0 \]" width="55" height="10" class="eqn" />
+<p>
+ベクトルの内積=0と言うことは2つのベクトルが直交していることを意味します。
+したがって、この直線は原点を通りベクトル<img src="../../../memo/geometry/eqn/a9a2dbad70b7afbe24ab063a09899fa2.gif" alt="$\overrightarrow{v}$" width="12" height="10" class="equation" />に直交する直線を表わしています。
+図にすると下のようになります。
+</p>
+<object data="../../../memo/geometry/point-line1.svg" type="image/svg+xml" ><img src="../../../memo/geometry/point-line1.png"  alt="陰関数表示の直線の図"/></object>
+
+<p>
+図から、ベクトル<img src="../../../memo/geometry/eqn/a9a2dbad70b7afbe24ab063a09899fa2.gif" alt="$\overrightarrow{v}$" width="12" height="10" class="equation" />と<img src="../../../memo/geometry/eqn/6820b22b2324e311a04b3d81c2737d02.gif" alt="$\overrightarrow{p}$" width="12" height="12" class="equation" />の角度を<img src="../../../memo/geometry/eqn/27e556cf3caa0673ac49a8f0de3c73ca.gif" alt="$\theta$" width="6" height="8" class="equation" />とすると、
+点と直線の距離<img src="../../../memo/geometry/eqn/2103f85b8b1477f430fc407cad462224.gif" alt="$d$" width="7" height="8" class="equation" />は次のようにかけます。
+<img src="../../../memo/geometry/eqn/5b040bf184b59740c3741a03b1ce08fa.gif" alt="\[ d = |\overrightarrow{p}||\cos\theta| \]" width="72" height="13" class="eqn" />
+内積の定義を思い出すとさらに
+<img src="../../../memo/geometry/eqn/f116f5a7fab531d47b64596b922f41b1.gif" alt="\[ d = \frac{|\overrightarrow{v}\cdot\overrightarrow{p}|}{|\overrightarrow{v}|} = \frac{|ax_\mathrm{P}+by_\mathrm{P}|}{\sqrt{a^2+b^2}} \]" width="141" height="29" class="eqn" />
+と変形できます。
+</p>
+<p>
+ここまでの導出は、原点を通る直線限定だったので、任意の直線について考えて見ます。
+平行移動し、点<img src="../../../memo/geometry/eqn/665d1339d9a2b31056687cc2145c602f.gif" alt="$\mathrm{P_0}$" width="13" height="10" class="equation" />位置ベクトル<img src="../../../memo/geometry/eqn/5fe66edce1bb45312d66af1b0c6b81dc.gif" alt="$\overrightarrow{p_0}=(x_0, y_0)$" width="66" height="13" class="equation" />を通るように直線の式を書き直します。
+<img src="../../../memo/geometry/eqn/70a99ff6fbf11c5c5d9da906b7d452f2.gif" alt="\begin{eqnarray*} \overrightarrow{v} \cdot (\overrightarrow{r}-\overrightarrow{p_0}) &amp;=&amp; \overrightarrow{v} \cdot \overrightarrow{r}- \overrightarrow{v} \cdot \overrightarrow{p_0} \\ &amp;=&amp; ax + by - (ax_0 + by_0) = 0 \end{eqnarray*}" width="217" height="31" class="eqn" />
+ここで、<img src="../../../memo/geometry/eqn/894d7ac47d385c9a237cd7fb3241b917.gif" alt="$c=-\overrightarrow{v} \cdot \overrightarrow{p_0}=-(ax_0 + by_0)$" width="146" height="13" class="equation" />とおけば、一番初めの方程式になります。
+同様に距離の式も書き直してみます。<img src="../../../memo/geometry/eqn/3e18a4a28fdee1744e5e3f79d13b9ff6.gif" alt="$c$" width="6" height="5" class="equation" />の定義に注意すれば、
+<img src="../../../memo/geometry/eqn/6325222fc335a0a986bc9e6587504966.gif" alt="\begin{eqnarray*} d &amp;=&amp; \frac{|\overrightarrow{v}\cdot(\overrightarrow{p}-\overrightarrow{p_0})|}{|\overrightarrow{v}|} \\ &amp;=&amp; \frac{|\overrightarrow{v}\cdot\overrightarrow{p}-\overrightarrow{v}\overrightarrow{p_0}|}{|\overrightarrow{v}|} \\ &amp;=&amp; \frac{|ax_\mathrm{P}+by_\mathrm{P}+c|}{\sqrt{a^2+b^2}} \end{eqnarray*}" width="102" height="95" class="eqn" />
+となります。これで、よく教科書に出てくる点と直線の距離の公式が導き出せました。
+</p>
+
+<p>
+ちなみに、絶対値をとる前の<img src="../../../memo/geometry/eqn/2103f85b8b1477f430fc407cad462224.gif" alt="$d$" width="7" height="8" class="equation" />の符号は、点が直線のどちら側にあるかを表わします。
+符号が正なら<img src="../../../memo/geometry/eqn/a9a2dbad70b7afbe24ab063a09899fa2.gif" alt="$\overrightarrow{v}$" width="12" height="10" class="equation" />と同じ側、負なら反対側にあるとわかります。
+</p>
+
+<h3 id="implicit-min">一番近い点を求める</h3>
+<p>
+距離が求まると直線上でもっとも近い点を求めることができます。
+求める点を点Hとすると、PHと向きが同じ単位ベクトルは<img src="../../../memo/geometry/eqn/cc92bedb94ce537f1e171bc2785db688.gif" alt="$-\overrightarrow{v}/|\overrightarrow{v}|$" width="44" height="13" class="equation" />とかけます。
+このベクトルに点Pと直線の距離を書けると、PHベクトルとなります。これから、点Hの位置ベクトルは
+<img src="../../../memo/geometry/eqn/b6babdc67f784cea83a441f6f1973e83.gif" alt="\[ \overrightarrow{p}-\frac{ax_\mathrm{P}+by_\mathrm{P}+c}{\sqrt{a^2+b^2}}\frac{\overrightarrow{v}}{|\overrightarrow{v}|} =\overrightarrow{p}-\frac{ax_\mathrm{P}+by_\mathrm{P}+c}{a^2+b^2}\overrightarrow{v} \]" width="253" height="30" class="eqn" />
+となります。これを成分表示すると、次のようになります。
+<img src="../../../memo/geometry/eqn/922dc395bb1cf91611f9988f5935848a.gif" alt="\begin{eqnarray*} x &amp;=&amp; x_\mathrm{p} - a\frac{ax_\mathrm{P}+by_\mathrm{P}+c}{a^2+b^2} \\ y &amp;=&amp; y_\mathrm{p} - b\frac{ax_\mathrm{P}+by_\mathrm{P}+c}{a^2+b^2} \end{eqnarray*}" width="131" height="55" class="eqn" />
+</p>
+
+<h2 id="parametric">媒介変数表示で表わす</h2>
+<h3 id="parametric-d">距離を求める</h3>
+<p>
+さて、ここまでは陰関数表示で直線の式を表したわけですが、次に、
+媒介変数を使ったパラメトリックな表現方法を考えてみます。
+<img src="../../../memo/geometry/eqn/de24c5483e73b4f5918b634b69738b0f.gif" alt="\begin{eqnarray*} x &amp;=&amp; at + x_0\\ y &amp;=&amp; bt + y_0 \end{eqnarray*}" width="59" height="27" class="eqn" />
+ベクトル表現を使うと次のように表現できます。
+<img src="../../../memo/geometry/eqn/8253a36c2b06eb6a896a47252a2ed836.gif" alt="\[ \overrightarrow{r} = \overrightarrow{v}t + \overrightarrow{p_0} \]" width="71" height="12" class="equation" />
+この表現方法なら<img src="../../../memo/geometry/eqn/4f4f4e395762a3af4575de74c019ebb5.gif" alt="$t$" width="4" height="7" class="equation" />の範囲を指定することによって、線分を作ることができるのでいろいろと便利そうです。
+</p>
+<p>
+この直線と点の距離を考えてみましょう。
+直線と点の関係を図にすると次のようになります。
+</p>
+<object data="../../../memo/geometry/point-line2.svg" type="image/svg+xml" ><img src="../../../memo/geometry/point-line2.png"  alt="媒介変数表示の直線の図"/></object>
+
+<p>
+二次元ベクトルの外積の定義<img src="../../../memo/geometry/eqn/2079b66f2356c00fb7d2276d57343742.gif" alt="$\overrightarrow{a}\times\overrightarrow{b}=|\overrightarrow{a}||\overrightarrow{b}|\sin\theta=x_ay_b-y_ax_b$" width="192" height="16" class="eqn" />
+を使うと、距離<img src="../../../memo/geometry/eqn/2103f85b8b1477f430fc407cad462224.gif" alt="$d$" width="7" height="8" class="equation" />は次式のようになります。
+<img src="../../../memo/geometry/eqn/b7aee3a1e4fb11e35d425b37ab96c770.gif" alt="\begin{eqnarray*} d &amp;=&amp; |\overrightarrow{p}-\overrightarrow{p_0}||\sin\theta| \\ &amp;=&amp; \frac{|\overrightarrow{v}\times(\overrightarrow{p}-\overrightarrow{p_0})|}{|\overrightarrow{v}|} \\ &amp;=&amp; \frac{|a(y_\mathrm{P}-y_0)-b(x_\mathrm{P}-x_0)|}{\sqrt{a^2+b^2}} \end{eqnarray*}" width="155" height="79" class="eqn" />
+</p>
+
+<h3 id="parametric-min">一番近い点を求める</h3>
+<p>
+直線上で点Pもっとも近い点を求めることも簡単にできます。
+<img src="../../../memo/geometry/eqn/a2bec0de3a53fdf6b3c5419a8d0600af.gif" alt="\begin{eqnarray*} |\overrightarrow{v}|t &amp;=&amp; |\overrightarrow{p}-\overrightarrow{p_0}|\cos\theta \\ &amp;=&amp; \frac{\overrightarrow{v}\cdot(\overrightarrow{p}-\overrightarrow{p_0})}{|\overrightarrow{v}|} \\ &amp;=&amp; \frac{a(x_\mathrm{P}-x_0)+b(y_\mathrm{P}-y_0)}{\sqrt{a^2+b^2}} \end{eqnarray*}" width="163" height="79" class="eqn" />
+これから、
+<img src="../../../memo/geometry/eqn/fcd9b612d468eedad5369b809e170c86.gif" alt="\[ t=\frac{a(x_\mathrm{P}-x_0)+b(y_\mathrm{P}-y_0)}{a^2+b^2} \]" width="146" height="26" class="eqn" />
+の点が直線上で点Pもっとも近い点になります。
+この点と点Pを結べば垂線を引くこともできます。
+</p>
+<h2 id="svg">実際にやってみよう</h2>
+<p>
+実際にやってみました。
+SVGにJavascriptを埋め込んで簡単なアニメーションを作ってみました。
+黒の直線とバツが与えられた直線と点、赤い円が半径=dの円、青い線分が垂線です。<br />
+<a href="./point-line.svg">SVGファイルをダウンロードする</a>
+</p>
+<object data="./point-line.svg" type="image/svg+xml" width="400" height="300">
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+
+
+<ul class="toInfo">
+	<li><a href="./">サイトトップへ</a></li>
+</ul>
+
+</body>
+</html>

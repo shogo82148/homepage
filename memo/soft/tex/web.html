@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>WebでLaTeXを使う - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/soft/tex/web.html" />
+
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/soft/tex/web.html&amp;ttl=WebでLaTeXを使う" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/soft/tex/web.html&amp;ttl=WebでLaTeXを使う" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#codecogs">codecogsを使う</a></li><li><a href="#mimeTeX">mimeTeXを使う</a></li><li><a href="#MathJax">MathJaxを使う</a></li></ul>
+</div>
+
+<div class="menuInfo">
+	<p>
+	LaTeXは文章組み版ソフトです。
+	数式とかがきれいに書けます。
+	</p>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>WebでLaTeXを使う</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">ソフト</a>&gt;&gt;<a href="./">TeX</a>&gt;&gt;WebでLaTeXを使う</navi>
+			<div class="contentswrap">
+			
+
+<p>
+HTMLにLaTeXコマンドを使って数式を埋め込む方法についていくつか調べてみました。
+<a href="http://oku.edu.mie-u.ac.jp/~okumura/texwiki/">TeX Wiki</a>の
+<a href="http://oku.edu.mie-u.ac.jp/~okumura/texwiki/?mimeTeX">MimeTeXのページ</a>にもいろいろ書いてあるけど、
+その中からレンタルサーバでもできそうなものだけまとめておきます。
+</p>
+
+<h2 id="codecogs">codecogsを使う</h2>
+<p>
+<a href="http://www.codecogs.com/">codecogs</a>と言うサイトで提供している
+<a href="http://www.codecogs.com/latex/eqneditor.php">Online LaTeX Equation Editor</a>
+を使った方法です。
+外部サービスを使うので、気軽に利用できます。
+</p>
+<p>
+使い方は「http://latex.codecogs.com/png.latex?」の後に数式を書いて、
+imgタグのsrcに書くだけ。
+ただし、記号はURLエンコードする必要があります。
+pngのところをgif,svg,pdf,swf,emfに書き換えると対応する形式で出力されます。
+</p>
+<table>
+	<tr>
+		<td>GIF形式</td>
+		<td><img src="http://latex.codecogs.com/gif.latex?F(s)=%5cint_0^%5cinfty%20f(t)e^{-st}%5cmathrm{d}t" alt="F(s)=\int_0^\infty f(t)e^{-st}\mathrm{d}t" /></td>
+	</tr>
+	<tr>
+		<td>PNG形式</td>
+		<td><img src="http://latex.codecogs.com/png.latex?F(s)=%5cint_0^%5cinfty%20f(t)e^{-st}%5cmathrm{d}t" alt="F(s)=\int_0^\infty f(t)e^{-st}\mathrm{d}t" /></td>
+	</tr>
+	<tr>
+		<td>SVG形式</td>
+		<td>
+			<object data="http://latex.codecogs.com/svg.latex?F(s)=%5cint_0^%5cinfty%20f(t)e^{-st}%5cmathrm{d}t" type="image/svg+xml" width="175" height="45">
+			<a href="http://latex.codecogs.com/svg.latex?F(s)=%5cint_0^%5cinfty%20f(t)e^{-st}%5cmathrm{d}t">ダウンロード</a>
+			</object>
+		</td>
+	</tr>
+	<tr>
+		<td>SWF形式</td>
+		<td>
+		<object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" width="175" height="45">
+		 <param name="movie" value="http://latex.codecogs.com/swf.latex?F(s)=\int_0^\infty%20f(t)e^{-st}\mathrm{d}t" />
+		 <object type="application/x-shockwave-flash" data="http://latex.codecogs.com/swf.latex?F(s)=%5cint_0^%5cinfty%20f(t)e^{-st}%5cmathrm{d}t" width="175" height="45">
+		  <param name="FlashVars" value="value" />
+		 </object>
+		</object>
+		</td>
+	</tr>
+	<tr>
+		<td>PDF形式</td>
+		<td>
+		<a href="http://latex.codecogs.com/pdf.latex?F(s)=%5cint_0^%5cinfty%20f(t)e^{-st}%5cmathrm{d}t">ダウンロード</a>
+		</td>
+	</tr>
+</table>
+<p>
+導入も簡単、図もきれいなのでいい感じ。
+SVGやSWFで読み込めば、拡大してもきれいなままです。
+でも、外部サービスを使うのでいつまでも使えるの？ってところでちょっと不安な気もします。
+</p>
+
+<h2 id="mimeTeX">mimeTeXを使う</h2>
+<p>
+<a href="http://www.forkosh.com/mimetex.html">MimeTeX</a>はTeXのサブセットです。
+数式をGIF画像として出力することができます。
+</p>
+<ol>
+<li>まずは、<a href="http://www.forkosh.com/mimetex.html">mimeTeX</a>からmimetex.zipをダウンロード
+	<ul>
+		<li><a href="http://www.forkosh.com/mimetex.html#precompiled">Precompiled Binaries...</a>から使っているOS用のコンパイル済みファイルをダウンロードすると楽</li>
+	</ul>
+</li>
+<li>mimetex.zipを解凍</li>
+<li>解凍したフォルダの中のmimetex.cgiをサーバにアップロード</li>
+<li>mimetex.cgiに実行権限(705 or 755)を与える</li>
+</ol>
+
+<p>
+あとはmimetex.cgiの後に?を付けてその後にTeXの数式を書けばOKです。
+ただし、記号はURLエンコードする必要があります。
+</p>
+<p>
+実行例<br />
+<img src="../../../cgi-bin/mimetex.cgi?F(s)=%5cint_0^%5cinfty%20f(t)e^{-st}%5cmathrm{d}t" alt="F(s) = \int_0^\infty f(t)e^{-st}\mathrm{d}t" />
+</p>
+<p>
+コンパイル済みファイルを使えば割と簡単にインストールできるので簡単。
+mimeTeXを使ったWikiプラグインがたくさんあるので、Wiki内で数式を使いたい場合は使いやすい。
+</p>
+<p>
+だた、いろいろとフォントを削ってあるので、あまりきれいとはいえないですね。
+</p>
+
+<h2 id="MathJax">MathJaxを使う</h2>
+<p>
+<a href="http://www.mathjax.org/">MathJax</a>はAJAXを使った数式描画ソフトです。
+<a href="http://www.mathjax.org/">MathJax</a>を読み込んだ状態で、
+HTML文章の中にTeXの数式を書いてくと勝手に変換してくれます。
+</p>
+<ol>
+<li><a href="http://sourceforge.net/projects/mathjax/files/">sourceforgeのMathJax</a>からMathJax-beta2.zipとMathJax-webfonts-beta2.zipをダウンロード</li>
+<li>MathJax-beta2.zipを解凍</li>
+<li>その中にMathJax-webfonts-beta2.zipを解凍</li>
+<li>testフォルダの中のHTMLファイルをブラウザで開いて正常に表示されればOK</li>
+<li>後はサーバ上にアップロード</li>
+</ol>
+
+<p>
+使うときは、HTMLのヘッダ部分に
+</p>
+<div class="src_frame"><pre><code>&lt;<span class="keyword">meta</span> <span class="keyword">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="keyword">content</span>=<span class="string">&quot;IE=EmulateIE7&quot;</span> /&gt;
+&lt;<span class="keyword">script</span> <span class="keyword">type</span>=<span class="string">&quot;text/javascript&quot;</span> <span class="keyword">src</span>=<span class="string">&quot;/MathJax.js&quot;</span>&gt;
+  MathJax.Hub.Config({
+    extensions: [&quot;tex2jax.js&quot;],
+    jax: [&quot;input/TeX&quot;,&quot;output/HTML-CSS&quot;],
+    &quot;HTML-CSS&quot;: {
+      availableFonts:[],
+    }
+  });
+&lt;/<span class="keyword">script</span>&gt;
+</code></pre></div>
+<p>
+と書いておき、後は本文に普通のTeXのように数式を書いておきます。
+</p>
+<div class="src_frame"><pre><code>\[
+F(s) = \int_0^\infty f(t)e^{-st}\mathrm{d}t
+\]
+</code></pre></div>
+\[
+F(s) = \int_0^\infty f(t)e^{-st}\mathrm{d}t
+\]
+
+<p>
+この方法なら外部サービスに頼らず、割ときれいな数式が簡単に作れます。
+埋め込みフォントに対応しているブラウザなら、ベクター形式で表示されるので、
+拡大してもすごくきれいです。
+</p>
+<p>
+ただ、問題がフォントのためのPNGファイルがやたらと多いこと。
+一つ一つは1kBも無い小さなファイルですが、これが3万個近くあるので意外と容量を食います。
+個数が多いのでアップロードも大変です。
+</p>
+<p>
+最近のブラウザならば画像フォントではなく、ベクター形式のフォントを自動的に読み込んで使用してくれます。
+そのため、大量のPNGファイルは必要ありません。
+オプションで強制的に画像を使用しないようにすることができます。
+</p>
+<p>
+/config/MathJax.jsの315行目に「imageFont: &quot;TeX&quot;,」と書かれた行があるので、
+ここを「imageFont: null,」と書き換えましょう。
+これで、画像フォントを使用しなくなるらしいです。
+</p>
+<p>
+しかし、これをするとIE6以上, Chrome, Safari 3.1以上, Firefox 3.5以上, and Opera 10以上が必要になるそうです。
+<a href="http://journal.mycom.co.jp/news/2010/02/01/020/index.html">2010年1月現在のブラウザシェア</a>を見ると、
+シェア上位のほとんどはすでに対応済みなので、ほとんど実害は無いかもしれません。
+<small>でも、某大学のコンピュータルームのPCに入っているのはFireFox1.5という現実・・・(2010年度現在)</small>
+</p>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

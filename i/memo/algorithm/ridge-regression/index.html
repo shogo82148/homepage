@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>リッジ回帰 - Shogo Computing Laboratory</title>
+
+</head>
+
+<body>
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/ridge-regression/index.html&amp;ttl=リッジ回帰" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/ridge-regression/index.html&amp;ttl=リッジ回帰" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+
+
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#ridge">リッジ回帰</a></li><li><a href="#svg">実際にやってみる</a></li></ul>
+</div>
+
+
+<h1>リッジ回帰</h1>
+<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;リッジ回帰</navi>
+
+
+
+
+<h2 id="ridge">リッジ回帰</h2>
+<p>
+<a href="./least-squares-method/">最小二乗法</a>では、
+近似曲線の次数を高くしたときに元の関数から大きくズレることがあります。
+実際にスクリプトで遊んでみると、元の関数には山がひとつしかないのに、
+近似関数では山がたくさんあってすごくデコボコした感じになることが確認できると思います。
+これを何とかすることはできないでしょうか。
+</p>
+<p>
+近似関数がデコボコしてしまうのは、関数が複雑すぎるからです。
+では、複雑な関数というのはどういう関数でしょう？
+リッジ回帰では「係数の絶対値が大きければ大きいほど複雑な関数」と考えます。
+</p>
+<p>
+最小二乗法では、次の式で表される「誤差の総和」を最小にすることが目的でした。
+</p>
+<img src="../../../../memo/algorithm/ridge-regression/5d0a25edf4ec861f0f7eb0ba642bd03f.gif" alt="\[ J=(\bm{G}\bm{a}-\bm{y})^T(\bm{G}\bm{a}-\bm{y}) \]" width="129" height="14" class="eqn" />
+<p>
+変数の詳細は<a href="./least-squares-method/">最小二乗法</a>を確認してください。
+これに、「関数の複雑さ」をペナルティとして加えます。
+</p>
+<img src="../../../../memo/algorithm/ridge-regression/326940d90bfaabc8ef86e506168af1b8.gif" alt="\[ J=(\bm{G}\bm{a}-\bm{y})^T(\bm{G}\bm{a}-\bm{y})+\lambda\bm{a}^T\bm{a} \]" width="174" height="14" class="eqn" />
+<p>
+係数の絶対値を直接扱うのは面倒なので、リッジ回帰では係数の二乗を扱います。
+λは「誤差の総和」と「関数の複雑さ」のトレードオフを決めるパラメータです。
+このような関数の複雑さをペナルティとして与えることを正則化といいます。
+</p>
+<p>
+Jはすべての点で微分可能なので、最小二乗法のときと同じように、微分して0と置いてみましょう。
+</p>
+<img src="../../../../memo/algorithm/ridge-regression/19262c03d94e8bd755ead7b45ce75817.gif" alt="\[\frac{\partial J}{\partial\bm{a}}=2\bm{G}^T\bm{G}\bm{a}-2\bm{G}^T\bm{y}+2\lambda\bm{a}=\bm{0}\]" width="178" height="26" class="eqn" />
+<p>
+整理すると、解かなければならない連立方程式は
+<img src="../../../../memo/algorithm/ridge-regression/97082e5ad3b036ac0321210da2973807.gif" alt="\[ (\bm{G}^T\bm{G}+\lambda\bm{I})\bm{a}=\bm{G}^T\bm{y} \]" width="114" height="14" class="eqn" />
+となります。Iは単位行列です。
+この方程式は逆行列を使えば簡単に解けてしまいますね。
+</p>
+
+<h2 id="svg">実際にやってみる</h2>
+<p>
+SVGを使ってグラフを描くJavascriptを作ってみました。
+黒い線が元の関数(直線, 2次関数, 三角関数から選択可)、
+赤い点が元関数にランダムノイズを加えたもの、
+青い線がリッジ回帰によって求めた近似曲線です。
+正則化パラメータを大きくするとより簡単な近似関数になるのが確認できると思います。
+</p>
+<p>
+SVGの描画には<a href="http://raphaeljs.com/">Raphaël</a>を
+行列計算に<a href="http://sylvester.jcoglan.com/">Sylvester</a>を使用しています。
+</p>
+
+<script type="text/javascript" src="../../../..//utils/jquery-1.4.2.min.js"> </script>
+<script type="text/javascript" src="../../../utils/raphael-min.js"></script>
+<script type="text/javascript" src="../../../utils/sylvester-min.js"></script>
+<script type="text/javascript" src="../least-squares-method/lsm.js"></script>
+
+<div id="Graph">
+</div>
+<div>
+元関数:
+<label><input type="radio" name="function" value="1" />一次関数</label>
+<label><input type="radio" name="function" value="2" />二次関数</label>
+<label><input type="radio" name="function" value="tri" checked="checked" />三角関数</label>
+</div>
+<div>
+誤差:
+<input type="range" id="error" max="30" min="0" value="30" />
+測定点の個数:
+<input type="range" id="number" max="100" min="2" value="10" />
+</div>
+<div>
+近似関数:
+<label><input type="radio" name="degree" value="1" />一次</label>
+<label><input type="radio" name="degree" value="2" />二次</label>
+<label><input type="radio" name="degree" value="3" />三次</label>
+<label><input type="radio" name="degree" value="4" />四次</label>
+<label><input type="radio" name="degree" value="5" />五次</label>
+<label><input type="radio" name="degree" value="10" checked="checked" />十次</label>
+<input type="button" id="refresh" value="更新" />
+</div>
+<div>
+正規化パラメータ:
+<input type="range" id="parameter" max="1000" min="0" value="10" />
+</div>
+
+
+<ul class="toInfo">
+	<li><a href="./">サイトトップへ</a></li>
+</ul>
+
+</body>
+</html>

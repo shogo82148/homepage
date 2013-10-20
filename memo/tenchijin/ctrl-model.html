@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>制御モデルの作成 - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/tenchijin/ctrl-model.html" />
+
+
+
+<link href="../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../">Home</a></li>
+			<li><a href="../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../soft/">ソフト</a></li>
+			<li><a href="../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/tenchijin/ctrl-model.html&amp;ttl=制御モデルの作成" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/tenchijin/ctrl-model.html&amp;ttl=制御モデルの作成" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#precindition">モデル化の前提</a></li><li><a href="#driving">駆動系のモデル化</a><ul><li><a href="#driving-elec">電気系のモデル化</a></li><li><a href="#driving-elec-mech">電気系から機械系</a></li><li><a href="#driving-mech-elec">機械系から電気系</a></li></ul></li><li><a href="#robot">ロボットのモデル化</a></li><li><a href="#ctrl-model">ロボット全体の制御モデル</a></li><li><a href="#controller">制御器のモデル</a></li></ul>
+</div>
+<div class="menuInfo">
+<p>2010年度NHK大学ロボコン「ロボ・ファラオ　ピラミッドを築け」の自動ロボット「天地人」の経路制御に関する資料です。</p>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>制御モデルの作成</h1>
+			<navi id="breadNavi"><a href="../../">HOME</a>&gt;&gt;<a href="../">メモ</a>&gt;&gt;<a href="./">天地人メモ</a>&gt;&gt;制御モデルの作成</navi>
+			<div class="contentswrap">
+			
+ロボットを制御するというからには、制御対象であるロボットがどのように振る舞うかを知らなければなりません。
+そこでここでは、移動ロボットの制御モデルがどのように表現されるか、
+どのようなコントローラを作成すればよいかを考えてみます。
+
+<h2 id="precindition">モデル化の前提</h2>
+<p>
+まずは対象となるロボットを決めます。
+平面を移動する移動ロボットの作り方にはいろいろありますが、
+ここでは対向２輪型(２輪駆動１キャスタ)のロボットを対象とします。
+対向２輪型とは、左右の独立な駆動輪とひとつのキャスタのみで構成できる簡単な移動方法です。
+作るのが簡単で、制御も容易、自由度も高い、制御屋さんにも設計屋さんにもみんなに易しい方式、ということで採用しました。
+動力としては、DCモータを想定します。
+</p>
+<p>
+このロボットの制御モデルを作りたいのですが、実際のロボットを厳密にモデル化することは困難です。
+そこで次のような仮定をします。
+</p>
+<ul>
+<li>
+タイヤはすべらない<br />
+タイヤによる移動は、床とタイヤとの摩擦を利用して移動しています。
+しかし、この摩擦を正確に知ることは困難です。ここでは、床との摩擦力が十分に大きいと仮定します。
+</li>
+<li>
+ロボットは十分重くて、大きい<br />
+モータの力は、ロボットを動かすためだけでなく、タイヤやギヤを回転させるためのにも使われます。
+しかし、タイヤやギヤを動かすために必要な力はロボットを動かすために必要な力と比べれば小さいと考えられます。
+簡単のために、タイヤやギヤの回転に必要な力は無視できるものとします。
+</li>
+<li>
+電機系の動作は機械系の動作に比べて十分速い<br />
+DCモータは内部にコイルをふくんでいるので、モータに流れる電流は印加電圧に対して複雑な過渡応答を示します。
+しかし、この応答は電気的なものであるので、機械系の応答と比べて速いと考えられます。
+そのため、モータのコイルが機械系に与える影響は小さいと考えられ、ここではその影響を無視することにします。
+</li>
+</ul>
+
+<h2 id="driving">駆動系のモデル化</h2>
+<h3 id="driving-elec">電気系のモデル化</h3>
+<p>
+駆動系をモデル化します。モータの電気系は等価回路は図1のように抵抗とモータの逆起電力であらわすことができます。
+この等価回路からモータに流れる電流は次のようになります。
+</p>
+<object data="./eqn/3881b8f3ce8badd51df3a74670556c56.svg" type="image/svg+xml" standby="\begin{eqnarray*} I_\mathrm{R} &amp;=&amp; \frac{V_\mathrm{R}-E_\mathrm{R}}{R} \\ I_\mathrm{L} &amp;=&amp; \frac{V_\mathrm{L}-E_\mathrm{L}}{R} \end{eqnarray*}" style="width:77pt;height:55pt;" class="eqn"><img src="./eqn/3881b8f3ce8badd51df3a74670556c56.gif" alt="\begin{eqnarray*} I_\mathrm{R} &amp;=&amp; \frac{V_\mathrm{R}-E_\mathrm{R}}{R} \\ I_\mathrm{L} &amp;=&amp; \frac{V_\mathrm{L}-E_\mathrm{L}}{R} \end{eqnarray*}" width="76" height="53" class="eqn" /></object>
+<table>
+<tr><td><object data="./eq-circuit-motor.svg" type="image/svg+xml" ><img src="./eq-circuit-motor.png"  alt="モータの等価回路"/></object></td></tr>
+<tr><td>図1 モータの等価回路</td></tr>
+</table>
+
+<h3 id="driving-elec-mech">電気系から機械系</h3>
+<p>
+次にモータの電気系が機械系に与える影響を見てみましょう。
+駆動系は図2のように、モータに半径<object data="./eqn/89f2e0d2d24bcf44db73aab8fc03252c.svg" type="image/svg+xml" standby="$r$" style="width:7pt;height:7pt;" class="equation"><img src="./eqn/89f2e0d2d24bcf44db73aab8fc03252c.gif" alt="$r$" width="6" height="5" class="equation" /></object>のタイヤがつながっているものと考えます。
+</p>
+<table>
+<tr><td><object data="./motor-model.svg" type="image/svg+xml" ><img src="./motor-model.png"  alt="駆動系のモデル"/></object></td></tr>
+<tr><td>図2 駆動系のモデル</td></tr>
+</table>
+<p>
+モータに発生するトルクは、モータに流れる電流に比例します。
+その比例定数を<object data="./eqn/1d4a525ad534ef609828f07914b30d94.svg" type="image/svg+xml" standby="$K_\mathrm{e}$" style="width:16pt;height:11pt;" class="equation"><img src="./eqn/1d4a525ad534ef609828f07914b30d94.gif" alt="$K_\mathrm{e}$" width="14" height="10" class="equation" /></object>とすると
+</p>
+<object data="./eqn/5978d9d1ea20d7462aff9b2f633c0b19.svg" type="image/svg+xml" standby="\begin{eqnarray*} T_\mathrm{R} &amp;=&amp; K_\mathrm{e}I_\mathrm{R} \\ T_\mathrm{L} &amp;=&amp; K_\mathrm{e}I_\mathrm{L} \end{eqnarray*}" style="width:59pt;height:29pt;" class="eqn"><img src="./eqn/5978d9d1ea20d7462aff9b2f633c0b19.gif" alt="\begin{eqnarray*} T_\mathrm{R} &amp;=&amp; K_\mathrm{e}I_\mathrm{R} \\ T_\mathrm{L} &amp;=&amp; K_\mathrm{e}I_\mathrm{L} \end{eqnarray*}" width="57" height="27" class="eqn" /></object>
+<p>
+となります。これから、ロボットに実際に加わる力は以下のようになります。
+</p>
+<object data="./eqn/8885f9483ce702634cfa3c38d6d9260f.svg" type="image/svg+xml" standby="\begin{eqnarray*} f_\mathrm{R} &amp;=&amp; \frac{T_\mathrm{R}}{r} = \frac{K_\mathrm{e}}{r}I_\mathrm{R} \\ f_\mathrm{L} &amp;=&amp; \frac{T_\mathrm{L}}{r} = \frac{K_\mathrm{e}}{r}I_\mathrm{L} \end{eqnarray*}" style="width:94pt;height:55pt;" class="eqn"><img src="./eqn/8885f9483ce702634cfa3c38d6d9260f.gif" alt="\begin{eqnarray*} f_\mathrm{R} &amp;=&amp; \frac{T_\mathrm{R}}{r} = \frac{K_\mathrm{e}}{r}I_\mathrm{R} \\ f_\mathrm{L} &amp;=&amp; \frac{T_\mathrm{L}}{r} = \frac{K_\mathrm{e}}{r}I_\mathrm{L} \end{eqnarray*}" width="92" height="53" class="eqn" /></object>
+
+<p>
+この力がロボットに伝わり、ロボットが移動するわけです。
+</p>
+
+<h3 id="driving-mech-elec">機械系から電気系</h3>
+<p>
+今度は逆に機械系が電気系に与える影響を考えます。
+ロボットが動き、右と左のタイヤがそれぞれ<object data="./eqn/1d414076d3340e54b3435b355a091515.svg" type="image/svg+xml" standby="$v_\mathrm{R},v_\mathrm{L}$" style="width:32pt;height:9pt;" class="equation"><img src="./eqn/1d414076d3340e54b3435b355a091515.gif" alt="$v_\mathrm{R},v_\mathrm{L}$" width="30" height="7" class="equation" /></object>で回転したとします。
+このときのモータの角速度は
+</p>
+<object data="./eqn/f6e24ec177a445636d546e8796c88aef.svg" type="image/svg+xml" standby="\begin{eqnarray*} \omega_\mathrm{R} &amp;=&amp; \frac{v_\mathrm{R}}{r} \\ \omega_\mathrm{L} &amp;=&amp; \frac{v_\mathrm{L}}{r} \end{eqnarray*}" style="width:47pt;height:49pt;" class="eqn"><img src="./eqn/f6e24ec177a445636d546e8796c88aef.gif" alt="\begin{eqnarray*} \omega_\mathrm{R} &amp;=&amp; \frac{v_\mathrm{R}}{r} \\ \omega_\mathrm{L} &amp;=&amp; \frac{v_\mathrm{L}}{r} \end{eqnarray*}" width="46" height="47" class="eqn" /></object>
+<p>
+です。モータに発生する逆起電力はモータの角速度に比例します。
+このときの比例定数は、単位系を適切に設定している場合<object data="./eqn/1d4a525ad534ef609828f07914b30d94.svg" type="image/svg+xml" standby="$K_\mathrm{e}$" style="width:16pt;height:11pt;" class="equation"><img src="./eqn/1d4a525ad534ef609828f07914b30d94.gif" alt="$K_\mathrm{e}$" width="14" height="10" class="equation" /></object>です。
+したがって、
+</p>
+<object data="./eqn/be1c11f5cacb5e2e7bbe584fd630a0e4.svg" type="image/svg+xml" standby="\begin{eqnarray*} E_\mathrm{R} &amp;=&amp; K_\mathrm{e}\omega_\mathrm{R} = \frac{K_\mathrm{e}}{r}v_\mathrm{R} \\ E_\mathrm{L} &amp;=&amp; K_\mathrm{e}\omega_\mathrm{L} = \frac{K_\mathrm{e}}{r}v_\mathrm{L} \end{eqnarray*}" style="width:110pt;height:55pt;" class="eqn"><img src="./eqn/be1c11f5cacb5e2e7bbe584fd630a0e4.gif" alt="\begin{eqnarray*} E_\mathrm{R} &amp;=&amp; K_\mathrm{e}\omega_\mathrm{R} = \frac{K_\mathrm{e}}{r}v_\mathrm{R} \\ E_\mathrm{L} &amp;=&amp; K_\mathrm{e}\omega_\mathrm{L} = \frac{K_\mathrm{e}}{r}v_\mathrm{L} \end{eqnarray*}" width="109" height="53" class="eqn" /></object>
+<p>
+となります。
+</p>
+
+<h2 id="robot">ロボットのモデル化</h2>
+<p>
+次にロボットの運動方程式を立てます。
+ロボットは図3のような大きさの質量<object data="./eqn/0e51a2dede42189d77627c4d742822c3.svg" type="image/svg+xml" standby="$m$" style="width:12pt;height:7pt;" class="equation"><img src="./eqn/0e51a2dede42189d77627c4d742822c3.gif" alt="$m$" width="11" height="5" class="equation" /></object>、慣性モーメント<object data="./eqn/8eb543f68dac24748e65e2e4c5fc968c.svg" type="image/svg+xml" standby="$J$" style="width:9pt;height:10pt;" class="equation"><img src="./eqn/8eb543f68dac24748e65e2e4c5fc968c.gif" alt="$J$" width="8" height="8" class="equation" /></object>の剛体と仮定します。
+</p>
+<table>
+<tr><td><object data="./robot-model.svg" type="image/svg+xml" ><img src="./robot-model.png"  alt="ロボットのモデル"/></object></td></tr>
+<tr><td>図3 ロボットのモデル</td></tr>
+</table>
+
+<p>
+この運動方程式は次のようになります。
+</p>
+<object data="./eqn/8a3f4f99a2ed8fe4377b9919ee0ff18f.svg" type="image/svg+xml" standby="\begin{eqnarray*} m\frac{\mathrm{d}v}{\mathrm{d}t} &amp;=&amp; f_\mathrm{R} + f_\mathrm{L} \\ J\frac{\mathrm{d}\omega}{\mathrm{d}t} &amp;=&amp; d(f_\mathrm{R} - f_\mathrm{L}) \end{eqnarray*}" style="width:100pt;height:55pt;" class="eqn"><img src="./eqn/8a3f4f99a2ed8fe4377b9919ee0ff18f.gif" alt="\begin{eqnarray*} m\frac{\mathrm{d}v}{\mathrm{d}t} &amp;=&amp; f_\mathrm{R} + f_\mathrm{L} \\ J\frac{\mathrm{d}\omega}{\mathrm{d}t} &amp;=&amp; d(f_\mathrm{R} - f_\mathrm{L}) \end{eqnarray*}" width="97" height="53" class="eqn" /></object>
+
+<p>
+ロボットがこのような運動をしているときの、
+タイヤの回転速度について考えてみましょう。
+</p>
+<p>
+対向２輪型のロボットの場合、図4のように円弧運動をしています。
+</p>
+
+<table>
+<tr><td><object data="./odmetry.svg" type="image/svg+xml" ><img src="./odmetry.png"  alt="ロボットの移動"/></object></td></tr>
+<tr><td>図4 ロボットの移動</td></tr>
+</table>
+<p>
+微小時間<object data="./eqn/5a63739e01952f6a63389340c037ae29.svg" type="image/svg+xml" standby="$\Delta t$" style="width:16pt;height:10pt;" class="equation"><img src="./eqn/5a63739e01952f6a63389340c037ae29.gif" alt="$\Delta t$" width="14" height="8" class="equation" /></object>の間に図4のように動いた場合、ロボットの速度と角速度は
+</p>
+<object data="./eqn/6f0ebaa846ee5b76e04d840cb5cf354e.svg" type="image/svg+xml" standby="\begin{eqnarray*} v &amp;=&amp; \frac{\rho\Delta\theta}{\Delta t}\\ \omega &amp;=&amp; \frac{\Delta\theta}{\Delta t} \end{eqnarray*}" style="width:49pt;height:55pt;" class="eqn"><img src="./eqn/6f0ebaa846ee5b76e04d840cb5cf354e.gif" alt="\begin{eqnarray*} v &amp;=&amp; \frac{\rho\Delta\theta}{\Delta t}\\ \omega &amp;=&amp; \frac{\Delta\theta}{\Delta t} \end{eqnarray*}" width="47" height="53" class="eqn" /></object>
+<p>
+と表すことができます。これから、
+</p>
+<object data="./eqn/89551ef858549ab3493f1e902b9e23b6.svg" type="image/svg+xml" standby="\begin{eqnarray*} v_\mathrm{R} &amp;=&amp; \frac{\Delta l_\mathrm{R}}{\Delta t} \\ &amp;=&amp; \frac{(\rho + d)\Delta\theta}{\Delta t} \\ &amp;=&amp; \frac{\rho\Delta\theta}{\Delta t} + d\frac{\Delta\theta}{\Delta t} \\ &amp;=&amp; v + d\omega \\ v_\mathrm{L} &amp;=&amp; v - d\omega \end{eqnarray*}" style="width:94pt;height:118pt;" class="eqn"><img src="./eqn/89551ef858549ab3493f1e902b9e23b6.gif" alt="\begin{eqnarray*} v_\mathrm{R} &amp;=&amp; \frac{\Delta l_\mathrm{R}}{\Delta t} \\ &amp;=&amp; \frac{(\rho + d)\Delta\theta}{\Delta t} \\ &amp;=&amp; \frac{\rho\Delta\theta}{\Delta t} + d\frac{\Delta\theta}{\Delta t} \\ &amp;=&amp; v + d\omega \\ v_\mathrm{L} &amp;=&amp; v - d\omega \end{eqnarray*}" width="92" height="116" class="eqn" /></object>
+<p>
+となることがわかります。
+</p>
+
+<h2 id="ctrl-model">ロボット全体の制御モデル</h2>
+<p>
+以上のことをまとめると図5のようなブロック図で表すことができます。
+</p>
+<table>
+<tr><td><object data="./ctrl-model.svg" type="image/svg+xml"  width="480" height="360"><img src="./ctrl-model.png"  alt="制御モデル" width="480" height="360"/></object></td></tr>
+<tr><td>図5 制御モデル</td></tr>
+</table>
+
+<p>
+このモデルは2入力2出力なので、少し複雑です。
+もう少し簡単になるように次のような変換をします。
+</p>
+<object data="./eqn/bc82d87793ebf10e7e3fb899806eabc4.svg" type="image/svg+xml" standby="\[ \left[ \begin{array}{c} x_1 \\ x_2 \end{array} \right] = \left[ \begin{array}{cc} 1 &amp; 1 \\ 1 &amp; -1 \end{array} \right] \left[ \begin{array}{c} V_\mathrm{R} \\ V_\mathrm{L} \end{array} \right] \]" style="width:153pt;height:30pt;" class="eqn"><img src="./eqn/bc82d87793ebf10e7e3fb899806eabc4.gif" alt="\[ \left[ \begin{array}{c} x_1 \\ x_2 \end{array} \right] = \left[ \begin{array}{cc} 1 &amp; 1 \\ 1 &amp; -1 \end{array} \right] \left[ \begin{array}{c} V_\mathrm{R} \\ V_\mathrm{L} \end{array} \right] \]" width="146" height="29" class="eqn" /></object>
+<p>
+この様な変換によって、ロボットのモデルを下のように書き直すことができます。
+</p>
+<table>
+<tr><td><object data="./ctrl-model2.svg" type="image/svg+xml"  width="480" height="360"><img src="./ctrl-model2.png"  alt="対角化した制御モデル" width="480" height="360"/></object></td></tr>
+<tr><td>図6 対角化した制御モデル</td></tr>
+</table>
+
+<p>
+このモデルをよく見ると、モデルの中に現れる行列がすべて対角成分のみとなっており、
+対角化できていることがわかります。
+これは速度と角速度を2つの独立な制御系として扱うことができるということを意味しています。
+</p>
+
+<h2 id="controller">制御器のモデル</h2>
+<p>
+ここまでで、ロボットの速度と角速度は独立に制御可能であることがわかりました。
+そこで、ロボットのコントローラも速度制御器と角速度制御器の2つの独立な制御器に分離してしまいましょう。
+このような考えに基づき制御器も含めたロボットのモデルは図7のようになります。
+</p>
+<table>
+<tr><td><object data="./controller.svg" type="image/svg+xml"  width="480" height="360"><img src="./controller.png"  alt="制御器のモデル" width="480" height="360"/></object></td></tr>
+<tr><td>図7 制御器のモデル</td></tr>
+</table>
+
+<p>
+経路制御器は、モータの速度を直接扱うのでなく、速度と向きの目標値を扱います。
+なぜ角速度ではなく向きの目標値をとっているのかというと、
+実際に角速度の制御器を作成してみたところ、どうパラメータ調整しても振動がひどく、うまくいかなかったからです。
+おそらく、タイヤの回転バックラッシュの影響や、ロータリーエンコーダの分解能が十分で角速度の検出精度が十分でなかった
+ためと考えられます。
+角度の制御は比較的うまくいったのでこちらを採用しました。
+天地人の向きの制御にはPIDコントローラを使用しています。
+</p>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

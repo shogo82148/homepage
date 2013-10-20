@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>２つの円の共通接線を求める - Shogo Computing Laboratory</title>
+
+<style>
+.suffix-sorted {
+    color: red;
+}
+.suffix-end {
+    background: #88F;
+}
+.suffix-a {
+    background: #8F8;
+}
+.suffix-b {
+    background: #8FF;
+}
+.suffix-c {
+    background: #F88;
+}
+.suffix-d {
+    background: #F8F;
+}
+.suffix-r {
+    background: #FF8;
+}
+.suffix td:nth-child(1) {
+    width: 2ex;
+    text-align: right;
+}
+.suffix td:nth-child(2) {
+    text-align: right;
+}
+.suffix td:nth-child(3) {
+    width: 15ex;
+    text-align: left;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/geometry/circle-circle.html&amp;ttl=２つの円の共通接線を求める" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/geometry/circle-circle.html&amp;ttl=２つの円の共通接線を求める" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+
+
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#in">共通内接線求めてみる</a></li><li><a href="#out">共通外接線を求めてみる</a></li><li><a href="#svg">実際にやってみよう</a></li></ul>
+</div>
+
+
+<h1>２つの円の共通接線を求める</h1>
+<navi id="breadNavi"><a href="../../">HOME</a>&gt;&gt;<a href="../">メモ</a>&gt;&gt;<a href="./">図形処理の基礎</a>&gt;&gt;２つの円の共通接線を求める</navi>
+
+
+<h2 id="in">共通内接線求めてみる</h2>
+<p>
+円と円の共通接線を求めてみます。
+まずは片方の円は原点中心として考えましょう。
+原点中心半径<img src="../../../memo/geometry/eqn/89f2e0d2d24bcf44db73aab8fc03252c.gif" alt="$r$" width="6" height="5" class="equation" />の円Aと、点P<img src="../../../memo/geometry/eqn/7b21584bcd06a236f680835e42398f39.gif" alt="$(x_\mathrm{P},y_\mathrm{P})$" width="39" height="12" class="equation" />中心の半径<img src="../../../memo/geometry/eqn/1e438235ef9ec72fc51ac5025516017c.gif" alt="$R$" width="9" height="8" class="equation" />の円Bを考えます。
+</p>
+
+<p>
+円A上に点Q<img src="../../../memo/geometry/eqn/2d113a6b74271fdd9884301dca8f2c7b.gif" alt="$(x_\mathrm{Q},y_\mathrm{Q})$" width="41" height="13" class="equation" />をとり、この点を通る切線を引きます。
+この切線の方程式は「<a href="./circle-tangent.html">円の接線を求める</a>」の結果から次のようになります。
+</p>
+<img src="../../../memo/geometry/eqn/ffa521901723af36b480d3f01fd4d3bc.gif" alt="\[ x_\mathrm{Q}x + y_\mathrm{Q}y - r^2 = 0 \]" width="103" height="14" class="eqn" />
+<p>
+この直線が円Bと接していれば、この直線は共通接線となります。
+「円Bと接する」ことと、「点Pとの距離が<img src="../../../memo/geometry/eqn/1e438235ef9ec72fc51ac5025516017c.gif" alt="$R$" width="9" height="8" class="equation" />である」ことが等価であることを利用すれば、
+この条件は「<a href="./point-line.html">点と直線の距離を求める</a>」の結果を用いて
+</p>
+<img src="../../../memo/geometry/eqn/0e72c4380cb2e4e7c50f71298afc7e27.gif" alt="\begin{eqnarray*} \frac{|x_\mathrm{P}x_\mathrm{Q} + y_\mathrm{P}y_\mathrm{Q} - r^2|}{\sqrt{x_\mathrm{Q}^2 + y_\mathrm{Q}^2}} &amp;=&amp; R \\ \frac{x_\mathrm{P}x_\mathrm{Q} + y_\mathrm{P}y_\mathrm{Q} - r^2}{r} &amp;=&amp; \pm R \end{eqnarray*}" width="138" height="70" class="eqn" />
+<p>
+と表すことができます。
+ここで右辺の符号は点Qが直線のどちら側にあるかを表します。
+プラスであれば2つの円は直線をはさんで反対側、マイナスであれば同じ側にあることを意味します。
+これから、プラスのときは共通内接線、マイナスのときは共通外接線を表していることがわかります。
+ここではプラスのとき、つまり共通内接線を求めてみましょう。
+このとき、円Aの接線が円Bと接する条件は次のように書き直せます。
+</p>
+<img src="../../../memo/geometry/eqn/2f6a34620f65a6127d36b65f8238b7e5.gif" alt="\[ x_\mathrm{P}x_\mathrm{Q} + y_\mathrm{P}y_\mathrm{Q} - r(r + R) = 0 \]" width="151" height="12" class="eqn" />
+<p>
+この方程式と、点Qが円A上にあるという条件
+</p>
+<img src="../../../memo/geometry/eqn/d383898497e4ad473d2876fe9aec9d42.gif" alt="\[ x_\mathrm{Q}^2+y_\mathrm{Q}^2 = r^2 \]" width="69" height="16" class="eqn" />
+<p>
+を連立させて点Qの座標について解けば、共通内接線がわかります。
+この2つの方程式、よく見ると円と直線の方程式です。
+つまり、<a href="./line-circle.html">直線と円の交点を求める</a>問題として解くことができます。
+以前求めた結果を用いて解くと
+</p>
+<img src="../../../memo/geometry/eqn/816dd546a8ee994d419aa611f9599eb5.gif" alt="\begin{eqnarray*} x_\mathrm{Q} &amp;=&amp; r\frac{x_\mathrm{P}(r+R) \pm y_\mathrm{P}\sqrt{(x_\mathrm{P}^2+y_\mathrm{P}^2)-(r+R)^2}}{x_\mathrm{P}^2+y_\mathrm{P}^2} \\ y_\mathrm{Q} &amp;=&amp; r\frac{y_\mathrm{P}(r+R) \mp x_\mathrm{P}\sqrt{(x_\mathrm{P}^2+y_\mathrm{P}^2)-(r+R)^2}}{x_\mathrm{P}^2+y_\mathrm{P}^2} \end{eqnarray*}" width="238" height="66" class="eqn" />
+<p>
+となります。この点を通る円Aの接線が円Aと円Bの共通内接線となります。
+</p>
+
+<h2 id="out">共通外接線を求めてみる</h2>
+<p>
+<img src="../../../memo/geometry/eqn/1e438235ef9ec72fc51ac5025516017c.gif" alt="$R$" width="9" height="8" class="equation" />を<img src="../../../memo/geometry/eqn/b70682d949b53f2341a778d6d0f933d9.gif" alt="$-R$" width="18" height="8" class="equation" />に置き換えるだけですね。具体的に書くと以下のようになります。
+</p>
+<img src="../../../memo/geometry/eqn/a9c03a06ff954045128c8815f6dee564.gif" alt="\begin{eqnarray*} x_\mathrm{Q} &amp;=&amp; r\frac{x_\mathrm{P}(r-R) \pm y_\mathrm{P}\sqrt{(x_\mathrm{P}^2+y_\mathrm{P}^2)-(r-R)^2}}{x_\mathrm{P}^2+y_\mathrm{P}^2} \\ y_\mathrm{Q} &amp;=&amp; r\frac{y_\mathrm{P}(r-R) \mp x_\mathrm{P}\sqrt{(x_\mathrm{P}^2+y_\mathrm{P}^2)-(r-R)^2}}{x_\mathrm{P}^2+y_\mathrm{P}^2} \end{eqnarray*}" width="238" height="66" class="eqn" />
+<p>
+この点を通る円Aの接線が円Aと円Bの共通外接線となります。
+</p>
+
+<h2 id="svg">実際にやってみよう</h2>
+<p>
+実際にやってみました。
+SVGにJavascriptを埋め込んで簡単なアニメーションを作ってみました。
+<a href="./circle-circle.svg">SVGファイルをダウンロードする</a>
+</p>
+<object data="./circle-circle.svg" type="image/svg+xml" width="400" height="300">
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+
+
+<ul class="toInfo">
+	<li><a href="./">サイトトップへ</a></li>
+</ul>
+
+</body>
+</html>

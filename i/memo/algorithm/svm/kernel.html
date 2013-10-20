@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>カーネルトリック - Shogo Computing Laboratory</title>
+
+<style>
+.suffix-sorted {
+    color: red;
+}
+.suffix-end {
+    background: #88F;
+}
+.suffix-a {
+    background: #8F8;
+}
+.suffix-b {
+    background: #8FF;
+}
+.suffix-c {
+    background: #F88;
+}
+.suffix-d {
+    background: #F8F;
+}
+.suffix-r {
+    background: #FF8;
+}
+.suffix td:nth-child(1) {
+    width: 2ex;
+    text-align: right;
+}
+.suffix td:nth-child(2) {
+    text-align: right;
+}
+.suffix td:nth-child(3) {
+    width: 15ex;
+    text-align: left;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/svm/kernel.html&amp;ttl=カーネルトリック" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/svm/kernel.html&amp;ttl=カーネルトリック" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+
+
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#mapping">写像</a></li><li><a href="#kernel">カーネルトリック</a></li><li><a href="#svg">実際にやってみよう</a></li></ul>
+</div>
+
+
+<h1>カーネルトリック</h1>
+<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;<a href="./">SVM</a>&gt;&gt;カーネルトリック</navi>
+
+
+
+
+
+<h2 id="mapping">写像</h2>
+<p>
+ソフトマージンで線形分離不可能な場合でも、分離超平面を決定することができますが、
+所詮線形分離なので、性能には限界があります。
+</p>
+<p>
+そこで、入力<img src="../../../../memo/algorithm/svm/d0692677c57d8b25e19401e6069a0156.gif" alt="$\bm x$" width="8" height="6" class="equation" />を適当な非線形変換<img src="../../../../memo/algorithm/svm/f50853d41be7d55874e952eb0d80c53e.gif" alt="$\phi$" width="7" height="10" class="equation" />を使って、
+より高次元な特徴空間<img src="../../../../memo/algorithm/svm/37c7cb4e544ab290cf4d374554abd0ef.gif" alt="$\phi(\bm x)$" width="24" height="12" class="equation" />へ写像することを考えます。
+</p>
+<object data="../../../../memo/algorithm/svm/mapping.svg" type="image/svg+xml" ><img src="../../../../memo/algorithm/svm/mapping.png"  alt="非線形写像"/></object>
+<p>
+例えば左の図で赤丸と青丸は線形分離出来ません。
+そこで、元の特徴空間<img src="../../../../memo/algorithm/svm/6e19614ee52b27a77aac02410e9f88ee.gif" alt="$\bm x=(x,y)$" width="51" height="12" class="equation" />を非線形変換し、<img src="../../../../memo/algorithm/svm/f99dd000edf0d9ed44e745e2e8d0ec4a.gif" alt="$\phi(\bm x)=(x^2,y^2)$" width="78" height="13" class="equation" />
+に写像します。
+すると、右図のような分布になり、直線で分離することが可能になります。
+</p>
+
+<h2 id="kernel">カーネルトリック</h2>
+<p>
+上の例では、二次元から二次元の写像でしたが、複雑な問題なるとより大きな次元に写像する必要があります。
+次元があまりにも大きくなると、写像を求めるのは大変になってきます。
+</p>
+<p>
+しかし、SVMの場合、実は実際に写像を求める必要はなく、ベクトルの内積だけ分かれば計算ができます。
+この写像した特徴空間の内積は、当然もとの特徴ベクトルの関数になっているはずです。
+そこで、写像した特徴空間の内積を関数Kで表すことにします。
+</p>
+<img src="../../../../memo/algorithm/svm/075ba5866d4b501ceb94af6cc107e9f1.gif" alt="$K(\bm x_1, \bm x_2)=\phi(\bm x_1)\cdot\phi(\bm x_2)$" width="135" height="12" class="eqn" />
+<p>
+この関数をカーネル関数といいます。
+カーネル関数さえ求まれば、<img src="../../../../memo/algorithm/svm/f50853d41be7d55874e952eb0d80c53e.gif" alt="$\phi$" width="7" height="10" class="equation" />を具体的に求める必要はありません。
+<img src="../../../../memo/algorithm/svm/f50853d41be7d55874e952eb0d80c53e.gif" alt="$\phi$" width="7" height="10" class="equation" />を具体的に求めなくても計算ができてしますので、この手法をカーネルトリックと言います。
+有名なカーネルとしては、次のようなものがあります。
+</p>
+<p>
+多項式カーネル
+<img src="../../../../memo/algorithm/svm/7a38509e3c6cdc2d06094d8ec5ce5498.gif" alt="$K(\bm x_1, \bm x_2)=(\bm x_1 \cdot \bm x_2 + 1)^d$" width="138" height="13" class="eqn" />
+</p>
+<p>
+ガウシアンカーネル
+<img src="../../../../memo/algorithm/svm/0a126bf50eabaac23545c4543b68d65e.gif" alt="$K(\bm x_1, \bm x_2)=\exp\left(\frac{\displaystyle||\bm x_1-\bm x_2||^2}{\displaystyle 2\sigma^2}\right)$" width="166" height="30" class="eqn" />
+</p>
+
+<h2 id="svg">実際にやってみよう</h2>
+<p>
+2変数の場合のカーネルトリックを使ったSVMです。カーネルにはガウスカーネルを使用しています。
+赤の点と、青の点を、黒い線で分けます。各点はドラッグ＆ドロップで動かせるのでいじってみてください。
+</p>
+<p>
+下ある二本のスライドバーは上がCパラメータ、下がガウスカーネルのパラメータσの調整用です。
+Cパラメータは右に行くほど大きく(つまりハードマージンSVMに近く)、
+σは右に行くほど大きくなります。
+</p>
+<p>
+<a href="./kernel-svm.svg">SVGファイルをダウンロードする</a>
+</p>
+<object data="./kernel-svm.svg" type="image/svg+xml" width="400" height="300">
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+
+
+
+<ul class="toInfo">
+	<li><a href="./">サイトトップへ</a></li>
+</ul>
+
+</body>
+</html>

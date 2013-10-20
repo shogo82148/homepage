@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Suffix Arrayとは - Shogo Computing Laboratory</title>
+
+<style>
+.suffix-sorted {
+    color: red;
+}
+.suffix-end {
+    background: #88F;
+}
+.suffix-a {
+    background: #8F8;
+}
+.suffix-b {
+    background: #8FF;
+}
+.suffix-c {
+    background: #F88;
+}
+.suffix-d {
+    background: #F8F;
+}
+.suffix-r {
+    background: #FF8;
+}
+td:nth-child(1) {
+    width: 2ex;
+    text-align: right;
+}
+td:nth-child(2) {
+    text-align: right;
+}
+td:nth-child(3) {
+    width: 15ex;
+    text-align: left;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/suffix-array/introduction.html&amp;ttl=Suffix Arrayとは" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/suffix-array/introduction.html&amp;ttl=Suffix Arrayとは" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+
+
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#">Suffix Array</a></li><li><a href="#">アルゴリズム</a></li><li><a href="#">やってみた</a></li></ul>
+</div>
+
+
+<h1>Suffix Arrayとは</h1>
+<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;<a href="./">Suffix Array</a>&gt;&gt;Suffix Arrayとは</navi>
+
+
+
+
+
+<h2>Suffix Array</h2>
+<p>
+接尾辞配列(Suffix Array)とは，接尾辞(Suffix)を辞書順にソートしたものです．
+</p>
+
+<p>
+例として「abracadabra$」という文字列を考えてみましょう．
+($は文字列の終わりを表す特殊な文字)
+Suffixとは，文字列のある位置から末尾までの文字列のことです．
+「abracadabra$」の場合，以下のように全部で11通りの Suffix があります．
+</p>
+<table border="1">
+  <tr><th>開始位置</th><th>Suffix</th></tr>
+  <tr><td>0</td><td>abracadabra$</td></tr>
+  <tr><td>1</td><td>bracadabra$</td></tr>
+  <tr><td>2</td><td>racadabra$</td></tr>
+  <tr><td>3</td><td>acadabra$</td></tr>
+  <tr><td>4</td><td>cadabra$</td></tr>
+  <tr><td>5</td><td>adabra$</td></tr>
+  <tr><td>6</td><td>dabra$</td></tr>
+  <tr><td>7</td><td>abra$</td></tr>
+  <tr><td>8</td><td>bra$</td></tr>
+  <tr><td>9</td><td>ra$</td></tr>
+  <tr><td>10</td><td>a$</td></tr>
+  <tr><td>11</td><td>$</td></tr>
+</table>
+
+<p>
+これを辞書順(ここではabc順)に並べ替えたものが Suffix Array です．
+</p>
+<table border="1">
+  <tr><th>開始位置</th><th>Suffix</th></tr>
+  <tr><td>11</td><td>$</td></tr>
+  <tr><td>10</td><td>a$</td></tr>
+  <tr><td>7</td><td>abra$</td></tr>
+  <tr><td>0</td><td>abracadabra$</td></tr>
+  <tr><td>3</td><td>acadabra$</td></tr>
+  <tr><td>5</td><td>adabra$</td></tr>
+  <tr><td>8</td><td>bra$</td></tr>
+  <tr><td>1</td><td>bracadabra$</td></tr>
+  <tr><td>4</td><td>cadabra$</td></tr>
+  <tr><td>6</td><td>dabra$</td></tr>
+  <tr><td>2</td><td>racadabra$</td></tr>
+  <tr><td>9</td><td>ra$</td></tr>
+</table>
+<p>
+Suffix は元の文字列と開始位置さえわかれば特定できるので，
+表の開始位置の列だけ覚えておけば Suffix Array を表すことができます．
+</p>
+
+<h2>アルゴリズム</h2>
+<p>
+もっとも簡単なアルゴリズムは Suffix Array の定義をそのまま実装することです．
+たいていの言語でソート関数が組み込まれているので，それを使うことができます．
+しかし，一般的なソートアルゴリズムはどんなに効率がいいものでも<img src="../../../../memo/algorithm/suffix-array/ff514eba41c59f90c20d895e80719763.gif" alt="$O(n \log n)$" width="51" height="12" class="equation" />回の Suffix の比較が必要となります．
+Suffix の比較には <img src="../../../../memo/algorithm/suffix-array/1f08ccc9cd7309ba1e756c3d9345ad9f.gif" alt="$O(n)$" width="25" height="12" class="equation" /> の計算量が必要なので，全体で <img src="../../../../memo/algorithm/suffix-array/aa9870286704e5b13ffbef6fbdd552a2.gif" alt="$O(n^2 \log n)$" width="57" height="13" class="equation" />の計算量となります．
+</p>
+<p>
+短い文章なら十分な速度ですが，長い文章では非効率です．
+次は少し工夫した<a hred="./bucket-sort.html">バケットソート</a>を見て見ることにしましょう．
+</p>
+
+<h2>やってみた</h2>
+<p>
+もっとも単純なアルゴリズムをJavaScriptで実装してみました．
+入力欄にテキストを入力すると Suffix Array を生成してくれます．
+さらに，検索欄にテキストを入力すると，先頭がその文字列で始まる Suffix を検索し，強調表示してくれます．
+このような Suffix は二分検索で高速に求めることができるので，全文検索などに応用することができます．
+</p>
+
+入力:<input id="text" type="text" size="50" value="abracadabra" /><br />
+検索:<input id="search" type="text" size="50" value="abra" />
+<div id="result" style="height:500px; overflow: auto;"></div>
+<script src="suffixarray.js"></script>
+
+
+<ul class="toInfo">
+	<li><a href="./">サイトトップへ</a></li>
+</ul>
+
+</body>
+</html>

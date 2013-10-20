@@ -1,0 +1,134 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+<g id="graph" stroke="red" stroke-width="2" fill="red">
+	<path id="curve" stroke="black" stroke-width="2" fill="none" />
+</g>
+<script type="text/ecmascript"><![CDATA[
+	//パラメータ取得
+	params = new Array();
+	if(document.defaultView.frameElement) {
+		params['alpha']=0.1;
+		var param_tags = document.defaultView.frameElement.getElementsByTagName("param");
+		for(var i=0;i<param_tags.length;i++) {
+			params[param_tags[i].getAttribute('name')] = param_tags[i].getAttribute('value');
+		}
+	}
+
+	//パラメータの設定
+	alpha = params['alpha']-0 || 0.002;
+	count = 0;
+	refreshcount = 100;
+	
+	$ = function(id) {
+		return document.getElementById(id);
+	}
+	w = document.documentElement.getAttribute('width')-0;
+	h = document.documentElement.getAttribute('height')-0;
+	ns = "http://www.w3.org/2000/svg";
+	
+	//新しい曲線を作成
+	function Curve() {
+		//関数のパラメータ
+		a = new Array(3);
+		b = new Array(a.length);
+		for(var i=0;i<a.length;i++) {
+			a[i] = Math.random()-0.5;
+			b[i] = Math.random()-0.5;
+		}
+		b[0] = 0;
+	
+		//描画する関数
+		function f(x) {
+			var ret = 0;
+			for(var i=0;i<a.length;i++) {
+				var theta = x*2*3.14159265358*i;
+				ret += a[i] * Math.sin(theta) + b[i] * Math.cos(theta);
+			}
+			return ret;
+		}
+		
+		//関数の微分
+		function df(x) {
+			var ret = 0;
+			for(var i=0;i<a.length;i++) {
+				var theta = x*2*3.14159265358*i;
+				ret += 2*3.14159265358*i*(a[i] * Math.cos(theta) - b[i] * Math.sin(theta));
+			}
+			return ret;
+		}
+		
+		//画面上での座標計算
+		function y(x) {
+			return (1-f(x))*h/2;
+		}
+		
+		//描画用のパスを作る
+		var d = 'M 0 ' + y(-1);
+		for(i=0;i<w;i+=2) {
+			var x = i*2/w-1;
+			d += ' ' + i + ' ' + y(x);
+		}
+		this.d = d;
+		this.f = f;
+		this.y = y;
+		this.df = df;
+	}
+	
+	//関数作成
+	curve = new Curve();
+	$('curve').setAttribute('d', curve.d);
+	
+	//点の初期化
+	points = new Array(20);
+	pointsx = new Array(points.length);
+	for(var i=0;i<points.length;i++) {
+		points[i] = document.createElementNS(ns, "svg:circle");
+    	points[i].setAttribute("r", "5");
+		$('graph').appendChild(points[i]);
+	}
+	
+	function newPoints() {
+		for(var i=0;i<points.length;i++) {
+			pointsx[i] = i/(points.length-1)*2-1;
+		}
+	}
+	
+	function setPoints() {
+		for(var i=0;i<points.length;i++) {
+			points[i].setAttribute('cx', (pointsx[i]+1)*w/2);
+			points[i].setAttribute('cy', curve.y(pointsx[i]));
+		}
+	}
+	
+	//データポイント作成
+	newPoints();
+	setPoints();
+
+	setInterval('animate();', 100);
+	
+	function animate() {
+		maxdelta = Math.abs(alpha*curve.df(pointsx[0]));
+		for(var i=0;i<points.length;i++) {
+			//最急降下法
+			delta = alpha*curve.df(pointsx[i]);
+			pointsx[i] -= delta;
+			
+			delta = Math.abs(delta);
+			if(delta>maxdelta) maxdelta = delta;
+		}
+		setPoints();
+		count++;
+		
+		//ある程度収束したら終了
+		if(maxdelta*w<0.1 || count>refreshcount) {
+			curve = new Curve();
+			$('curve').setAttribute('d', curve.d);
+			newPoints();
+			setPoints();
+			count = 0;
+		}
+	}
+]]></script>
+</svg>

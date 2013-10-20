@@ -1,0 +1,97 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+<g id="lines" stroke="black" stroke-width="2" fill="white">
+</g>
+<g id="points" stroke="red" stroke-width="2" fill="white">
+</g>
+<script type="text/ecmascript"><![CDATA[
+	var $ = function(id) {
+		return document.getElementById(id);
+	}
+	var w = document.documentElement.getAttribute('width')-0;
+	var h = document.documentElement.getAttribute('height')-0;
+	var numline = 3;
+	
+	function Line() {
+		this.x = Math.random() * w;
+		this.y = Math.random() * h;
+		this.theta = Math.random() * 2 * Math.PI;
+	}
+
+	function setLine(l, x1, y1, x2, y2) {
+		l.setAttribute('x1', x1);
+		l.setAttribute('y1', y1);
+		l.setAttribute('x2', x2);
+		l.setAttribute('y2', y2);
+	}
+	
+	function setCircle(c, x, y, r) {
+		c.setAttribute('cx', x);
+		c.setAttribute('cy', y);
+		c.setAttribute('r', r);
+	}
+	
+	var sl = new Array(numline), el = new Array(numline);
+	var line = new Array(numline);
+	var point = new Array(numline*numline);
+	var count = 0, maxcount = 30;
+	var i, j;
+	
+	for(i=0;i<numline;i++) {
+		sl[i] = new Line();
+		el[i] = new Line();
+		line[i] = document.createElementNS("http://www.w3.org/2000/svg", "line");
+		$('lines').appendChild(line[i]);
+		for(j=i+1;j<numline;j++) {
+			point[i*numline+j] = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+			$('points').appendChild(point[i*numline+j]);
+		}
+	}
+	
+	setInterval('animate();', 100);
+	
+	function animate() {
+		var i, j;
+		var t = count / maxcount;
+		var tt = 1-t;
+		var l = new Array(numline);
+		
+		for(i=0;i<numline;i++) {
+			l[i] = {
+				'x' : tt*sl[i].x + t*el[i].x,
+				'y' : tt*sl[i].y + t*el[i].y,
+				'theta' : tt*sl[i].theta + t*el[i].theta,
+			}
+			l[i].a = Math.cos(l[i].theta);
+			l[i].b = Math.sin(l[i].theta);
+		}
+		
+		for(i=0;i<numline;i++) {
+			setLine(line[i], l[i].x-(w+h)*l[i].a, l[i].y-(w+h)*l[i].b, l[i].x+(w+h)*l[i].a, l[i].y+(w+h)*l[i].b);
+			for(j=i+1;j<numline;j++) {
+				var dx = l[j].x - l[i].x;
+				var dy = l[j].y - l[i].y;
+				var cross = l[i].a*l[j].b - l[i].b*l[j].a;
+				
+				if(cross!=0) {
+					var ti = -(l[j].a*dy-l[j].b*dx)/cross;
+					setCircle(point[i*numline+j], l[i].x+l[i].a*ti, l[i].y+l[i].b*ti, 5);
+				} else {
+					setCircle(point[i*numline+j], 0, 0, 0);
+				}
+			}
+		}
+		
+		count++;
+		if(count>maxcount) {
+			for(i=0;i<numline;i++) {
+				sl[i] = el[i];
+				el[i] = new Line();
+			}
+			count = 0;
+		}
+	}
+]]></script>
+</svg>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>ホモグラフィ - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/geometry/homography/" />
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/geometry/homography/index.html&amp;ttl=ホモグラフィ" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/geometry/homography/index.html&amp;ttl=ホモグラフィ" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#">射影変換</a></li><li><a href="#">ホモグラフィ</a></li><li><a href="#">ホモグラフィ行列を推定する</a></li><li><a href="#">やってみた</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>ホモグラフィ</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">図形処理の基礎</a>&gt;&gt;ホモグラフィ</navi>
+			<div class="contentswrap">
+			
+
+<p>
+ホモグラフィとは、平面を射影変換を用いて別の平面に射影することを言います。
+二次元画像の変形などに使われます。
+二次元画像の変形方法としてはアフィン変換がありますが、ホモグラフィはその拡張です。
+アフィン変換は長方形を平行四辺形に変形させることしか出来ませんが、
+ホモグラフィを使えば台形へ変形させることができます。
+</p>
+
+<h2>射影変換</h2>
+<p>
+ホモグラフィについて考える前に、
+ホモグラフィの基本的な考え方である射影変換について考えましょう。
+</p>
+<p>
+コンピュータで3Dを扱う場合、コンピュータ内部では3Dをごちゃごちゃいじったとしても、ほとんどの場合最終的な出力は画面(2D)です。
+そのため、3Dを2Dに変換する作業が必要となります。
+それを実現するのが射影変換です。
+</p>
+
+<h2>ホモグラフィ</h2>
+
+<p>
+平面<object data="./eqn/561ebb4bc8bfd55acae7bb931b4a4b38.svg" type="image/svg+xml" standby="$z=1$" style="width:30pt;height:9pt;" class="equation"><img src="./eqn/561ebb4bc8bfd55acae7bb931b4a4b38.gif" alt="$z=1$" width="27" height="9" class="equation" /></object>上の点<object data="./eqn/3cd5687445135b5d75181af0aaf3bd6f.svg" type="image/svg+xml" standby="$\bm{p}$" style="width:9pt;height:9pt;" class="equation"><img src="./eqn/3cd5687445135b5d75181af0aaf3bd6f.gif" alt="$\bm{p}$" width="8" height="9" class="equation" /></object>を<object data="./eqn/b3f5c4cd8ea0579f705215aef0b26798.svg" type="image/svg+xml" standby="$\bm{P}$" style="width:12pt;height:10pt;" class="equation"><img src="./eqn/b3f5c4cd8ea0579f705215aef0b26798.gif" alt="$\bm{P}$" width="11" height="9" class="equation" /></object>に変換することを考えます。
+<object data="./eqn/03bde09847e318b2181cb2867eed1f42.svg" type="image/svg+xml" standby="\[ \bm{p}=\left[ \begin{array}{c} x \\ y \\ 1 \end{array}\right], \bm{P}=\left[ \begin{array}{c} X \\ Y \\ 1 \end{array}\right] \]" style="width:132pt;height:45pt;" class="eqn"><img src="./eqn/03bde09847e318b2181cb2867eed1f42.gif" alt="\[ \bm{p}=\left[ \begin{array}{c} x \\ y \\ 1 \end{array}\right], \bm{P}=\left[ \begin{array}{c} X \\ Y \\ 1 \end{array}\right] \]" width="126" height="43" class="eqn" /></object>
+</p>
+
+<p>
+このときホモグラフィ変換は次式で表されます。
+<object data="./eqn/d7e95a355b70d620c0d32f3b78d869da.svg" type="image/svg+xml" standby="\[ \bm{P}'=\left[ \begin{array}{c} X' \\ Y' \\ W' \end{array}\right] =\bm{H}\bm{p} \]" style="width:111pt;height:45pt;" class="eqn"><img src="./eqn/d7e95a355b70d620c0d32f3b78d869da.gif" alt="\[ \bm{P}'=\left[ \begin{array}{c} X' \\ Y' \\ W' \end{array}\right] =\bm{H}\bm{p} \]" width="109" height="43" class="eqn" /></object>
+ここで、行列Hはホモグラフィ行列といい、この変換を決めるパラメータです。
+<object data="./eqn/d6fa3260fe21edee3e43242b08e3b34d.svg" type="image/svg+xml" standby="\[ \bm{H}=\left[ \begin{array}{ccc} h_{11} &amp; h_{12} &amp; h_{13} \\ h_{21} &amp; h_{22} &amp; h_{23} \\ h_{31} &amp; h_{32} &amp; h_{33} \end{array} \right] \]" style="width:133pt;height:45pt;" class="eqn"><img src="./eqn/d6fa3260fe21edee3e43242b08e3b34d.gif" alt="\[ \bm{H}=\left[ \begin{array}{ccc} h_{11} &amp; h_{12} &amp; h_{13} \\ h_{21} &amp; h_{22} &amp; h_{23} \\ h_{31} &amp; h_{32} &amp; h_{33} \end{array} \right] \]" width="127" height="43" class="eqn" /></object>
+</p>
+
+<p>
+<object data="./eqn/b3f5c4cd8ea0579f705215aef0b26798.svg" type="image/svg+xml" standby="$\bm{P}$" style="width:12pt;height:10pt;" class="equation"><img src="./eqn/b3f5c4cd8ea0579f705215aef0b26798.gif" alt="$\bm{P}$" width="11" height="9" class="equation" /></object>と<object data="./eqn/0efb522a7fad008e4458ff43dac04871.svg" type="image/svg+xml" standby="$\bm{P}'$" style="width:15pt;height:10pt;" class="equation"><img src="./eqn/0efb522a7fad008e4458ff43dac04871.gif" alt="$\bm{P}'$" width="13" height="9" class="equation" /></object>は数値的には等しくありませんが、
+射影変換によって同じ点となるので、意味的には同じものです。
+実際の変換先の座標を求めるのには次式を用います。
+<object data="./eqn/09e4d71beb03b587c2d77ce743bb1a95.svg" type="image/svg+xml" standby="\[\bm{P}=\frac{1}{W'}\bm{P}'\]" style="width:60pt;height:25pt;" class="eqn"><img src="./eqn/09e4d71beb03b587c2d77ce743bb1a95.gif" alt="\[\bm{P}=\frac{1}{W'}\bm{P}'\]" width="59" height="24" class="eqn" /></object>
+</p>
+
+<h2>ホモグラフィ行列を推定する</h2>
+<p>
+ホモグラフィ行列がわかれば、上に書いた式を用いて座標変換が行えます。
+では、逆に、座標変換の結果だけわかっていて、それからホモグラフィ行列を求めることはできないでしょうか。
+これについて考えてみましょう。
+</p>
+
+<p>
+<object data="./eqn/3cd5687445135b5d75181af0aaf3bd6f.svg" type="image/svg+xml" standby="$\bm{p}$" style="width:9pt;height:9pt;" class="equation"><img src="./eqn/3cd5687445135b5d75181af0aaf3bd6f.gif" alt="$\bm{p}$" width="8" height="9" class="equation" /></object>が<object data="./eqn/b3f5c4cd8ea0579f705215aef0b26798.svg" type="image/svg+xml" standby="$\bm{P}$" style="width:12pt;height:10pt;" class="equation"><img src="./eqn/b3f5c4cd8ea0579f705215aef0b26798.gif" alt="$\bm{P}$" width="11" height="9" class="equation" /></object>に変換されることがわかっているとします。
+上に書いたように、実際の変換結果<object data="./eqn/b3f5c4cd8ea0579f705215aef0b26798.svg" type="image/svg+xml" standby="$\bm{P}$" style="width:12pt;height:10pt;" class="equation"><img src="./eqn/b3f5c4cd8ea0579f705215aef0b26798.gif" alt="$\bm{P}$" width="11" height="9" class="equation" /></object>とホモグラフィ変換の結果<object data="./eqn/0efb522a7fad008e4458ff43dac04871.svg" type="image/svg+xml" standby="$\bm{P}'$" style="width:15pt;height:10pt;" class="equation"><img src="./eqn/0efb522a7fad008e4458ff43dac04871.gif" alt="$\bm{P}'$" width="13" height="9" class="equation" /></object>は
+<object data="./eqn/09e4d71beb03b587c2d77ce743bb1a95.svg" type="image/svg+xml" standby="\[\bm{P}=\frac{1}{W'}\bm{P}'\]" style="width:60pt;height:25pt;" class="eqn"><img src="./eqn/09e4d71beb03b587c2d77ce743bb1a95.gif" alt="\[\bm{P}=\frac{1}{W'}\bm{P}'\]" width="59" height="24" class="eqn" /></object>
+という関係が成り立っている必要があります。
+このままでは少し扱いにくいので、この関係を少し別の形に書き換えてみましょう。
+この式は、位置ベクトルPとP'は長さは違うけど向きは同じ、つまり平行であるということを表しています。
+ベクトルの外積の定義を思い出すと、このことは次のように書くことができます。
+<object data="./eqn/71ddca9b1e1bdba8456329791b6277bd.svg" type="image/svg+xml" standby="\[\bm{P}\times\bm{P}'=\bm{P}\times\bm{H}\bm{p}=0\]" style="width:124pt;height:13pt;" class="eqn"><img src="./eqn/71ddca9b1e1bdba8456329791b6277bd.gif" alt="\[\bm{P}\times\bm{P}'=\bm{P}\times\bm{H}\bm{p}=0\]" width="121" height="13" class="eqn" /></object>
+</p>
+
+<p>
+このままでは計算しづらいので、<object data="./eqn/0efb522a7fad008e4458ff43dac04871.svg" type="image/svg+xml" standby="$\bm{P}'$" style="width:15pt;height:10pt;" class="equation"><img src="./eqn/0efb522a7fad008e4458ff43dac04871.gif" alt="$\bm{P}'$" width="13" height="9" class="equation" /></object>を成分表示になおしてみましょう。
+<object data="./eqn/7b588483ce3b8dfa11c1cfa932f57067.svg" type="image/svg+xml" standby="\[ \bm{P}'=\left[ \begin{array}{c} X' \\ Y' \\ W' \end{array}\right] =\bm{H}\bm{p}= \left[ \begin{array}{c} {\bm{h}^1}^T \bm{p} \\ {\bm{h}^2}^T \bm{p} \\ {\bm{h}^3}^T \bm{p} \end{array}\right] \]" style="width:183pt;height:52pt;" class="eqn"><img src="./eqn/7b588483ce3b8dfa11c1cfa932f57067.gif" alt="\[ \bm{P}'=\left[ \begin{array}{c} X' \\ Y' \\ W' \end{array}\right] =\bm{H}\bm{p}= \left[ \begin{array}{c} {\bm{h}^1}^T \bm{p} \\ {\bm{h}^2}^T \bm{p} \\ {\bm{h}^3}^T \bm{p} \end{array}\right] \]" width="177" height="51" class="eqn" /></object>
+ここで、<object data="./eqn/c3560a0e8b8ed2cd2333bc1b28ccfbe3.svg" type="image/svg+xml" standby="\[{\bm{h}^i}^T\]" style="width:20pt;height:15pt;" class="equation"><img src="./eqn/c3560a0e8b8ed2cd2333bc1b28ccfbe3.gif" alt="\[{\bm{h}^i}^T\]" width="19" height="14" class="equation" /></object>は<object data="./eqn/21433203531c2464f488b9f11d3e919e.svg" type="image/svg+xml" standby="$\bm{H}$" style="width:14pt;height:10pt;" class="equation"><img src="./eqn/21433203531c2464f488b9f11d3e919e.gif" alt="$\bm{H}$" width="13" height="9" class="equation" /></object>の行ベクトルです。
+</p>
+
+<p>
+これを使うとPとP'の条件は以下のようにかけます。
+<object data="./eqn/74f1bbc8ed58a05dbc7254bffefe94c2.svg" type="image/svg+xml" standby="\[ \bm{P}\times\bm{P}'= \bm{P}\times\bm{H}\bm{p}= \left[ \begin{array}{c} Y{\bm{h}^3}^T\bm{p}-{\bm{h}^2}^T\bm{p} \\ {\bm{h}^1}^T\bm{p}-X{\bm{h}^3}^T\bm{p} \\ X{\bm{h}^2}^T\bm{p}-Y{\bm{h}^1}^T\bm{p} \\ \end{array} \right]=0\]" style="width:259pt;height:52pt;" class="eqn"><img src="./eqn/74f1bbc8ed58a05dbc7254bffefe94c2.gif" alt="\[ \bm{P}\times\bm{P}'= \bm{P}\times\bm{H}\bm{p}= \left[ \begin{array}{c} Y{\bm{h}^3}^T\bm{p}-{\bm{h}^2}^T\bm{p} \\ {\bm{h}^1}^T\bm{p}-X{\bm{h}^3}^T\bm{p} \\ X{\bm{h}^2}^T\bm{p}-Y{\bm{h}^1}^T\bm{p} \\ \end{array} \right]=0\]" width="255" height="51" class="eqn" /></object>
+
+ホモグラフィ行列の項をくくり出すと次のようになります。
+<object data="./eqn/aec73ba9ba66d0312cbd8b211ae180c8.svg" type="image/svg+xml" standby="\[\left[ \begin{array}{ccc} 0 &amp; -\bm{p}^T &amp; Y\bm{p}^T \\ \bm{p}^T &amp; 0 &amp; -X\bm{p}^T \\ -Y\bm{p}^T &amp; X\bm{p}^T &amp; 0 \end{array} \right] \left[ \begin{array}{c} \bm{h}^1 \\ \bm{h}^2 \\ \bm{h}^3 \end{array} \right]=0 \]" style="width:212pt;height:45pt;" class="eqn"><img src="./eqn/aec73ba9ba66d0312cbd8b211ae180c8.gif" alt="\[\left[ \begin{array}{ccc} 0 &amp; -\bm{p}^T &amp; Y\bm{p}^T \\ \bm{p}^T &amp; 0 &amp; -X\bm{p}^T \\ -Y\bm{p}^T &amp; X\bm{p}^T &amp; 0 \end{array} \right] \left[ \begin{array}{c} \bm{h}^1 \\ \bm{h}^2 \\ \bm{h}^3 \end{array} \right]=0 \]" width="206" height="44" class="eqn" /></object>
+</p>
+
+<p>
+3つの方程式が出てきましたが、このうち2つの線形和で残りの1つを表すことができるので、
+2つのだけ満たせば十分です。
+<object data="./eqn/9e6a96b1ee980c149c0b485459bb0a5a.svg" type="image/svg+xml" standby="\[\left[ \begin{array}{ccc} 0 &amp; \bm{p}^T &amp; -Y\bm{p}^T \\ \bm{p}^T &amp; 0 &amp; -X\bm{p}^T \\ \end{array} \right] \left[ \begin{array}{c} \bm{h}^1 \\ \bm{h}^2 \\ \bm{h}^3 \end{array} \right]=0 \]" style="width:179pt;height:45pt;" class="eqn"><img src="./eqn/9e6a96b1ee980c149c0b485459bb0a5a.gif" alt="\[\left[ \begin{array}{ccc} 0 &amp; \bm{p}^T &amp; -Y\bm{p}^T \\ \bm{p}^T &amp; 0 &amp; -X\bm{p}^T \\ \end{array} \right] \left[ \begin{array}{c} \bm{h}^1 \\ \bm{h}^2 \\ \bm{h}^3 \end{array} \right]=0 \]" width="174" height="43" class="eqn" /></object>
+具体的に成分表示すると次のようになります。
+<object data="./eqn/3d433c1a4780982b69805c832e80a063.svg" type="image/svg+xml" standby="\[\left[ \begin{array}{ccccccccc} 0 &amp; 0 &amp; 0 &amp; x &amp; y &amp; 1 &amp; -Yx &amp; -Yy &amp; -Y \\ x &amp; y &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; -Xx &amp; -Xy &amp; -X \end{array} \right] \left[ \begin{array}{c} h_{11} \\ h_{12} \\ h_{13} \\ h_{21} \\ h_{22} \\ h_{23} \\ h_{31} \\ h_{32} \\ h_{33} \end{array} \right]=0 \]" style="width:302pt;height:131pt;" class="eqn"><img src="./eqn/3d433c1a4780982b69805c832e80a063.gif" alt="\[\left[ \begin{array}{ccccccccc} 0 &amp; 0 &amp; 0 &amp; x &amp; y &amp; 1 &amp; -Yx &amp; -Yy &amp; -Y \\ x &amp; y &amp; 1 &amp; 0 &amp; 0 &amp; 0 &amp; -Xx &amp; -Xy &amp; -X \end{array} \right] \left[ \begin{array}{c} h_{11} \\ h_{12} \\ h_{13} \\ h_{21} \\ h_{22} \\ h_{23} \\ h_{31} \\ h_{32} \\ h_{33} \end{array} \right]=0 \]" width="296" height="129" class="eqn" /></object>
+</p>
+<p>
+ホモグラフィ行列は定数倍しても最終結果は同じになるので、
+求めなければならないパラメータは8つです。
+1つの点と点の関係がわかると2本方程式が立てられるので、
+4つの点がわかれば連立方程式を解いてホモグラフィ行列を決定することができます。
+</p>
+
+<h2>やってみた</h2>
+
+<p>
+JavascriptとCSS3を使ったホモグラフィ変換のデモです。
+画像の4隅の丸をドラッグ＆ドロップすると、それに合わせてホモグラフィ変換します。
+</p>
+<p>
+CSS3から対応した3D変換機能を使っています。
+3D変換に対応したブラウザとグラフィックボードが必要です。
+</p>
+
+<link rel="stylesheet" type="text/css" media="screen,print" href="homography.css" />
+<script type="text/javascript" src="../../../utils/jquery-1.7.2.min.js"> </script>
+<script type="text/javascript" src="../../../utils/jquery-ui-1.8.21.custom.min.js"> </script>
+<script type="text/javascript" src="../../../utils/raphael-min.js"></script>
+<script type="text/javascript" src="../../../utils/sylvester-min.js"></script>
+<script type="text/javascript" src="homography.js"></script>
+
+<div id="container">
+    <img id="content" src="../../../img/lenna.jpg" width="512" height="512" />
+    <div class="marker" id="marker1"></div>
+    <div class="marker" id="marker2"></div>
+    <div class="marker" id="marker3"></div>
+    <div class="marker" id="marker4"></div>
+</div>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>直線と円の交点を求める - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/geometry/line-circle.html" />
+
+
+
+<link href="../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../">Home</a></li>
+			<li><a href="../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../soft/">ソフト</a></li>
+			<li><a href="../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/geometry/line-circle.html&amp;ttl=直線と円の交点を求める" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/geometry/line-circle.html&amp;ttl=直線と円の交点を求める" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#implicit">陰関数で表わす</a></li><li><a href="#parametric">媒介変数表示で表わす</a></li><li><a href="#svg">実際にやってみよう</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>直線と円の交点を求める</h1>
+			<navi id="breadNavi"><a href="../../">HOME</a>&gt;&gt;<a href="../">メモ</a>&gt;&gt;<a href="./">図形処理の基礎</a>&gt;&gt;直線と円の交点を求める</navi>
+			<div class="contentswrap">
+			
+
+<h2 id="implicit">陰関数で表わす</h2>
+<p>
+直線と円の交点について考えてみます。
+点<object data="./eqn/7b21584bcd06a236f680835e42398f39.svg" type="image/svg+xml" standby="$(x_\mathrm{P},y_\mathrm{P})$" style="width:43pt;height:13pt;" class="equation"><img src="./eqn/7b21584bcd06a236f680835e42398f39.gif" alt="$(x_\mathrm{P},y_\mathrm{P})$" width="39" height="12" class="equation" /></object>を中心とした半径<object data="./eqn/89f2e0d2d24bcf44db73aab8fc03252c.svg" type="image/svg+xml" standby="$r$" style="width:7pt;height:7pt;" class="equation"><img src="./eqn/89f2e0d2d24bcf44db73aab8fc03252c.gif" alt="$r$" width="6" height="5" class="equation" /></object>の円と、直線<object data="./eqn/efa25205cb985c034fcb97a21f4f8fff.svg" type="image/svg+xml" standby="$ax+by+c=0$" style="width:82pt;height:12pt;" class="equation"><img src="./eqn/efa25205cb985c034fcb97a21f4f8fff.gif" alt="$ax+by+c=0$" width="80" height="10" class="equation" /></object>の交点を考えます。
+</p>
+<object data="./line-circle1.svg" type="image/svg+xml" ><img src="./line-circle1.png" /></object>
+
+<p>
+上の図で、点Hの座標は「<a href="./point-line.html">点と直線の距離を求める</a>」で求めました。
+<object data="./eqn/45f76a341331add7516689c5cdcf2cc1.svg" type="image/svg+xml" standby="$d=ax_\mathrm{P}+by_\mathrm{P}+c$" style="width:96pt;height:12pt;" class="equation"><img src="./eqn/45f76a341331add7516689c5cdcf2cc1.gif" alt="$d=ax_\mathrm{P}+by_\mathrm{P}+c$" width="95" height="10" class="equation" /></object>と置けば、点Hの座標は次のように書けます。
+</p>
+<object data="./eqn/9da7e09c25e0e9a8ba92b5c306b07882.svg" type="image/svg+xml" standby="\begin{eqnarray*} x &amp;=&amp; x_\mathrm{P} - a\frac{d}{a^2+b^2} \\ y &amp;=&amp; y_\mathrm{P} - b\frac{d}{a^2+b^2} \end{eqnarray*}" style="width:97pt;height:57pt;" class="eqn"><img src="./eqn/9da7e09c25e0e9a8ba92b5c306b07882.gif" alt="\begin{eqnarray*} x &amp;=&amp; x_\mathrm{P} - a\frac{d}{a^2+b^2} \\ y &amp;=&amp; y_\mathrm{P} - b\frac{d}{a^2+b^2} \end{eqnarray*}" width="96" height="55" class="eqn" /></object>
+
+<p>
+次に線分HQの長さを考えます。この長さは三平方の定理から簡単に求めることができます。
+線分OHの長さは<object data="./eqn/a4c5e9f2e8f5da9365c35e8e0375cfe9.svg" type="image/svg+xml" standby="$d/\sqrt{a^2+b^2}$" style="width:60pt;height:15pt;" class="equation"><img src="./eqn/a4c5e9f2e8f5da9365c35e8e0375cfe9.gif" alt="$d/\sqrt{a^2+b^2}$" width="59" height="14" class="equation" /></object>なので
+</p>
+<object data="./eqn/bb0ee930156cd39762be2e7a41a570d0.svg" type="image/svg+xml" standby="\[ \mathrm{HQ} = \sqrt{r^2-\frac{d^2}{a^2+b^2}} \]" style="width:113pt;height:30pt;" class="eqn"><img src="./eqn/bb0ee930156cd39762be2e7a41a570d0.gif" alt="\[ \mathrm{HQ} = \sqrt{r^2-\frac{d^2}{a^2+b^2}} \]" width="112" height="30" class="eqn" /></object>
+<p>
+となります。
+</p>
+<p>
+ここで、直線に沿った向きのベクトルを<object data="./eqn/11d46fbfbd78793e7e928def7e4f66a1.svg" type="image/svg+xml" standby="$\overrightarrow{w}$" style="width:13pt;height:12pt;" class="equation"><img src="./eqn/11d46fbfbd78793e7e928def7e4f66a1.gif" alt="$\overrightarrow{w}$" width="12" height="10" class="equation" /></object>とすると
+</p>
+<object data="./eqn/66b0dddaf57a940c26978dbd481d7227.svg" type="image/svg+xml" standby="\[ \overrightarrow{\mathrm{HQ}} = \pm \sqrt{r^2-\frac{d^2}{a^2+b^2}}\frac{\overrightarrow{w}}{|\overrightarrow{w}|} \]" style="width:142pt;height:32pt;" class="eqn"><img src="./eqn/66b0dddaf57a940c26978dbd481d7227.gif" alt="\[ \overrightarrow{\mathrm{HQ}} = \pm \sqrt{r^2-\frac{d^2}{a^2+b^2}}\frac{\overrightarrow{w}}{|\overrightarrow{w}|} \]" width="140" height="30" class="eqn" /></object>
+<p>
+と書くことができます。
+<object data="./eqn/11d46fbfbd78793e7e928def7e4f66a1.svg" type="image/svg+xml" standby="$\overrightarrow{w}$" style="width:13pt;height:12pt;" class="equation"><img src="./eqn/11d46fbfbd78793e7e928def7e4f66a1.gif" alt="$\overrightarrow{w}$" width="12" height="10" class="equation" /></object>は<object data="./eqn/a9a2dbad70b7afbe24ab063a09899fa2.svg" type="image/svg+xml" standby="$\overrightarrow{v}$" style="width:13pt;height:12pt;" class="equation"><img src="./eqn/a9a2dbad70b7afbe24ab063a09899fa2.gif" alt="$\overrightarrow{v}$" width="12" height="10" class="equation" /></object>と直交するベクトルなので<object data="./eqn/6e47310c452688bc7932ffd6eb1a100e.svg" type="image/svg+xml" standby="$\overrightarrow{w}=(b,-a)$" style="width:65pt;height:15pt;" class="equation"><img src="./eqn/6e47310c452688bc7932ffd6eb1a100e.gif" alt="$\overrightarrow{w}=(b,-a)$" width="62" height="13" class="equation" /></object>です。
+</p>
+<p>
+これで点Hの座標と、点Hと点Qの相対座標がわかりました。
+後はこれらを足しあわせれば点Qの座標が出ます。
+</p>
+
+<object data="./eqn/f84d06255a9b62bad283b5e4728a510b.svg" type="image/svg+xml" standby="\begin{eqnarray*} x &amp;=&amp; x_\mathrm{P} - a\frac{d}{a^2+b^2} \pm \sqrt{r^2-\frac{d^2}{a^2+b^2}}\frac{b}{\sqrt{a^2+b^2}}\\ y &amp;=&amp; y_\mathrm{P} - b\frac{d}{a^2+b^2} \mp \sqrt{r^2-\frac{d^2}{a^2+b^2}}\frac{a}{\sqrt{a^2+b^2}} \end{eqnarray*}" style="width:239pt;height:68pt;" class="eqn"><img src="./eqn/f84d06255a9b62bad283b5e4728a510b.gif" alt="\begin{eqnarray*} x &amp;=&amp; x_\mathrm{P} - a\frac{d}{a^2+b^2} \pm \sqrt{r^2-\frac{d^2}{a^2+b^2}}\frac{b}{\sqrt{a^2+b^2}}\\ y &amp;=&amp; y_\mathrm{P} - b\frac{d}{a^2+b^2} \mp \sqrt{r^2-\frac{d^2}{a^2+b^2}}\frac{a}{\sqrt{a^2+b^2}} \end{eqnarray*}" width="236" height="67" class="eqn" /></object>
+
+<p>
+これをまとめると点Pの座標は次式のようになります。
+</p>
+
+<object data="./eqn/ddc880db4c1a58e6225ca50116d25956.svg" type="image/svg+xml" standby="\begin{eqnarray*} x &amp;=&amp; \frac{-ad \pm b\sqrt{(a^2+b^2)r^2 - d^2}}{a^2+b^2} + x_\mathrm{P} \\ y &amp;=&amp; \frac{-bd \mp a\sqrt{(a^2+b^2)r^2 - d^2}}{a^2+b^2} + y_\mathrm{P} \end{eqnarray*}" style="width:192pt;height:63pt;" class="eqn"><img src="./eqn/ddc880db4c1a58e6225ca50116d25956.gif" alt="\begin{eqnarray*} x &amp;=&amp; \frac{-ad \pm b\sqrt{(a^2+b^2)r^2 - d^2}}{a^2+b^2} + x_\mathrm{P} \\ y &amp;=&amp; \frac{-bd \mp a\sqrt{(a^2+b^2)r^2 - d^2}}{a^2+b^2} + y_\mathrm{P} \end{eqnarray*}" width="190" height="61" class="eqn" /></object>
+
+<p>
+特に、円の中心が原点の場合、<object data="./eqn/04963596bc1d116558e5a56a162e8d5f.svg" type="image/svg+xml" standby="$d=c$" style="width:29pt;height:10pt;" class="equation"><img src="./eqn/04963596bc1d116558e5a56a162e8d5f.gif" alt="$d=c$" width="28" height="8" class="equation" /></object>となります。
+</p>
+
+
+<h2 id="parametric">媒介変数表示で表わす</h2>
+<p>
+直線が媒介変数表示されている場合についても考えてみます。
+</p>
+<object data="./eqn/de24c5483e73b4f5918b634b69738b0f.svg" type="image/svg+xml" standby="\begin{eqnarray*} x &amp;=&amp; at + x_0\\ y &amp;=&amp; bt + y_0 \end{eqnarray*}" style="width:61pt;height:29pt;" class="eqn"><img src="./eqn/de24c5483e73b4f5918b634b69738b0f.gif" alt="\begin{eqnarray*} x &amp;=&amp; at + x_0\\ y &amp;=&amp; bt + y_0 \end{eqnarray*}" width="59" height="27" class="eqn" /></object>
+
+<p>
+まずは点Hの座標ですが、「<a href="./point-line.html">点と直線の距離を求める</a>」で求めたように
+</p>
+<object data="./eqn/fcd9b612d468eedad5369b809e170c86.svg" type="image/svg+xml" standby="\[ t=\frac{a(x_\mathrm{P}-x_0)+b(y_\mathrm{P}-y_0)}{a^2+b^2} \]" style="width:147pt;height:28pt;" class="eqn"><img src="./eqn/fcd9b612d468eedad5369b809e170c86.gif" alt="\[ t=\frac{a(x_\mathrm{P}-x_0)+b(y_\mathrm{P}-y_0)}{a^2+b^2} \]" width="146" height="26" class="eqn" /></object>
+<p>
+となる<object data="./eqn/4f4f4e395762a3af4575de74c019ebb5.svg" type="image/svg+xml" standby="$t$" style="width:6pt;height:9pt;" class="equation"><img src="./eqn/4f4f4e395762a3af4575de74c019ebb5.gif" alt="$t$" width="4" height="7" class="equation" /></object>の点です。
+</p>
+<p>
+<object data="./eqn/78e32856f87ba945cfedde7db2e58adc.svg" type="image/svg+xml" standby="$d=a(y_\mathrm{P}-y_0)-b(x_\mathrm{P}-x_0)$" style="width:148pt;height:13pt;" class="equation"><img src="./eqn/78e32856f87ba945cfedde7db2e58adc.gif" alt="$d=a(y_\mathrm{P}-y_0)-b(x_\mathrm{P}-x_0)$" width="145" height="12" class="equation" /></object>とすれば、陰関数表示の場合と同様に
+</p>
+<object data="./eqn/bb0ee930156cd39762be2e7a41a570d0.svg" type="image/svg+xml" standby="\[ \mathrm{HQ} = \sqrt{r^2-\frac{d^2}{a^2+b^2}} \]" style="width:113pt;height:30pt;" class="eqn"><img src="./eqn/bb0ee930156cd39762be2e7a41a570d0.gif" alt="\[ \mathrm{HQ} = \sqrt{r^2-\frac{d^2}{a^2+b^2}} \]" width="112" height="30" class="eqn" /></object>
+<p>
+です。これから、
+</p>
+<object data="./eqn/4f5bde65eb1a238983ba969192a793cf.svg" type="image/svg+xml" standby="\begin{eqnarray*} t &amp;=&amp; \frac{a(x_\mathrm{P}-x_0)+b(y_\mathrm{P}-y_0)}{a^2+b^2} \pm \sqrt{r^2-\frac{d^2}{a^2+b^2}}\frac{1}{\sqrt{a^2+b^2}}\\ &amp;=&amp; \frac{a(x_\mathrm{P}-x_0)+b(y_\mathrm{P}-y_0) \pm \sqrt{(a^2+b^2)r^2 - d^2}}{a^2+b^2} \end{eqnarray*}" style="width:289pt;height:65pt;" class="eqn"><img src="./eqn/4f5bde65eb1a238983ba969192a793cf.gif" alt="\begin{eqnarray*} t &amp;=&amp; \frac{a(x_\mathrm{P}-x_0)+b(y_\mathrm{P}-y_0)}{a^2+b^2} \pm \sqrt{r^2-\frac{d^2}{a^2+b^2}}\frac{1}{\sqrt{a^2+b^2}}\\ &amp;=&amp; \frac{a(x_\mathrm{P}-x_0)+b(y_\mathrm{P}-y_0) \pm \sqrt{(a^2+b^2)r^2 - d^2}}{a^2+b^2} \end{eqnarray*}" width="286" height="64" class="eqn" /></object>
+
+<h2 id="svg">実際にやってみよう</h2>
+<p>
+実際にやってみました。
+SVGにJavascriptを埋め込んで簡単なアニメーションを作ってみました。
+黒の直線と円が与えられた時の交点を求めます。赤の小さい円が交点です。<br />
+<a href="./line-circle.svg">SVGファイルをダウンロードする</a>
+</p>
+<object data="./line-circle.svg" type="image/svg+xml" width="400" height="300">
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>円と円の交点を求める - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/geometry/circle-cross.html" />
+
+
+
+<link href="../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../">Home</a></li>
+			<li><a href="../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../soft/">ソフト</a></li>
+			<li><a href="../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/geometry/circle-cross.html&amp;ttl=円と円の交点を求める" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/geometry/circle-cross.html&amp;ttl=円と円の交点を求める" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#solve">交点を求める</a></li><li><a href="#svg">実際にやってみよう</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>円と円の交点を求める</h1>
+			<navi id="breadNavi"><a href="../../">HOME</a>&gt;&gt;<a href="../">メモ</a>&gt;&gt;<a href="./">図形処理の基礎</a>&gt;&gt;円と円の交点を求める</navi>
+			<div class="contentswrap">
+			
+
+<h2 id="solve">交点を求める</h2>
+<p>
+円と円の交点を求めてみます。
+どちらの円も任意の位置にあると面倒なので、片方の円は原点中心とします。
+</p>
+<object data="./eqn/44d2e584a5400c284bc89d1abba85232.svg" type="image/svg+xml" standby="\begin{eqnarray*} x^2 + y^2 &amp;=&amp; r_1^2\\ (x-x_1)^2 + (y-y_1)^2 &amp;=&amp; r_2^2 \end{eqnarray*}" style="width:138pt;height:33pt;" class="eqn"><img src="./eqn/44d2e584a5400c284bc89d1abba85232.gif" alt="\begin{eqnarray*} x^2 + y^2 &amp;=&amp; r_1^2\\ (x-x_1)^2 + (y-y_1)^2 &amp;=&amp; r_2^2 \end{eqnarray*}" width="135" height="32" class="eqn" /></object>
+<p>
+上の円の方程式から、下の円の方程式を引きます。
+</p>
+<object data="./eqn/cab1725fab4522ac44c97af1c6d2d48e.svg" type="image/svg+xml" standby="\begin{eqnarray*} x^2-(x-x_1)^2 + y^2-(y-y_1)^2 &amp;=&amp; r_1^2 - r_2^2\\ 2x_1x - x_1^2 + 2y_1y - y_1^2 &amp;=&amp; r_1^2 - r_2^2\\ x_1x + y_1y - \frac{x_1^2+y_1^2+r_1^2-r_2^2}{2} &amp;=&amp; 0 \end{eqnarray*}" style="width:216pt;height:64pt;" class="eqn"><img src="./eqn/cab1725fab4522ac44c97af1c6d2d48e.gif" alt="\begin{eqnarray*} x^2-(x-x_1)^2 + y^2-(y-y_1)^2 &amp;=&amp; r_1^2 - r_2^2\\ 2x_1x - x_1^2 + 2y_1y - y_1^2 &amp;=&amp; r_1^2 - r_2^2\\ x_1x + y_1y - \frac{x_1^2+y_1^2+r_1^2-r_2^2}{2} &amp;=&amp; 0 \end{eqnarray*}" width="214" height="62" class="eqn" /></object>
+<p>
+ここで、<object data="./eqn/799e5cb19c92cf63d77a7f8750770b03.svg" type="image/svg+xml" standby="$(x_1^2+y_1^2+r_1^2-r_2^2)/2=a$" style="width:135pt;height:14pt;" class="equation"><img src="./eqn/799e5cb19c92cf63d77a7f8750770b03.gif" alt="$(x_1^2+y_1^2+r_1^2-r_2^2)/2=a$" width="131" height="13" class="equation" /></object>とおけば、
+</p>
+<object data="./eqn/48b5492185758314ec09ce3dcf4b9d87.svg" type="image/svg+xml" standby="\[ x_1x + y_1y - a = 0 \]" style="width:96pt;height:12pt;" class="eqn"><img src="./eqn/48b5492185758314ec09ce3dcf4b9d87.gif" alt="\[ x_1x + y_1y - a = 0 \]" width="93" height="10" class="eqn" /></object>
+<p>
+と直線の方程式となります。この直線は、円と円の二つの交点を通る直線です。
+つまり、ここで求めた直線ともともとの円の交点を求めれば、円と円の交点がわかります。
+「<a href="./line-circle.html">直線と円の交点を求める</a>」で求めた結果を使えば、
+</p>
+<object data="./eqn/78bc8827dc06cabe444c3e37ff11adc4.svg" type="image/svg+xml" standby="\begin{eqnarray*} x &amp;=&amp; \frac{ax_1 \pm y_1\sqrt{(x_1^2+y_1^2)r_1^2 - a^2}}{x_1^2+y_1^2} \\ y &amp;=&amp; \frac{ay_1 \mp x_1\sqrt{(x_1^2+y_1^2)r_1^2 - a^2}}{x_1^2+y_1^2} \end{eqnarray*}" style="width:167pt;height:68pt;" class="eqn"><img src="./eqn/78bc8827dc06cabe444c3e37ff11adc4.gif" alt="\begin{eqnarray*} x &amp;=&amp; \frac{ax_1 \pm y_1\sqrt{(x_1^2+y_1^2)r_1^2 - a^2}}{x_1^2+y_1^2} \\ y &amp;=&amp; \frac{ay_1 \mp x_1\sqrt{(x_1^2+y_1^2)r_1^2 - a^2}}{x_1^2+y_1^2} \end{eqnarray*}" width="165" height="66" class="eqn" /></object>
+<p>
+となります。
+</p>
+<p>
+どちら円も任意の位置にある場合は、<object data="./eqn/9f02b11e850cfe1122dc105c2a306e75.svg" type="image/svg+xml" standby="$x_1\rightarrow x_1-x_0$" style="width:71pt;height:10pt;" class="equation"><img src="./eqn/9f02b11e850cfe1122dc105c2a306e75.gif" alt="$x_1\rightarrow x_1-x_0$" width="69" height="8" class="equation" /></object>、<object data="./eqn/4fd7275dc382a366eeaa7fdf1b28ae6a.svg" type="image/svg+xml" standby="$y_1\rightarrow y_1-y_0$" style="width:68pt;height:11pt;" class="equation"><img src="./eqn/4fd7275dc382a366eeaa7fdf1b28ae6a.gif" alt="$y_1\rightarrow y_1-y_0$" width="66" height="8" class="equation" /></object>と置き換えて求めます。
+</p>
+
+
+<h2 id="svg">実際にやってみよう</h2>
+<p>
+実際にやってみました。
+SVGにJavascriptを埋め込んで簡単なアニメーションを作ってみました。
+黒の直線と円が与えられた時の交点を求めます。赤の小さい円が交点です。<br />
+<a href="./circle-cross.svg">SVGファイルをダウンロードする</a>
+<div>
+<object data="./circle-cross.svg" type="image/svg+xml" width="400" height="300">
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+</div>
+</p>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

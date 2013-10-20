@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ラグランジュ補間 - Shogo Computing Laboratory</title>
+
+</head>
+
+<body>
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/lagrange-interpolation/index.html&amp;ttl=ラグランジュ補間" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/lagrange-interpolation/index.html&amp;ttl=ラグランジュ補間" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+
+
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#lagrange">ラグランジュ補間</a></li><li><a href="#three">3点を補間してみる</a></li><li><a href="#npoints">一般的な場合</a></li><li><a href="#svg">実際にやってみよう</a></li></ul>
+</div>
+
+
+<h1>ラグランジュ補間</h1>
+<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;ラグランジュ補間</navi>
+
+
+
+<h2 id="lagrange">ラグランジュ補間</h2>
+<p>
+ある関数<img src="../../../../memo/algorithm/lagrange-interpolation/7997339883ac20f551e7f35efff0a2b9.gif" alt="$f(x)$" width="23" height="12" class="equation" />上の<img src="../../../../memo/algorithm/lagrange-interpolation/3f18d8f60c110e865571bba5ba67dcc6.gif" alt="$n+1$" width="27" height="9" class="equation" />個の点<img src="../../../../memo/algorithm/lagrange-interpolation/ae9bb4f69a35eac052f1a0663375c69a.gif" alt="$(x_0, y_0), (x_1, y_1), \cdots, (x_n, y_n)$" width="146" height="12" class="equation" />が分かっているとします。
+このとき、与えられたすべての点を通る多項式関数を求める方法がラグランジュ補間です。
+</p>
+
+<h2 id="three">3点を補間してみる</h2>
+<p>
+例として3点を通る補間関数を考えてみます。
+下の図で、<img src="../../../../memo/algorithm/lagrange-interpolation/f1290fcf9ea7ff786efb6d71dd8dd3dd.gif" alt="$(x_0, y_0), (x_1, y_1), (x_2, y_2)$" width="122" height="12" class="equation" />の3点を通る関数<img src="../../../../memo/algorithm/lagrange-interpolation/52be0087c9da1f0683ccc50761e8bcab.gif" alt="$P(x)$" width="25" height="12" class="equation" />を求めるのがここでの目的です。
+<div><object data="../../../../memo/algorithm/lagrange-interpolation/points.svg" type="image/svg+xml" ><img src="../../../../memo/algorithm/lagrange-interpolation/points.png"  alt="3点を通る補間関数"/></object></div>
+</p>
+<p>
+しかし、このような関数を直接求めるのは困難です。
+そこで、補間関数を次の図のように3つの関数に分解します。
+<div><object data="../../../../memo/algorithm/lagrange-interpolation/lagrange3.svg" type="image/svg+xml" ><img src="../../../../memo/algorithm/lagrange-interpolation/lagrange3.png"  alt="補間関数を分解"/></object></div>
+<img src="../../../../memo/algorithm/lagrange-interpolation/c998b1e541398661cf6b60461f73d58f.gif" alt="$y_0L_0(x)$" width="41" height="12" class="equation" />(赤の曲線)は点<img src="../../../../memo/algorithm/lagrange-interpolation/a903f939f6fb649debe1561ecbb18c66.gif" alt="$(x_0, y_0)$" width="36" height="12" class="equation" />を通りますが、それ以外の点<img src="../../../../memo/algorithm/lagrange-interpolation/7298f798448a3586c0bb7bd7e66a2db6.gif" alt="$x=x_1, x_2$" width="52" height="7" class="equation" />では0になるような関数です。
+同様に、<img src="../../../../memo/algorithm/lagrange-interpolation/ef3806e1e9ec0fad1fd282e433335bec.gif" alt="$y_1L_1$(x)" width="40" height="12" class="equation" />(緑の曲線)は点<img src="../../../../memo/algorithm/lagrange-interpolation/ca6ddd8b6e3fd733652829004b0804d0.gif" alt="$(x_1, y_1)$" width="36" height="12" class="equation" />を通りそれ以外の点<img src="../../../../memo/algorithm/lagrange-interpolation/bf89f105a7c0f65f7950de563cc876cd.gif" alt="$x=x_0, x_2$" width="52" height="7" class="equation" />では0、
+<img src="../../../../memo/algorithm/lagrange-interpolation/22534f6f6ad83a62a42e725667458685.gif" alt="$y_2L_2(x)$" width="41" height="12" class="equation" />(青の曲線)は点<img src="../../../../memo/algorithm/lagrange-interpolation/12c0dfc2ea75b288114f13b15bed661f.gif" alt="$(x_2, y_2)$" width="36" height="12" class="equation" />を通りそれ以外の点<img src="../../../../memo/algorithm/lagrange-interpolation/32f03a077e31289abf44001bf81faf57.gif" alt="$x=x_0, x_1$" width="51" height="7" class="equation" />では0となるような関数です。
+これらの関数を用いると、<img src="../../../../memo/algorithm/lagrange-interpolation/52be0087c9da1f0683ccc50761e8bcab.gif" alt="$P(x)$" width="25" height="12" class="equation" />は次のように表すことができます。
+<img src="../../../../memo/algorithm/lagrange-interpolation/915fd203c0c5efe83d93040df508ced0.gif" alt="\[P(x)=y_0L_0(x) + y_1L_1(x) + y_2L_2(x)\]" width="193" height="12" class="eqn" />
+</p>
+<p>
+分解したあとの関数を求めるのは簡単です。
+<img src="../../../../memo/algorithm/lagrange-interpolation/8a14bff8937ae391451bdcee5e927984.gif" alt="$L_0(x)$" width="29" height="12" class="equation" />は<img src="../../../../memo/algorithm/lagrange-interpolation/7298f798448a3586c0bb7bd7e66a2db6.gif" alt="$x=x_1, x_2$" width="52" height="7" class="equation" />で0となるので、因数として<img src="../../../../memo/algorithm/lagrange-interpolation/50e73c1c778772a43601cc4414c9eee1.gif" alt="$(x-x_1)(x-x_2)$" width="84" height="12" class="equation" />を持つはずです。
+<img src="../../../../memo/algorithm/lagrange-interpolation/37b822cccb925a33740df4e324dc9e50.gif" alt="$L_0(x_0)=1$" width="56" height="12" class="equation" />となるように係数を調節してやれば
+<img src="../../../../memo/algorithm/lagrange-interpolation/61dfd5f08581487397c9fe0d1a25fc10.gif" alt="\[L_0(x)=\frac{(x-x_1)(x-x_2)}{(x_0-x_1)(x_0-x_2)}\]" width="144" height="28" class="eqn" />
+となります。<img src="../../../../memo/algorithm/lagrange-interpolation/60a2b9e07407ee29724e83c77454a534.gif" alt="$L_1(x), L_2$(x)" width="63" height="12" class="equation" />についても同様に考えると次のようになります。
+<img src="../../../../memo/algorithm/lagrange-interpolation/6f7b3cced1217bf4bd9aee44472e477f.gif" alt="\begin{eqnarray*} L_1(x) &amp;=&amp; \frac{(x-x_0)(x-x_2)}{(x_1-x_0)(x_1-x_2)}\\ L_2(x) &amp;=&amp; \frac{(x-x_0)(x-x_1)}{(x_2-x_0)(x_2-x_1)} \end{eqnarray*}" width="144" height="61" class="eqn" />
+</p>
+
+<h2 id="npoints">一般的な場合</h2>
+<p>
+以上のことを一般的な場合に拡張すると
+<img src="../../../../memo/algorithm/lagrange-interpolation/0e04f6d0499019d520d86221c12d7aa7.gif" alt="\begin{eqnarray*} P(x) &amp;=&amp; \sum_{i=0}^{n}y_iL_i(x)\\ L_i(x) &amp;=&amp; \frac{(x-x_0)\cdots(x-x_{i-1})(x-x_{i+1})\cdots(x-x_n)}{(x_i-x_0)\cdots(x_i-x_{i-1})(x_i-x_{i+1})\cdots(x_i-x_n)}\\ &amp;=&amp;\prod_{\footnotesize\begin{array}{c}j=0\\j\not = i\end{array}}^{n}\frac{x-x_j}{x_i-x_j} \end{eqnarray*}" width="291" height="123" class="eqn" />
+が得られます。これがラグランジュ補間の補間関数です。
+</p>
+<p>
+</p>
+<h2 id="svg">実際にやってみよう</h2>
+<p>
+一変数の場合について、実際にやってみました。
+例によって、SVGにJavascriptを埋め込んだ簡単なアニメーションです。
+すべての赤い点を通るように、黒い曲線を引きます。ドラッグ＆ドロップで点を移動できます。
+<div>
+<object data="./lagrange.svg" type="image/svg+xml" width="400" height="300">
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+</div>
+</p>
+<p>
+ラグランジュ補間のような多項式補間では、補間する点の数が増えると下のように振動してしまいます。
+このような現象をルンゲ現象と言います。これを回避するには、いくつかの区間に分割する、区間の端の点を多くする、などの対処方法をとる必要があります。
+<div>
+<object data="./lagrange.svg" type="image/svg+xml" width="400" height="300">
+<param name="function" value="1" />
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+</div>
+</p>
+
+
+<ul class="toInfo">
+	<li><a href="./">サイトトップへ</a></li>
+</ul>
+
+</body>
+</html>

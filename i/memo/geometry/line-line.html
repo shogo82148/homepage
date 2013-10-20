@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>2直線の交点を求める - Shogo Computing Laboratory</title>
+
+<style>
+.suffix-sorted {
+    color: red;
+}
+.suffix-end {
+    background: #88F;
+}
+.suffix-a {
+    background: #8F8;
+}
+.suffix-b {
+    background: #8FF;
+}
+.suffix-c {
+    background: #F88;
+}
+.suffix-d {
+    background: #F8F;
+}
+.suffix-r {
+    background: #FF8;
+}
+.suffix td:nth-child(1) {
+    width: 2ex;
+    text-align: right;
+}
+.suffix td:nth-child(2) {
+    text-align: right;
+}
+.suffix td:nth-child(3) {
+    width: 15ex;
+    text-align: left;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/geometry/line-line.html&amp;ttl=2直線の交点を求める" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/geometry/line-line.html&amp;ttl=2直線の交点を求める" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+
+
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#implicit">陰関数で表わす</a></li><li><a href="#parametric">媒介変数表示で表わす</a></li><li><a href="#svg">実際にやってみよう</a></li></ul>
+</div>
+
+
+<h1>2直線の交点を求める</h1>
+<navi id="breadNavi"><a href="../../">HOME</a>&gt;&gt;<a href="../">メモ</a>&gt;&gt;<a href="./">図形処理の基礎</a>&gt;&gt;2直線の交点を求める</navi>
+
+
+<h2 id="implicit">陰関数で表わす</h2>
+<p>
+2本の直線の交点を求めてみます。
+直線の方程式を次のように定義します。
+</p>
+<img src="../../../memo/geometry/eqn/0d0f63943bea4ffc047264d5a8946f3f.gif" alt="\begin{eqnarray*} a_1 x + b_1 y + c_1 &amp;=&amp; 0 \\ a_2 x + b_2 y + c_2 &amp;=&amp; 0 \end{eqnarray*}" width="97" height="28" class="eqn" />
+<p>
+単純な二元の連立方程式なので簡単にとけます。
+ここではクラメルの公式を使ってみましょう。
+</p>
+<img src="../../../memo/geometry/eqn/c155968a922f4db9082112131451cdf8.gif" alt="\begin{eqnarray*} x &amp;=&amp; \frac{\left| \begin{array}{cc} -c_1 &amp; b_1 \\ -c_2 &amp; b_2 \end{array} \right|}{\left| \begin{array}{cc} a_1 &amp; b_1 \\ a_2 &amp; b_2 \end{array} \right|} = \frac{b_1c_2-b_2c_1}{a_1b_2-a_2b_1} \\ y &amp;=&amp; \frac{\left| \begin{array}{cc} a_1 &amp; -c_1 \\ a_2 &amp; -c_2 \end{array} \right|}{\left| \begin{array}{cc} a_1 &amp; -c_1 \\ a_2 &amp; -c_2 \end{array} \right|}= \frac{-a_1c_2+a_2c_1}{a_1b_2-a_2b_1} \end{eqnarray*}" width="175" height="127" class="eqn" />
+
+<h2 id="parametric">媒介変数表示で表わす</h2>
+<p>
+媒介変数を使ったパラメトリックな表現でも求めてみます。
+</p>
+<img src="../../../memo/geometry/eqn/1653b6ec5a9537b7a36258b57f6b50e1.gif" alt="\begin{eqnarray*} \overrightarrow{p} &amp;=&amp; = \overrightarrow{v_1}t_1 + \overrightarrow{p_1}\\ \overrightarrow{p} &amp;=&amp; = \overrightarrow{v_2}t_2 + \overrightarrow{p_2} \end{eqnarray*}" width="89" height="30" class="eqn" />
+<p>
+陰関数表示の場合と同様に連立方程式をたてて解いてもいいですが、
+別の考え方をしてみましょう。
+</p>
+<p>
+直線1と直線2の交点を求めることを考えます。
+ここで、直線2上に点Pを取ってみましょう。
+点Pが直線1上の点でもあるということは、点Pと直線1の距離が0であるということです。
+点と直線の距離は「<a href="./point-line.html">点と直線の距離を求める</a>」でやりました。
+</p>
+<img src="../../../memo/geometry/eqn/6054978c319478f07423a661e855cf12.gif" alt="\begin{eqnarray*} \frac{\overrightarrow{v_1}\times(\overrightarrow{v_2}t_2+\overrightarrow{p_2}-\overrightarrow{p_1})}{|\overrightarrow{v_1}|} &amp;=&amp; 0 \\ (\overrightarrow{v_1}\times\overrightarrow{v_2})t_2+\overrightarrow{v_1}\times(\overrightarrow{p_2}-\overrightarrow{p_1}) &amp;=&amp; 0 \\ t_2 &amp;=&amp; -\frac{\overrightarrow{v_1} \times (\overrightarrow{p_2}-\overrightarrow{p_1})}{\overrightarrow{v_1} \times \overrightarrow{v_2}} \end{eqnarray*}" width="246" height="77" class="eqn" />
+<p>
+<img src="../../../memo/geometry/eqn/4ad941990ade99427ec9730e46ddcdd4.gif" alt="$t_1$" width="8" height="9" class="equation" />についても同様に考えると
+</p>
+<img src="../../../memo/geometry/eqn/7a516fc84c4de071c425523f4df56943.gif" alt="\[ t_2 = -\frac{\overrightarrow{v_2} \times (\overrightarrow{p_2}-\overrightarrow{p_1})}{\overrightarrow{v_1} \times \overrightarrow{v_2}} \]" width="111" height="28" class="eqn" />
+<p>
+となります。後はこれを直線の式に代入すれば、交点の座標が求まります。
+</p>
+
+<h2 id="svg">実際にやってみよう</h2>
+<p>
+実際にやってみました。
+SVGにJavascriptを埋め込んで簡単なアニメーションを作ってみました。
+黒の何本かの直線が与えられた時の交点を求めます。赤の小さい円が交点です。<br />
+<a href="./line-line.svg">SVGファイルをダウンロードする</a>
+</p>
+<object data="./line-line.svg" type="image/svg+xml" width="400" height="300">
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+
+
+<ul class="toInfo">
+	<li><a href="./">サイトトップへ</a></li>
+</ul>
+
+</body>
+</html>

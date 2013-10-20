@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>数学的に考えてみる(ハードマージンSVM) - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/algorithm/svm/svm-detail.html" />
+
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/svm/svm-detail.html&amp;ttl=数学的に考えてみる(ハードマージンSVM)" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/svm/svm-detail.html&amp;ttl=数学的に考えてみる(ハードマージンSVM)" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#motivation">仕組み</a></li><li><a href="#formalize">問題の定式化</a></li><li><a href="#dualform">双対問題への置き換え</a></li><li><a href="#smo">SMOアルゴリズム</a><ul><li><a href="#whatsmo">考え方</a></li><li><a href="#algorithm">アルゴリズム</a></li></ul></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>数学的に考えてみる(ハードマージンSVM)</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;<a href="./">SVM</a>&gt;&gt;数学的に考えてみる(ハードマージンSVM)</navi>
+			<div class="contentswrap">
+			
+
+
+
+
+もっと数学的な説明が欲しい方のために、少しまとめてみました。
+
+<h2 id="motivation">仕組み</h2>
+<p>
+簡単な仕組みは<a href="svm.html">ハードマージンSVM</a>を参照してください。
+JavaScript+SVGで実装した例があります。
+</p>
+<h2 id="formalize">問題の定式化</h2>
+<p>
+データ<object data="./01cd3f07652b768fcf1cd21f69b7ed91.svg" type="image/svg+xml" standby="$\bm x_i$" style="width:13pt;height:9pt;" class="equation"><img src="./01cd3f07652b768fcf1cd21f69b7ed91.gif" alt="$\bm x_i$" width="11" height="8" class="equation" /></object>が<object data="./67fd0fbc8bcccbfc3955fd80ca39f113.svg" type="image/svg+xml" standby="$y_i=-1$" style="width:43pt;height:12pt;" class="equation"><img src="./67fd0fbc8bcccbfc3955fd80ca39f113.gif" alt="$y_i=-1$" width="40" height="10" class="equation" /></object>と<object data="./3fc1da90265c1c5cb4739583567fc4d5.svg" type="image/svg+xml" standby="$y_i=+1$" style="width:43pt;height:12pt;" class="equation"><img src="./3fc1da90265c1c5cb4739583567fc4d5.gif" alt="$y_i=+1$" width="40" height="10" class="equation" /></object>のどちらかのクラスに分類されているものとします。
+この分類が線形分離可能で、
+<object data="./79aba9cfa477f9687d8843df1c0c5c0c.svg" type="image/svg+xml" standby="\[\bm w\cdot\bm x + b = 0\]" style="width:70pt;height:11pt;" class="eqn"><img src="./79aba9cfa477f9687d8843df1c0c5c0c.gif" alt="\[\bm w\cdot\bm x + b = 0\]" width="69" height="9" class="eqn" /></object>
+で表される超平面で完全に分類できるものと仮定します。
+ここで<object data="./acb5ae8893e7b5ca6c2e4f2d123ba27f.svg" type="image/svg+xml" standby="$\bm w$" style="width:12pt;height:7pt;" class="equation"><img src="./acb5ae8893e7b5ca6c2e4f2d123ba27f.gif" alt="$\bm w$" width="10" height="6" class="equation" /></object>は重みベクトル、<object data="./4bdc8d9bcfb35e1c9bfb51fc69687dfc.svg" type="image/svg+xml" standby="$b$" style="width:7pt;height:10pt;" class="equation"><img src="./4bdc8d9bcfb35e1c9bfb51fc69687dfc.gif" alt="$b$" width="5" height="8" class="equation" /></object>はバイアスパラメータです。
+</p>
+<p>
+超平面の方程式は両辺を定数倍しても変わらないので、一つに決めることができません。
+そこで、二つの超平面
+<object data="./d9ec92e9f318cb71a7a15405a55165ac.svg" type="image/svg+xml" standby="\[\bm w\cdot\bm x + b = +1\]" style="width:79pt;height:11pt;" class="eqn"><img src="./d9ec92e9f318cb71a7a15405a55165ac.gif" alt="\[\bm w\cdot\bm x + b = +1\]" width="76" height="9" class="eqn" /></object>
+<object data="./5b5a9f6ddec44ac5a3dbaa7534086121.svg" type="image/svg+xml" standby="\[\bm w\cdot\bm x + b = -1\]" style="width:79pt;height:11pt;" class="eqn"><img src="./5b5a9f6ddec44ac5a3dbaa7534086121.gif" alt="\[\bm w\cdot\bm x + b = -1\]" width="76" height="9" class="eqn" /></object>
+の間(下図の点線の間)にはデータが存在しないという条件をつけることにします。
+この条件は<object data="./2b442e3e088d1b744730822d18e7aa21.svg" type="image/svg+xml" standby="$y_i$" style="width:11pt;height:9pt;" class="equation"><img src="./2b442e3e088d1b744730822d18e7aa21.gif" alt="$y_i$" width="9" height="7" class="equation" /></object>を使って次のように表すことができます。
+<object data="./c4e97af43108bc2e1441f641c9d0f9f0.svg" type="image/svg+xml" standby="\[y_i(\bm w\cdot\bm x_i + b) \le 1\]" style="width:93pt;height:13pt;" class="eqn"><img src="./c4e97af43108bc2e1441f641c9d0f9f0.gif" alt="\[y_i(\bm w\cdot\bm x_i + b) \le 1\]" width="90" height="12" class="eqn" /></object>
+</p>
+<object data="./max-margin.svg" type="image/svg+xml" ><img src="./max-margin.png"  alt="マージン最大化"/></object>
+<p>
+このような条件下ではマージンは<object data="./a40e9627c4dd268893dad88893854d7e.svg" type="image/svg+xml" standby="$2/||\bm w||$" style="width:37pt;height:13pt;" class="equation"><img src="./a40e9627c4dd268893dad88893854d7e.gif" alt="$2/||\bm w||$" width="34" height="12" class="equation" /></object>とかけます。
+マージン最大化問題は、これを最大化するパラメータを求める問題と考えることができます。
+</p>
+<p>
+ただし、これを直接最大化するは難しいので、次のように書き換えておきます。
+</p>
+<p>
+<object data="./c4e97af43108bc2e1441f641c9d0f9f0.svg" type="image/svg+xml" standby="\[y_i(\bm w\cdot\bm x_i + b) \le 1\]" style="width:93pt;height:13pt;" class="eqn"><img src="./c4e97af43108bc2e1441f641c9d0f9f0.gif" alt="\[y_i(\bm w\cdot\bm x_i + b) \le 1\]" width="90" height="12" class="eqn" /></object>
+の条件下で
+<object data="./61a944b9f6e83c0f8c7de71c59c5b265.svg" type="image/svg+xml" standby="\[\frac{1}{2}||\bm w||^2\]" style="width:37pt;height:25pt;" class="eqn"><img src="./61a944b9f6e83c0f8c7de71c59c5b265.gif" alt="\[\frac{1}{2}||\bm w||^2\]" width="35" height="24" class="eqn" /></object>
+を最小化する。
+</p>
+
+<h2 id="dualform">双対問題への置き換え</h2>
+<p>
+上の最小化問題は、条件式がありそのまま扱うのは面倒です。
+そこで、ラグランジュの未定乗数を導入し、
+<object data="./4acace7b694ee77ccfa47110a72f0ea1.svg" type="image/svg+xml" standby="\[L(\bm w, b, \bm \alpha)=\frac{1}{2}||\bm w||^2+\sum_{i=1}^{n}\alpha_i \left\{1-y_i(\bm w\cdot\bm x_i + b)\right\}\]" style="width:257pt;height:34pt;" class="eqn"><img src="./4acace7b694ee77ccfa47110a72f0ea1.gif" alt="\[L(\bm w, b, \bm \alpha)=\frac{1}{2}||\bm w||^2+\sum_{i=1}^{n}\alpha_i \left\{1-y_i(\bm w\cdot\bm x_i + b)\right\}\]" width="255" height="33" class="eqn" /></object>
+の最小化と置き換えます。
+このとき、不等式制約条件を持つ関数最適化問題の一種なので<a href="kkt.html">KKT条件</a>から次の条件を満たす必要があります。
+<object data="./e6ef5122a82b7615020e530dc2ce53d7.svg" type="image/svg+xml" standby="\[\frac{\partial}{\partial \bm w}L(\bm w, b, \bm \alpha)=0, \frac{\partial}{\partial b}L(\bm w, b, \bm \alpha)=0\]" style="width:189pt;height:26pt;" class="eqn"><img src="./e6ef5122a82b7615020e530dc2ce53d7.gif" alt="\[\frac{\partial}{\partial \bm w}L(\bm w, b, \bm \alpha)=0, \frac{\partial}{\partial b}L(\bm w, b, \bm \alpha)=0\]" width="187" height="26" class="eqn" /></object>
+<object data="./054bf2e42c0b06ef44f5b8b7073fc5ba.svg" type="image/svg+xml" standby="\[\alpha_i \ge 0\]" style="width:35pt;height:11pt;" class="eqn"><img src="./054bf2e42c0b06ef44f5b8b7073fc5ba.gif" alt="\[\alpha_i \ge 0\]" width="33" height="10" class="eqn" /></object>
+これから
+<object data="./f871656e5cdf0409661bcdbe784ba737.svg" type="image/svg+xml" standby="\[\bm w = \sum_{i=1}^{n}\alpha_i y_i\bm x_i\]" style="width:80pt;height:34pt;" class="eqn"><img src="./f871656e5cdf0409661bcdbe784ba737.gif" alt="\[\bm w = \sum_{i=1}^{n}\alpha_i y_i\bm x_i\]" width="78" height="33" class="eqn" /></object>
+<object data="./38d2af3335708111922ac1ec59772d43.svg" type="image/svg+xml" standby="\[\frac{\partial}{\partial b}L(\bm w, b, \bm \alpha)=\sum_{i=1}^{n}\alpha_i y_i=0\]" style="width:146pt;height:34pt;" class="eqn"><img src="./38d2af3335708111922ac1ec59772d43.gif" alt="\[\frac{\partial}{\partial b}L(\bm w, b, \bm \alpha)=\sum_{i=1}^{n}\alpha_i y_i=0\]" width="144" height="33" class="eqn" /></object>
+が得られます。するとラグランジュ関数を次のように書き換えることができます。
+<object data="./7f5f05cc3237b0fe263a205895f4208e.svg" type="image/svg+xml" standby="\begin{eqnarray*} L(\bm w, b, \bm \alpha)&amp;=&amp;\frac{1}{2}||\bm w||^2+\sum_{i=1}^{n}\alpha_i - \bm w\cdot\sum_{i=1}^{n}\alpha_i y_i\bm x_i - b\sum_{i=1}^{n}\alpha_i y_i \\ &amp;=&amp;\sum_{i=1}^{n}\alpha_i - \frac{1}{2}||\bm w||^2 \\ &amp;=&amp;\sum_{i=1}^{n}\alpha_i - \frac{1}{2}\sum_{i,j}\alpha_i\alpha_j y_i y_j \bm x_i \bm x_j \end{eqnarray*}" style="width:301pt;height:115pt;" class="eqn"><img src="./7f5f05cc3237b0fe263a205895f4208e.gif" alt="\begin{eqnarray*} L(\bm w, b, \bm \alpha)&amp;=&amp;\frac{1}{2}||\bm w||^2+\sum_{i=1}^{n}\alpha_i - \bm w\cdot\sum_{i=1}^{n}\alpha_i y_i\bm x_i - b\sum_{i=1}^{n}\alpha_i y_i \\ &amp;=&amp;\sum_{i=1}^{n}\alpha_i - \frac{1}{2}||\bm w||^2 \\ &amp;=&amp;\sum_{i=1}^{n}\alpha_i - \frac{1}{2}\sum_{i,j}\alpha_i\alpha_j y_i y_j \bm x_i \bm x_j \end{eqnarray*}" width="298" height="115" class="eqn" /></object>
+</p>
+<p>
+以上のことをまとめると、
+<object data="./054bf2e42c0b06ef44f5b8b7073fc5ba.svg" type="image/svg+xml" standby="\[\alpha_i \ge 0\]" style="width:35pt;height:11pt;" class="eqn"><img src="./054bf2e42c0b06ef44f5b8b7073fc5ba.gif" alt="\[\alpha_i \ge 0\]" width="33" height="10" class="eqn" /></object>
+<object data="./38d2af3335708111922ac1ec59772d43.svg" type="image/svg+xml" standby="\[\frac{\partial}{\partial b}L(\bm w, b, \bm \alpha)=\sum_{i=1}^{n}\alpha_i y_i=0\]" style="width:146pt;height:34pt;" class="eqn"><img src="./38d2af3335708111922ac1ec59772d43.gif" alt="\[\frac{\partial}{\partial b}L(\bm w, b, \bm \alpha)=\sum_{i=1}^{n}\alpha_i y_i=0\]" width="144" height="33" class="eqn" /></object>
+の条件下で、
+<object data="./9dd0282b0ccc2d905fdaa274595662a6.svg" type="image/svg+xml" standby="\[L(\bm w, b, \bm \alpha)=\sum_{i=1}^{n}\alpha_i - \frac{1}{2}\sum_{i,j}\alpha_i\alpha_j y_i y_j \bm x_i \bm x_j \]" style="width:215pt;height:36pt;" class="eqn"><img src="./9dd0282b0ccc2d905fdaa274595662a6.gif" alt="\[L(\bm w, b, \bm \alpha)=\sum_{i=1}^{n}\alpha_i - \frac{1}{2}\sum_{i,j}\alpha_i\alpha_j y_i y_j \bm x_i \bm x_j \]" width="212" height="35" class="eqn" /></object>
+を最小化する<object data="./67e7dd600dde6ca2d15b4df76a96110b.svg" type="image/svg+xml" standby="$\alpha_i$" style="width:13pt;height:8pt;" class="equation"><img src="./67e7dd600dde6ca2d15b4df76a96110b.gif" alt="$\alpha_i$" width="11" height="7" class="equation" /></object>を求める問題に帰着できました。
+この問題は二次計画問題と呼ばれる問題で、局所解が最適解になることが保証されており、効率的に解くアルゴリズムがいくつか知られています。
+</p>
+<p>
+このとき
+<object data="./f871656e5cdf0409661bcdbe784ba737.svg" type="image/svg+xml" standby="\[\bm w = \sum_{i=1}^{n}\alpha_i y_i\bm x_i\]" style="width:80pt;height:34pt;" class="eqn"><img src="./f871656e5cdf0409661bcdbe784ba737.gif" alt="\[\bm w = \sum_{i=1}^{n}\alpha_i y_i\bm x_i\]" width="78" height="33" class="eqn" /></object>
+で重みを求めることができます。
+さらに、bの値は<a href="kkt.html">KKT条件</a>の相補条件から、<object data="./67e7dd600dde6ca2d15b4df76a96110b.svg" type="image/svg+xml" standby="$\alpha_i$" style="width:13pt;height:8pt;" class="equation"><img src="./67e7dd600dde6ca2d15b4df76a96110b.gif" alt="$\alpha_i$" width="11" height="7" class="equation" /></object>が0で無いベクトル(サポートベクトル)から
+<object data="./039f0b4e1459022cd52f528511c37b34.svg" type="image/svg+xml" standby="$b=y_i-\bm{w}\cdot\bm{x}_i$" style="width:77pt;height:12pt;" class="eqn"><img src="./039f0b4e1459022cd52f528511c37b34.gif" alt="$b=y_i-\bm{w}\cdot\bm{x}_i$" width="75" height="10" class="eqn" /></object>
+となります。
+</p>
+<h2 id="smo">SMOアルゴリズム</h2>
+<h3 id="whatsmo">考え方</h3>
+<p>
+この問題は一般的な二次計画問題として解くこともできますが、SVMに対して有効なアルゴリズムがいくつか提案されています。
+代表的なものがSMO(Sequential Minimal Optimization)アルゴリズムです。
+</p>
+<p>
+一度にすべての変数考えることは難しいので、いくつか適当な変数を選び、これらの変数に関する最適化問題を考えます。
+他の変数は定数と考えます。
+この部分問題を最適化をすることによって、元の問題も最適解へ近づくはずだ、と言うのがSMOの基本的な考え方です。
+</p>
+
+<h3 id="algorithm">アルゴリズム</h3>
+<p>
+1つの変数をいじると、拘束条件を満たすために最低もう一つ変数を選んで変更しなければなりません。
+そこで、適当な二変数<object data="./6c54c197bfced08e29c132b1ba4f33ed.svg" type="image/svg+xml" standby="\[\alpha_{i_1},\alpha_{i_2}\]" style="width:38pt;height:10pt;" class="equation"><img src="./6c54c197bfced08e29c132b1ba4f33ed.gif" alt="\[\alpha_{i_1},\alpha_{i_2}\]" width="36" height="9" class="equation" /></object>を選んで、この二変数に対する最適化問題を考えます。
+</p>
+<p>
+<object data="./7607398130584362eca94361eafea7e4.svg" type="image/svg+xml" standby="\[\alpha_{i_1} \rightarrow \alpha_{i_1} + \delta_{i_1},\alpha_{i_2} \rightarrow \alpha_{i_2} + \delta_{i_2}\]" style="width:165pt;height:13pt;" class="equation"><img src="./7607398130584362eca94361eafea7e4.gif" alt="\[\alpha_{i_1} \rightarrow \alpha_{i_1} + \delta_{i_1},\alpha_{i_2} \rightarrow \alpha_{i_2} + \delta_{i_2}\]" width="163" height="12" class="equation" /></object>に置き換えるとします。
+このとき、目的関数<object data="./edda765a1d3d51fee14226c3f937d124.svg" type="image/svg+xml" standby="$L(\bm w, b, \bm \alpha)$" style="width:54pt;height:13pt;" class="equation"><img src="./edda765a1d3d51fee14226c3f937d124.gif" alt="$L(\bm w, b, \bm \alpha)$" width="52" height="12" class="equation" /></object>から関係する項だけを抜き出したものを<object data="./8d496f5e74078f5affd71e1b3d88b997.svg" type="image/svg+xml" standby="$O(\delta_{i_1}, \delta_{i_2})$" style="width:53pt;height:13pt;" class="equation"><img src="./8d496f5e74078f5affd71e1b3d88b997.gif" alt="$O(\delta_{i_1}, \delta_{i_2})$" width="51" height="13" class="equation" /></object>とすると
+<object data="./34acbd5dfd393cb96cb7518df414ba77.svg" type="image/svg+xml" standby="\begin{eqnarray*} O(\delta_{i_1}, \delta_{i_2}) &amp;=&amp; \delta_{i_1}+\delta_{i_2} -\delta_{i_1}y_{i_1}\sum_{i=1}^n\alpha_iy_i\bm{x}_{i_1}\bm{x}_i -\delta_{i_2}y_{i_2}\sum_{i=1}^n\alpha_iy_i\bm{x}_{i_2}\bm{x}_i\\ &amp; &amp; -\frac{1}{2}\delta_{i_1}^2\bm{x}_{i_1}\bm{x}_{i_1} -\delta_{i_1}\delta_{i_2}y_{i_1}y_{i_2}\bm{x}_{i_1}\bm{x}_{i_2} -\frac{1}{2}\delta_{i_2}^2\bm{x}_{i_2}\bm{x}_{i_2} \end{eqnarray*}" style="width:340pt;height:64pt;" class="eqn"><img src="./34acbd5dfd393cb96cb7518df414ba77.gif" alt="\begin{eqnarray*} O(\delta_{i_1}, \delta_{i_2}) &amp;=&amp; \delta_{i_1}+\delta_{i_2} -\delta_{i_1}y_{i_1}\sum_{i=1}^n\alpha_iy_i\bm{x}_{i_1}\bm{x}_i -\delta_{i_2}y_{i_2}\sum_{i=1}^n\alpha_iy_i\bm{x}_{i_2}\bm{x}_i\\ &amp; &amp; -\frac{1}{2}\delta_{i_1}^2\bm{x}_{i_1}\bm{x}_{i_1} -\delta_{i_1}\delta_{i_2}y_{i_1}y_{i_2}\bm{x}_{i_1}\bm{x}_{i_2} -\frac{1}{2}\delta_{i_2}^2\bm{x}_{i_2}\bm{x}_{i_2} \end{eqnarray*}" width="336" height="63" class="eqn" /></object>
+となります。また、制約条件から
+<object data="./fc5d73d784d87d037a2a1e4538d87dbd.svg" type="image/svg+xml" standby="\[\left\{ \begin{array}{rcl} \delta_{i_1}y_{i_1}+\delta_{i_2}y_{i_2}&amp;=&amp;0\\ \alpha_{i_1} + \delta_{i_1}&amp;\ge&amp;0\\ \alpha_{i_2} + \delta_{i_2}&amp;\ge&amp;0 \end{array} \right.\]" style="width:129pt;height:45pt;" class="eqn"><img src="./fc5d73d784d87d037a2a1e4538d87dbd.gif" alt="\[\left\{ \begin{array}{rcl} \delta_{i_1}y_{i_1}+\delta_{i_2}y_{i_2}&amp;=&amp;0\\ \alpha_{i_1} + \delta_{i_1}&amp;\ge&amp;0\\ \alpha_{i_2} + \delta_{i_2}&amp;\ge&amp;0 \end{array} \right.\]" width="125" height="43" class="eqn" /></object>
+です。
+</p>
+<p>
+制約条件から、<object data="./853705874ed925973df114b6df44fc09.svg" type="image/svg+xml" standby="$\delta_{i_2}=-y_{i_1}y_{i_2}\delta_{i_1}$" style="width:82pt;height:13pt;" class="equation"><img src="./853705874ed925973df114b6df44fc09.gif" alt="$\delta_{i_2}=-y_{i_1}y_{i_2}\delta_{i_1}$" width="80" height="12" class="equation" /></object>なので、
+<object data="./5aa00946a8dc43e59810623c32e258d4.svg" type="image/svg+xml" standby="\begin{eqnarray*} O(\delta_{i_1}, \delta_{i_2}) &amp;=&amp; \left(y_{i_1}-y_{i_2}- \sum_{i=1}^n\alpha_iy_i\bm{x}_{i_1}\bm{x}_i+ \sum_{i=1}^n\alpha_iy_i\bm{x}_{i_2}\bm{x}_i\right)y_{i_1}\delta_{i_1}\\ &amp; &amp; -\frac{1}{2}\left(\bm{x}_{i_1}\bm{x}_{i_1}- 2\bm{x}_{i_1}\bm{x}_{i_2}+ \bm{x}_{i_2}\bm{x}_{i_2}\right)\delta_{i_1}^2 \end{eqnarray*}" style="width:329pt;height:66pt;" class="eqn"><img src="./5aa00946a8dc43e59810623c32e258d4.gif" alt="\begin{eqnarray*} O(\delta_{i_1}, \delta_{i_2}) &amp;=&amp; \left(y_{i_1}-y_{i_2}- \sum_{i=1}^n\alpha_iy_i\bm{x}_{i_1}\bm{x}_i+ \sum_{i=1}^n\alpha_iy_i\bm{x}_{i_2}\bm{x}_i\right)y_{i_1}\delta_{i_1}\\ &amp; &amp; -\frac{1}{2}\left(\bm{x}_{i_1}\bm{x}_{i_1}- 2\bm{x}_{i_1}\bm{x}_{i_2}+ \bm{x}_{i_2}\bm{x}_{i_2}\right)\delta_{i_1}^2 \end{eqnarray*}" width="325" height="65" class="eqn" /></object>
+となります。<object data="./9a73e462e25252da490ffba114bbf1fa.svg" type="image/svg+xml" standby="$\partial O/\partial\delta_{i_1}=0$" style="width:67pt;height:13pt;" class="equation"><img src="./9a73e462e25252da490ffba114bbf1fa.gif" alt="$\partial O/\partial\delta_{i_1}=0$" width="65" height="13" class="equation" /></object>より
+<object data="./036bfc9c15ee8c8cf514fab5ce290380.svg" type="image/svg+xml" standby="\[ \delta_{i_1} = \frac{\displaystyle \left(\sum_{i=1}^n\alpha_iy_i\bm{x}_{i_2}\bm{x}_i-y_{i_2}\right)- \left(\sum_{i=1}^n\alpha_iy_i\bm{x}_{i_1}\bm{x}_i-y_{i_1}\right) }{ \bm{x}_{i_1}\bm{x}_{i_1}- 2\bm{x}_{i_1}\bm{x}_{i_2}+ \bm{x}_{i_2}\bm{x}_{i_2} }y_{i_1} \]" style="width:297pt;height:54pt;" class="eqn"><img src="./036bfc9c15ee8c8cf514fab5ce290380.gif" alt="\[ \delta_{i_1} = \frac{\displaystyle \left(\sum_{i=1}^n\alpha_iy_i\bm{x}_{i_2}\bm{x}_i-y_{i_2}\right)- \left(\sum_{i=1}^n\alpha_iy_i\bm{x}_{i_1}\bm{x}_i-y_{i_1}\right) }{ \bm{x}_{i_1}\bm{x}_{i_1}- 2\bm{x}_{i_1}\bm{x}_{i_2}+ \bm{x}_{i_2}\bm{x}_{i_2} }y_{i_1} \]" width="294" height="53" class="eqn" /></object>
+と、更新式が得られます。ただし、制約条件を満たすように、クリッピングする必要があります。
+</p>
+<p>
+２変数の選び方には、ランダムに選ぶ、<a href="kkt.html">KKT条件</a>を満たさないものから順に選ぶなどの
+さまざまな手法が提案されています。
+<a href="svm.html">ハードマージンSVM</a>での実装はランダムに選択しています。
+</p>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

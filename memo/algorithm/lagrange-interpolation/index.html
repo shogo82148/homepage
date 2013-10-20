@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>ラグランジュ補間 - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/algorithm/lagrange-interpolation/" />
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/lagrange-interpolation/index.html&amp;ttl=ラグランジュ補間" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/lagrange-interpolation/index.html&amp;ttl=ラグランジュ補間" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#lagrange">ラグランジュ補間</a></li><li><a href="#three">3点を補間してみる</a></li><li><a href="#npoints">一般的な場合</a></li><li><a href="#svg">実際にやってみよう</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>ラグランジュ補間</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;ラグランジュ補間</navi>
+			<div class="contentswrap">
+			
+
+
+<h2 id="lagrange">ラグランジュ補間</h2>
+<p>
+ある関数<object data="./7997339883ac20f551e7f35efff0a2b9.svg" type="image/svg+xml" standby="$f(x)$" style="width:25pt;height:13pt;" class="equation"><img src="./7997339883ac20f551e7f35efff0a2b9.gif" alt="$f(x)$" width="23" height="12" class="equation" /></object>上の<object data="./3f18d8f60c110e865571bba5ba67dcc6.svg" type="image/svg+xml" standby="$n+1$" style="width:29pt;height:10pt;" class="equation"><img src="./3f18d8f60c110e865571bba5ba67dcc6.gif" alt="$n+1$" width="27" height="9" class="equation" /></object>個の点<object data="./ae9bb4f69a35eac052f1a0663375c69a.svg" type="image/svg+xml" standby="$(x_0, y_0), (x_1, y_1), \cdots, (x_n, y_n)$" style="width:150pt;height:13pt;" class="equation"><img src="./ae9bb4f69a35eac052f1a0663375c69a.gif" alt="$(x_0, y_0), (x_1, y_1), \cdots, (x_n, y_n)$" width="146" height="12" class="equation" /></object>が分かっているとします。
+このとき、与えられたすべての点を通る多項式関数を求める方法がラグランジュ補間です。
+</p>
+
+<h2 id="three">3点を補間してみる</h2>
+<p>
+例として3点を通る補間関数を考えてみます。
+下の図で、<object data="./f1290fcf9ea7ff786efb6d71dd8dd3dd.svg" type="image/svg+xml" standby="$(x_0, y_0), (x_1, y_1), (x_2, y_2)$" style="width:126pt;height:13pt;" class="equation"><img src="./f1290fcf9ea7ff786efb6d71dd8dd3dd.gif" alt="$(x_0, y_0), (x_1, y_1), (x_2, y_2)$" width="122" height="12" class="equation" /></object>の3点を通る関数<object data="./52be0087c9da1f0683ccc50761e8bcab.svg" type="image/svg+xml" standby="$P(x)$" style="width:27pt;height:13pt;" class="equation"><img src="./52be0087c9da1f0683ccc50761e8bcab.gif" alt="$P(x)$" width="25" height="12" class="equation" /></object>を求めるのがここでの目的です。
+<div><object data="./points.svg" type="image/svg+xml" ><img src="./points.png"  alt="3点を通る補間関数"/></object></div>
+</p>
+<p>
+しかし、このような関数を直接求めるのは困難です。
+そこで、補間関数を次の図のように3つの関数に分解します。
+<div><object data="./lagrange3.svg" type="image/svg+xml" ><img src="./lagrange3.png"  alt="補間関数を分解"/></object></div>
+<object data="./c998b1e541398661cf6b60461f73d58f.svg" type="image/svg+xml" standby="$y_0L_0(x)$" style="width:42pt;height:13pt;" class="equation"><img src="./c998b1e541398661cf6b60461f73d58f.gif" alt="$y_0L_0(x)$" width="41" height="12" class="equation" /></object>(赤の曲線)は点<object data="./a903f939f6fb649debe1561ecbb18c66.svg" type="image/svg+xml" standby="$(x_0, y_0)$" style="width:40pt;height:13pt;" class="equation"><img src="./a903f939f6fb649debe1561ecbb18c66.gif" alt="$(x_0, y_0)$" width="36" height="12" class="equation" /></object>を通りますが、それ以外の点<object data="./7298f798448a3586c0bb7bd7e66a2db6.svg" type="image/svg+xml" standby="$x=x_1, x_2$" style="width:53pt;height:9pt;" class="equation"><img src="./7298f798448a3586c0bb7bd7e66a2db6.gif" alt="$x=x_1, x_2$" width="52" height="7" class="equation" /></object>では0になるような関数です。
+同様に、<object data="./ef3806e1e9ec0fad1fd282e433335bec.svg" type="image/svg+xml" standby="$y_1L_1$(x)" style="width:42pt;height:13pt;" class="equation"><img src="./ef3806e1e9ec0fad1fd282e433335bec.gif" alt="$y_1L_1$(x)" width="40" height="12" class="equation" /></object>(緑の曲線)は点<object data="./ca6ddd8b6e3fd733652829004b0804d0.svg" type="image/svg+xml" standby="$(x_1, y_1)$" style="width:40pt;height:13pt;" class="equation"><img src="./ca6ddd8b6e3fd733652829004b0804d0.gif" alt="$(x_1, y_1)$" width="36" height="12" class="equation" /></object>を通りそれ以外の点<object data="./bf89f105a7c0f65f7950de563cc876cd.svg" type="image/svg+xml" standby="$x=x_0, x_2$" style="width:53pt;height:9pt;" class="equation"><img src="./bf89f105a7c0f65f7950de563cc876cd.gif" alt="$x=x_0, x_2$" width="52" height="7" class="equation" /></object>では0、
+<object data="./22534f6f6ad83a62a42e725667458685.svg" type="image/svg+xml" standby="$y_2L_2(x)$" style="width:42pt;height:13pt;" class="equation"><img src="./22534f6f6ad83a62a42e725667458685.gif" alt="$y_2L_2(x)$" width="41" height="12" class="equation" /></object>(青の曲線)は点<object data="./12c0dfc2ea75b288114f13b15bed661f.svg" type="image/svg+xml" standby="$(x_2, y_2)$" style="width:40pt;height:13pt;" class="equation"><img src="./12c0dfc2ea75b288114f13b15bed661f.gif" alt="$(x_2, y_2)$" width="36" height="12" class="equation" /></object>を通りそれ以外の点<object data="./32f03a077e31289abf44001bf81faf57.svg" type="image/svg+xml" standby="$x=x_0, x_1$" style="width:53pt;height:9pt;" class="equation"><img src="./32f03a077e31289abf44001bf81faf57.gif" alt="$x=x_0, x_1$" width="51" height="7" class="equation" /></object>では0となるような関数です。
+これらの関数を用いると、<object data="./52be0087c9da1f0683ccc50761e8bcab.svg" type="image/svg+xml" standby="$P(x)$" style="width:27pt;height:13pt;" class="equation"><img src="./52be0087c9da1f0683ccc50761e8bcab.gif" alt="$P(x)$" width="25" height="12" class="equation" /></object>は次のように表すことができます。
+<object data="./915fd203c0c5efe83d93040df508ced0.svg" type="image/svg+xml" standby="\[P(x)=y_0L_0(x) + y_1L_1(x) + y_2L_2(x)\]" style="width:195pt;height:13pt;" class="eqn"><img src="./915fd203c0c5efe83d93040df508ced0.gif" alt="\[P(x)=y_0L_0(x) + y_1L_1(x) + y_2L_2(x)\]" width="193" height="12" class="eqn" /></object>
+</p>
+<p>
+分解したあとの関数を求めるのは簡単です。
+<object data="./8a14bff8937ae391451bdcee5e927984.svg" type="image/svg+xml" standby="$L_0(x)$" style="width:31pt;height:13pt;" class="equation"><img src="./8a14bff8937ae391451bdcee5e927984.gif" alt="$L_0(x)$" width="29" height="12" class="equation" /></object>は<object data="./7298f798448a3586c0bb7bd7e66a2db6.svg" type="image/svg+xml" standby="$x=x_1, x_2$" style="width:53pt;height:9pt;" class="equation"><img src="./7298f798448a3586c0bb7bd7e66a2db6.gif" alt="$x=x_1, x_2$" width="52" height="7" class="equation" /></object>で0となるので、因数として<object data="./50e73c1c778772a43601cc4414c9eee1.svg" type="image/svg+xml" standby="$(x-x_1)(x-x_2)$" style="width:87pt;height:13pt;" class="equation"><img src="./50e73c1c778772a43601cc4414c9eee1.gif" alt="$(x-x_1)(x-x_2)$" width="84" height="12" class="equation" /></object>を持つはずです。
+<object data="./37b822cccb925a33740df4e324dc9e50.svg" type="image/svg+xml" standby="$L_0(x_0)=1$" style="width:58pt;height:13pt;" class="equation"><img src="./37b822cccb925a33740df4e324dc9e50.gif" alt="$L_0(x_0)=1$" width="56" height="12" class="equation" /></object>となるように係数を調節してやれば
+<object data="./61dfd5f08581487397c9fe0d1a25fc10.svg" type="image/svg+xml" standby="\[L_0(x)=\frac{(x-x_1)(x-x_2)}{(x_0-x_1)(x_0-x_2)}\]" style="width:145pt;height:30pt;" class="eqn"><img src="./61dfd5f08581487397c9fe0d1a25fc10.gif" alt="\[L_0(x)=\frac{(x-x_1)(x-x_2)}{(x_0-x_1)(x_0-x_2)}\]" width="144" height="28" class="eqn" /></object>
+となります。<object data="./60a2b9e07407ee29724e83c77454a534.svg" type="image/svg+xml" standby="$L_1(x), L_2$(x)" style="width:66pt;height:13pt;" class="equation"><img src="./60a2b9e07407ee29724e83c77454a534.gif" alt="$L_1(x), L_2$(x)" width="63" height="12" class="equation" /></object>についても同様に考えると次のようになります。
+<object data="./6f7b3cced1217bf4bd9aee44472e477f.svg" type="image/svg+xml" standby="\begin{eqnarray*} L_1(x) &amp;=&amp; \frac{(x-x_0)(x-x_2)}{(x_1-x_0)(x_1-x_2)}\\ L_2(x) &amp;=&amp; \frac{(x-x_0)(x-x_1)}{(x_2-x_0)(x_2-x_1)} \end{eqnarray*}" style="width:145pt;height:63pt;" class="eqn"><img src="./6f7b3cced1217bf4bd9aee44472e477f.gif" alt="\begin{eqnarray*} L_1(x) &amp;=&amp; \frac{(x-x_0)(x-x_2)}{(x_1-x_0)(x_1-x_2)}\\ L_2(x) &amp;=&amp; \frac{(x-x_0)(x-x_1)}{(x_2-x_0)(x_2-x_1)} \end{eqnarray*}" width="144" height="61" class="eqn" /></object>
+</p>
+
+<h2 id="npoints">一般的な場合</h2>
+<p>
+以上のことを一般的な場合に拡張すると
+<object data="./0e04f6d0499019d520d86221c12d7aa7.svg" type="image/svg+xml" standby="\begin{eqnarray*} P(x) &amp;=&amp; \sum_{i=0}^{n}y_iL_i(x)\\ L_i(x) &amp;=&amp; \frac{(x-x_0)\cdots(x-x_{i-1})(x-x_{i+1})\cdots(x-x_n)}{(x_i-x_0)\cdots(x_i-x_{i-1})(x_i-x_{i+1})\cdots(x_i-x_n)}\\ &amp;=&amp;\prod_{\footnotesize\begin{array}{c}j=0\\j\not = i\end{array}}^{n}\frac{x-x_j}{x_i-x_j} \end{eqnarray*}" style="width:293pt;height:123pt;" class="eqn"><img src="./0e04f6d0499019d520d86221c12d7aa7.gif" alt="\begin{eqnarray*} P(x) &amp;=&amp; \sum_{i=0}^{n}y_iL_i(x)\\ L_i(x) &amp;=&amp; \frac{(x-x_0)\cdots(x-x_{i-1})(x-x_{i+1})\cdots(x-x_n)}{(x_i-x_0)\cdots(x_i-x_{i-1})(x_i-x_{i+1})\cdots(x_i-x_n)}\\ &amp;=&amp;\prod_{\footnotesize\begin{array}{c}j=0\\j\not = i\end{array}}^{n}\frac{x-x_j}{x_i-x_j} \end{eqnarray*}" width="291" height="123" class="eqn" /></object>
+が得られます。これがラグランジュ補間の補間関数です。
+</p>
+<p>
+</p>
+<h2 id="svg">実際にやってみよう</h2>
+<p>
+一変数の場合について、実際にやってみました。
+例によって、SVGにJavascriptを埋め込んだ簡単なアニメーションです。
+すべての赤い点を通るように、黒い曲線を引きます。ドラッグ＆ドロップで点を移動できます。
+<div>
+<object data="./lagrange.svg" type="image/svg+xml" width="400" height="300">
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+</div>
+</p>
+<p>
+ラグランジュ補間のような多項式補間では、補間する点の数が増えると下のように振動してしまいます。
+このような現象をルンゲ現象と言います。これを回避するには、いくつかの区間に分割する、区間の端の点を多くする、などの対処方法をとる必要があります。
+<div>
+<object data="./lagrange.svg" type="image/svg+xml" width="400" height="300">
+<param name="function" value="1" />
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+</div>
+</p>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

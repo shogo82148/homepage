@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>テンプレート適用機(仮) - Shogo Computing Laboratory</title>
+
+<style>
+.suffix-sorted {
+    color: red;
+}
+.suffix-end {
+    background: #88F;
+}
+.suffix-a {
+    background: #8F8;
+}
+.suffix-b {
+    background: #8FF;
+}
+.suffix-c {
+    background: #F88;
+}
+.suffix-d {
+    background: #F8F;
+}
+.suffix-r {
+    background: #FF8;
+}
+.suffix td:nth-child(1) {
+    width: 2ex;
+    text-align: right;
+}
+.suffix td:nth-child(2) {
+    text-align: right;
+}
+.suffix td:nth-child(3) {
+    width: 15ex;
+    text-align: left;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/soft/internet/template/index.html&amp;ttl=テンプレート適用機(仮)" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/soft/internet/template/index.html&amp;ttl=テンプレート適用機(仮)" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#intro">このソフトは何？</a></li><li><a href="#download">ダウンロード</a></li><li><a href="#install">インストール</a></li><li><a href="#uninstall">アンインストール</a></li><li><a href="#usage">使い方</a></li><li><a href="#template">テンプレートの書き方</a></li><li><a href="#option">コマンドラインオプション</a></li><li><a href="#reference">コマンドリファレンス</a></li></ul>
+</div>
+
+
+<h1>テンプレート適用機(仮)</h1>
+<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../">ソフト</a>&gt;&gt;テンプレート適用機(仮)</navi>
+
+
+<h2 id="intro">このソフトは何？</h2>
+<p>
+ネット上を探すと、Webページのテンプレートはすぐに見つかります。
+そのほとんどが、「テンプレートをコピーして、必要な部分を書き換えてね」という形式です。
+しかし、どんなに素晴らしいテンプレートでも、しばらく使っていると自分専用にカスタマイズしたくなります。
+それがページを作成した後だと、何十もあるページをすべて手作業で変更する必要がでてきます。
+これは、非常に面倒だし、ミス無く行うのは大変です。
+適当な置換ルーツを使うという手もありますが、場合によっては置換の条件が複雑になって条件を考えるのが面倒です。
+Wikiのようにサーバ上で自動整形してくれるものもありますが、
+サーバによっては使えない場合もあるので、オフラインで作成したい。
+</p>
+<p>
+そんな不満を解消するべく、このソフトを作って見ました。このソフトを使えば、テンプレートの変更が簡単にできます。
+</p>
+
+<h2 id="download">ダウンロード</h2>
+<p>
+<a href="./template.zip">テンプレート適用機(仮)をダウンロード(293K)</a>
+</p>
+
+<h2 id="install">インストール</h2>
+<p>
+このソフトはPerlスクリプトを使用して書かれています。
+そのため事前にPerlの実行環境をインストールする必要があります。
+Windowsなら<a href="http://www.activestate.com/">ActivePerl</a>がおすすめです。
+詳しいインストールの方法はそれぞれの説明書を参照して下さい。
+</p>
+<p>
+あとはアーカイブを解凍するだけです。
+</p>
+
+<h2 id="uninstall">アンインストール</h2>
+<p>
+OSの設定などはいじりません。フォルダごと削除すればOKです。
+</p>
+<p>
+Perlのアンインストールは、インストールしたPerlの説明書を参照してください。
+</p>
+
+<h2 id="usage">使い方</h2>
+<p>
+基本的な使い方は
+</p>
+<ol>
+<li>templateフォルダにテンプレートを入れる。</li>
+<li>srcフォルダに文章を入れる。</li>
+<li>スクリプトを実行する。</li>
+</ol>
+<p>
+srcフォルダ内のHTMLファイルにテンプレートが適用され、「out」フォルダに出力されます。
+</p>
+
+<h2 id="template">テンプレートの書き方</h2>
+<p>
+「template」フォルダの中のファイルは「template.html」を除いてすべて出力フォルダにコピーされます。
+「template.html」には、すべてのHTMLページに共通するデザインなどを書いておきます。
+最低限以下のような内容が必要です。
+</p>
+<hr />
+<div>
+	&lt;!--#load_content --&gt;<br />
+	&lt;!--#show_content --&gt;<br />
+</div>
+<hr />
+<p>
+show_contentコマンドが「src」フォルダ内の文章で置き換えられます。
+詳しくはコマンドリファレンスを参照してください。
+</p>
+
+<h2 id="option">コマンドラインオプション</h2>
+<dl>
+<dt>-i [フォルダ名], --input [フォルダ名] </dt>
+<dd>文章の入ったフォルダを指定します。デフォルトで「src」です。</dd>
+<dt>-o [フォルダ名], --output [フォルダ名] </dt>
+<dd>整形済みの文書を出力するフォルダを指定します。デフォルトで「out」です。</dd>
+<dt>-t [フォルダ名], --template [フォルダ名] </dt>
+<dd>テンプレートの入ったフォルダを指定します。デフォルトで「template」です。</dd>
+<dt>-c, --copyfile </dt>
+<dd>デフォルトではHTMLファイル以外のファイルは無視します。
+このオプションを指定すると、HTMLファイル以外のファイルをコピーするようになります。</dd>
+<dt>-d [フォルダ名], --directory [フォルダ名] </dt>
+<dd>同じ文章を使って、PC用・携帯用のようにテンプレートを変えたい場合に使用します。
+outputオプションで指定されたフォルダの中に、新しくフォルダを作成してその中に文章を出力します。</dd>
+</dl>
+
+
+<h2 id="reference">コマンドリファレンス</h2>
+<p>
+基本的にSSIと似たような文法です。
+いくつか独自仕様のコマンドを追加してあります。
+詳細はコマンドラインリファレンスを参照してください。
+</p>
+
+
+<ul class="toInfo">
+	<li><a href="./">サイトトップへ</a></li>
+</ul>
+
+</body>
+</html>

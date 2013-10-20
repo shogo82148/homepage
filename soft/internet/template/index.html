@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>テンプレート適用機(仮) - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/soft/internet/template/" />
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/soft/internet/template/index.html&amp;ttl=テンプレート適用機(仮)" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/soft/internet/template/index.html&amp;ttl=テンプレート適用機(仮)" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#intro">このソフトは何？</a></li><li><a href="#download">ダウンロード</a></li><li><a href="#install">インストール</a></li><li><a href="#uninstall">アンインストール</a></li><li><a href="#usage">使い方</a></li><li><a href="#template">テンプレートの書き方</a></li><li><a href="#option">コマンドラインオプション</a></li><li><a href="#reference">コマンドリファレンス</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>テンプレート適用機(仮)</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../">ソフト</a>&gt;&gt;テンプレート適用機(仮)</navi>
+			<div class="contentswrap">
+			
+
+<h2 id="intro">このソフトは何？</h2>
+<p>
+ネット上を探すと、Webページのテンプレートはすぐに見つかります。
+そのほとんどが、「テンプレートをコピーして、必要な部分を書き換えてね」という形式です。
+しかし、どんなに素晴らしいテンプレートでも、しばらく使っていると自分専用にカスタマイズしたくなります。
+それがページを作成した後だと、何十もあるページをすべて手作業で変更する必要がでてきます。
+これは、非常に面倒だし、ミス無く行うのは大変です。
+適当な置換ルーツを使うという手もありますが、場合によっては置換の条件が複雑になって条件を考えるのが面倒です。
+Wikiのようにサーバ上で自動整形してくれるものもありますが、
+サーバによっては使えない場合もあるので、オフラインで作成したい。
+</p>
+<p>
+そんな不満を解消するべく、このソフトを作って見ました。このソフトを使えば、テンプレートの変更が簡単にできます。
+</p>
+
+<h2 id="download">ダウンロード</h2>
+<p>
+<a href="./template.zip">テンプレート適用機(仮)をダウンロード(293K)</a>
+</p>
+
+<h2 id="install">インストール</h2>
+<p>
+このソフトはPerlスクリプトを使用して書かれています。
+そのため事前にPerlの実行環境をインストールする必要があります。
+Windowsなら<a href="http://www.activestate.com/">ActivePerl</a>がおすすめです。
+詳しいインストールの方法はそれぞれの説明書を参照して下さい。
+</p>
+<p>
+あとはアーカイブを解凍するだけです。
+</p>
+
+<h2 id="uninstall">アンインストール</h2>
+<p>
+OSの設定などはいじりません。フォルダごと削除すればOKです。
+</p>
+<p>
+Perlのアンインストールは、インストールしたPerlの説明書を参照してください。
+</p>
+
+<h2 id="usage">使い方</h2>
+<p>
+基本的な使い方は
+</p>
+<ol>
+<li>templateフォルダにテンプレートを入れる。</li>
+<li>srcフォルダに文章を入れる。</li>
+<li>スクリプトを実行する。</li>
+</ol>
+<p>
+srcフォルダ内のHTMLファイルにテンプレートが適用され、「out」フォルダに出力されます。
+</p>
+
+<h2 id="template">テンプレートの書き方</h2>
+<p>
+「template」フォルダの中のファイルは「template.html」を除いてすべて出力フォルダにコピーされます。
+「template.html」には、すべてのHTMLページに共通するデザインなどを書いておきます。
+最低限以下のような内容が必要です。
+</p>
+<hr />
+<div>
+	&lt;!--#load_content --&gt;<br />
+	&lt;!--#show_content --&gt;<br />
+</div>
+<hr />
+<p>
+show_contentコマンドが「src」フォルダ内の文章で置き換えられます。
+詳しくはコマンドリファレンスを参照してください。
+</p>
+
+<h2 id="option">コマンドラインオプション</h2>
+<dl>
+<dt>-i [フォルダ名], --input [フォルダ名] </dt>
+<dd>文章の入ったフォルダを指定します。デフォルトで「src」です。</dd>
+<dt>-o [フォルダ名], --output [フォルダ名] </dt>
+<dd>整形済みの文書を出力するフォルダを指定します。デフォルトで「out」です。</dd>
+<dt>-t [フォルダ名], --template [フォルダ名] </dt>
+<dd>テンプレートの入ったフォルダを指定します。デフォルトで「template」です。</dd>
+<dt>-c, --copyfile </dt>
+<dd>デフォルトではHTMLファイル以外のファイルは無視します。
+このオプションを指定すると、HTMLファイル以外のファイルをコピーするようになります。</dd>
+<dt>-d [フォルダ名], --directory [フォルダ名] </dt>
+<dd>同じ文章を使って、PC用・携帯用のようにテンプレートを変えたい場合に使用します。
+outputオプションで指定されたフォルダの中に、新しくフォルダを作成してその中に文章を出力します。</dd>
+</dl>
+
+
+<h2 id="reference">コマンドリファレンス</h2>
+<p>
+基本的にSSIと似たような文法です。
+いくつか独自仕様のコマンドを追加してあります。
+詳細はコマンドラインリファレンスを参照してください。
+</p>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>オドメトリ - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/tenchijin/odmetry.html" />
+
+
+
+<link href="../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../">Home</a></li>
+			<li><a href="../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../soft/">ソフト</a></li>
+			<li><a href="../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/tenchijin/odmetry.html&amp;ttl=オドメトリ" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/tenchijin/odmetry.html&amp;ttl=オドメトリ" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#odmetry">オドメトリとは？</a></li><li><a href="#line">直線近似</a></li><li><a href="#arc">円弧近似</a></li><li><a href="#issue">問題点</a></li></ul>
+</div>
+<div class="menuInfo">
+<p>2010年度NHK大学ロボコン「ロボ・ファラオ　ピラミッドを築け」の自動ロボット「天地人」の経路制御に関する資料です。</p>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>オドメトリ</h1>
+			<navi id="breadNavi"><a href="../../">HOME</a>&gt;&gt;<a href="../">メモ</a>&gt;&gt;<a href="./">天地人メモ</a>&gt;&gt;オドメトリ</navi>
+			<div class="contentswrap">
+			
+
+<h2 id="odmetry">オドメトリとは？</h2>
+<p>
+ロボットの走行経路を制御するには、ロボットが今どこにいるのかを知ること、自己位置推定が必要となります。
+GPSを使ったり、カメラで撮影た床や天井の映像から推定したりといった様々な手法が提案されています。
+しかし、これらの手法は非常に複雑な処理が必要となります。
+そこで、比較的簡単な、タイヤの回転角から現在位置を推定する手法を考えてみましょう。
+この様な手法は、オドメトリやデッドレコニングといいます。
+</p>
+
+<h2 id="line">直線近似</h2>
+<p>
+<a href="./ctrl-model.html">制御モデルの作成</a>で扱ったように
+ロボットの速度・角速度と、タイヤの速度関係は次のように表すことができます。
+</p>
+<object data="./eqn/b3e40f387efae8709a7a8183ad7e3b15.svg" type="image/svg+xml" standby="\begin{eqnarray*} v_\mathrm{R} &amp;=&amp; v + d\omega \\ v_\mathrm{L} &amp;=&amp; v - d\omega \end{eqnarray*}" style="width:66pt;height:30pt;" class="eqn"><img src="./eqn/b3e40f387efae8709a7a8183ad7e3b15.gif" alt="\begin{eqnarray*} v_\mathrm{R} &amp;=&amp; v + d\omega \\ v_\mathrm{L} &amp;=&amp; v - d\omega \end{eqnarray*}" width="63" height="27" class="eqn" /></object>
+<p>
+この関係から逆に、タイヤの速度から、ロボットの速さと角速度を求めることができます。
+</p>
+<object data="./eqn/d696e7388c3f26c7cb6b246c0d859a9e.svg" type="image/svg+xml" standby="\begin{eqnarray*} v &amp;=&amp; \frac{v_\mathrm{R}+v_\mathrm{L}}{2} \\ \omega &amp;=&amp; \frac{d(v_\mathrm{R}-v_\mathrm{L})}{2} \end{eqnarray*}" style="width:83pt;height:55pt;" class="eqn"><img src="./eqn/d696e7388c3f26c7cb6b246c0d859a9e.gif" alt="\begin{eqnarray*} v &amp;=&amp; \frac{v_\mathrm{R}+v_\mathrm{L}}{2} \\ \omega &amp;=&amp; \frac{d(v_\mathrm{R}-v_\mathrm{L})}{2} \end{eqnarray*}" width="82" height="53" class="eqn" /></object>
+<p>
+これから以下の微分方程式を解けば良いことがわかります。
+</p>
+<object data="./eqn/3cd5c86badf8f6898652ab84b7152dc2.svg" type="image/svg+xml" standby="\begin{eqnarray*} \frac{\mathrm{d}x}{\mathrm{d}t} &amp; = &amp; v\cos\theta\\ \frac{\mathrm{d}y}{\mathrm{d}t} &amp; = &amp; v\sin\theta\\ \frac{\mathrm{d}\theta}{\mathrm{d}t} &amp; = &amp; \omega \end{eqnarray*}" style="width:65pt;height:85pt;" class="eqn"><img src="./eqn/3cd5c86badf8f6898652ab84b7152dc2.gif" alt="\begin{eqnarray*} \frac{\mathrm{d}x}{\mathrm{d}t} &amp; = &amp; v\cos\theta\\ \frac{\mathrm{d}y}{\mathrm{d}t} &amp; = &amp; v\sin\theta\\ \frac{\mathrm{d}\theta}{\mathrm{d}t} &amp; = &amp; \omega \end{eqnarray*}" width="63" height="83" class="eqn" /></object>
+<p>
+この微分方程式は解析的に解くことができません。
+したがって次式を用いて数値積分を行うことになります。
+</p>
+<object data="./eqn/3e7dbece78565e6c84f41143a7cd6c4d.svg" type="image/svg+xml" standby="\begin{eqnarray*} x_{i+1} &amp; = &amp; x_{i}+v_{i}\cos\theta_{i}\Delta t\\ y_{i+1} &amp; = &amp; y_{i}+v_{i}\sin\theta_{i}\Delta t\\ \theta_{i+1} &amp; = &amp; \theta_{i}+\omega_{i}\Delta t \end{eqnarray*}" style="width:119pt;height:48pt;" class="eqn"><img src="./eqn/3e7dbece78565e6c84f41143a7cd6c4d.gif" alt="\begin{eqnarray*} x_{i+1} &amp; = &amp; x_{i}+v_{i}\cos\theta_{i}\Delta t\\ y_{i+1} &amp; = &amp; y_{i}+v_{i}\sin\theta_{i}\Delta t\\ \theta_{i+1} &amp; = &amp; \theta_{i}+\omega_{i}\Delta t \end{eqnarray*}" width="117" height="46" class="eqn" /></object>
+<p>
+これはロボットの移動を直線で近似することと対応します。
+</p>
+
+<h2 id="arc">円弧近似</h2>
+<p>
+もう少し詳しくロボットの移動を見てみましょう。
+微小時間<object data="./eqn/5a63739e01952f6a63389340c037ae29.svg" type="image/svg+xml" standby="$\Delta t$" style="width:16pt;height:10pt;" class="equation"><img src="./eqn/5a63739e01952f6a63389340c037ae29.gif" alt="$\Delta t$" width="14" height="8" class="equation" /></object>の間のロボットの速さはほぼ一定と考えられ、この間ロボットは円弧軌道を描くと見なせます。
+</p>
+<table>
+<tr><td><object data="./odmetry.svg" type="image/svg+xml" ><img src="./odmetry.png"  alt="ロボットの移動する軌跡"/></object></td></tr>
+<tr><td>図1 ロボットの移動する軌跡</td></tr>
+</table>
+
+<p>
+図1のように微小時間<object data="./eqn/5a63739e01952f6a63389340c037ae29.svg" type="image/svg+xml" standby="$\Delta t$" style="width:16pt;height:10pt;" class="equation"><img src="./eqn/5a63739e01952f6a63389340c037ae29.gif" alt="$\Delta t$" width="14" height="8" class="equation" /></object>の間に、
+ロボットが半径<object data="./eqn/6dec54c48a0438a5fcde6053bdb9d712.svg" type="image/svg+xml" standby="$\rho$" style="width:8pt;height:9pt;" class="equation"><img src="./eqn/6dec54c48a0438a5fcde6053bdb9d712.gif" alt="$\rho$" width="6" height="7" class="equation" /></object>円運動をして、向きが<object data="./eqn/2237be7541e5923a75cabc51d349f4ae.svg" type="image/svg+xml" standby="$\Delta\theta$" style="width:17pt;height:10pt;" class="equation"><img src="./eqn/2237be7541e5923a75cabc51d349f4ae.gif" alt="$\Delta\theta$" width="16" height="8" class="equation" /></object>だけ変化したとします。
+このとき、右と左のタイヤが進んだ距離<object data="./eqn/1817ed5bf37431debad768c65886cb11.svg" type="image/svg+xml" standby="$\Delta l_\mathrm{R}, \Delta l_\mathrm{L}$" style="width:47pt;height:12pt;" class="equation"><img src="./eqn/1817ed5bf37431debad768c65886cb11.gif" alt="$\Delta l_\mathrm{R}, \Delta l_\mathrm{L}$" width="46" height="10" class="equation" /></object>は次のようにあらわされます。
+</p>
+<object data="./eqn/ae88e4e3eaddab3f9df182e113e0f80d.svg" type="image/svg+xml" standby="\begin{eqnarray*} \Delta l_{\mathrm{R}} &amp; = &amp; (\rho+d)\Delta\theta\\ \Delta l_{\mathrm{L}} &amp; = &amp; (\rho-d)\Delta\theta \end{eqnarray*}" style="width:91pt;height:31pt;" class="eqn"><img src="./eqn/ae88e4e3eaddab3f9df182e113e0f80d.gif" alt="\begin{eqnarray*} \Delta l_{\mathrm{R}} &amp; = &amp; (\rho+d)\Delta\theta\\ \Delta l_{\mathrm{L}} &amp; = &amp; (\rho-d)\Delta\theta \end{eqnarray*}" width="89" height="30" class="eqn" /></object>
+<p>
+これから、次の関係が得られます。
+</p>
+<object data="./eqn/2e5ebd0e336a61953000f798c0d0afe0.svg" type="image/svg+xml" standby="\begin{eqnarray*} \Delta\theta &amp; = &amp; \frac{\Delta l_{\mathrm{R}}-\Delta l_{\mathrm{L}}}{2}\\ \rho\Delta\theta &amp; = &amp; \frac{\Delta l_{\mathrm{R}}+\Delta l_{\mathrm{L}}}{2} \end{eqnarray*}" style="width:97pt;height:55pt;" class="eqn"><img src="./eqn/2e5ebd0e336a61953000f798c0d0afe0.gif" alt="\begin{eqnarray*} \Delta\theta &amp; = &amp; \frac{\Delta l_{\mathrm{R}}-\Delta l_{\mathrm{L}}}{2}\\ \rho\Delta\theta &amp; = &amp; \frac{\Delta l_{\mathrm{R}}+\Delta l_{\mathrm{L}}}{2} \end{eqnarray*}" width="96" height="53" class="eqn" /></object>
+
+<p>
+この間ロボットが移動したかを考えてみましょう。
+上の関係と、三角関数の和を積に直す公式を使うと次のように書けます。
+</p>
+<object data="./eqn/d68215dd392d4f0c1ad0fc6ba3401827.svg" type="image/svg+xml" standby="\begin{eqnarray*} \Delta x &amp; = &amp; \rho(\sin(\theta+\Delta\theta)-\sin\theta) \\ &amp;=&amp; 2\rho\cos\left(\theta+\frac{\Delta\theta}{2}\right)\sin\left(\frac{\Delta\theta}{2}\right) \\ &amp;=&amp; \rho\Delta\theta\cos\left(\theta+\frac{\Delta\theta}{2}\right)\frac{\sin\left({\displaystyle \frac{\Delta\theta}{2}}\right)}{\displaystyle \frac{\Delta\theta}{2}} \\ &amp;=&amp; \frac{\Delta l_\mathrm{R}+\Delta l_\mathrm{L}}{2}\cos\left(\theta+\frac{\Delta\theta}{2}\right)\mathrm{sinc}\frac{\Delta\theta}{2} \\ \Delta y &amp; = &amp; \rho(-\cos(\theta+\Delta\theta)+\cos\theta) \\ &amp;=&amp; \frac{\Delta l_\mathrm{R}+\Delta l_\mathrm{L}}{2}\sin\left(\theta+\frac{\Delta\theta}{2}\right)\mathrm{sinc}\frac{\Delta\theta}{2} \end{eqnarray*}" style="width:209pt;height:192pt;" class="eqn"><img src="./eqn/d68215dd392d4f0c1ad0fc6ba3401827.gif" alt="\begin{eqnarray*} \Delta x &amp; = &amp; \rho(\sin(\theta+\Delta\theta)-\sin\theta) \\ &amp;=&amp; 2\rho\cos\left(\theta+\frac{\Delta\theta}{2}\right)\sin\left(\frac{\Delta\theta}{2}\right) \\ &amp;=&amp; \rho\Delta\theta\cos\left(\theta+\frac{\Delta\theta}{2}\right)\frac{\sin\left({\displaystyle \frac{\Delta\theta}{2}}\right)}{\displaystyle \frac{\Delta\theta}{2}} \\ &amp;=&amp; \frac{\Delta l_\mathrm{R}+\Delta l_\mathrm{L}}{2}\cos\left(\theta+\frac{\Delta\theta}{2}\right)\mathrm{sinc}\frac{\Delta\theta}{2} \\ \Delta y &amp; = &amp; \rho(-\cos(\theta+\Delta\theta)+\cos\theta) \\ &amp;=&amp; \frac{\Delta l_\mathrm{R}+\Delta l_\mathrm{L}}{2}\sin\left(\theta+\frac{\Delta\theta}{2}\right)\mathrm{sinc}\frac{\Delta\theta}{2} \end{eqnarray*}" width="207" height="190" class="eqn" /></object>
+<p>
+ここで<object data="./eqn/1789c234a7f1d0654305d420d870034b.svg" type="image/svg+xml" standby="$\mathrm{sinc}x=\sin x/x$" style="width:81pt;height:13pt;" class="equation"><img src="./eqn/1789c234a7f1d0654305d420d870034b.gif" alt="$\mathrm{sinc}x=\sin x/x$" width="79" height="12" class="equation" /></object>という形の関数が現れます。
+これは<a href="http://ja.wikipedia.org/wiki/Sinc%E9%96%A2%E6%95%B0" target="_blank">sinc関数(シンクかんすう)</a>
+と呼ばれる関数です。ここで出てきたものは、厳密には、非正規化sinc関数やカーディナル・サインと呼ばれます。
+</p>
+<p>
+さて、このsinc関数、定義通りに計算するとx=0のとき0/0の不定形になってしまいます。
+数学的にはsinc0=1と定義するのが普通ですが、コンピュータで扱う場合には少し注意が必要です。
+x=0の近くでは次のような工夫をする必要があるでしょう。
+</p>
+<ol>
+<li>
+テーラー展開による多項式近似を行う<br />
+sin関数のテーラー展開からsinc関数が次の多項式で表現できることは簡単にわかりますね。
+<object data="./eqn/d680332429d22bf3fc601487e616c315.svg" type="image/svg+xml" standby="\[ \textrm{sinc}x=1+\frac{1}{3!}x^{2}+\frac{1}{5!}x^{4}+\cdots \]" style="width:157pt;height:25pt;" class="eqn"><img src="./eqn/d680332429d22bf3fc601487e616c315.gif" alt="\[ \textrm{sinc}x=1+\frac{1}{3!}x^{2}+\frac{1}{5!}x^{4}+\cdots \]" width="154" height="24" class="eqn" /></object>
+適当な項で打ち切ってsinc関数の近似値を求めます。
+</li>
+<li>
+<object data="./eqn/8c7563c225547a1f1a6d9f46721aa1db.svg" type="image/svg+xml" standby="$\textrm{sinc}x=1$" style="width:50pt;height:9pt;" class="equation"><img src="./eqn/8c7563c225547a1f1a6d9f46721aa1db.gif" alt="$\textrm{sinc}x=1$" width="47" height="9" class="equation" /></object>としてしまう<br />
+十分に<object data="./eqn/5a63739e01952f6a63389340c037ae29.svg" type="image/svg+xml" standby="$\Delta t$" style="width:16pt;height:10pt;" class="equation"><img src="./eqn/5a63739e01952f6a63389340c037ae29.gif" alt="$\Delta t$" width="14" height="8" class="equation" /></object>が小さければ、ロボットの向きの変化<object data="./eqn/2237be7541e5923a75cabc51d349f4ae.svg" type="image/svg+xml" standby="$\Delta\theta$" style="width:17pt;height:10pt;" class="equation"><img src="./eqn/2237be7541e5923a75cabc51d349f4ae.gif" alt="$\Delta\theta$" width="16" height="8" class="equation" /></object>も十分小さいと考えられます。
+したがって、sinc関数の二次の項以降は無視できるほど小さいはずです。
+そこで、sinc関数をx=0付近で一次近似し、<object data="./eqn/8c7563c225547a1f1a6d9f46721aa1db.svg" type="image/svg+xml" standby="$\textrm{sinc}x=1$" style="width:50pt;height:9pt;" class="equation"><img src="./eqn/8c7563c225547a1f1a6d9f46721aa1db.gif" alt="$\textrm{sinc}x=1$" width="47" height="9" class="equation" /></object>と置いてしまいます。
+天地人ではこの方法をとりました。
+</li>
+</ol>
+
+<h2 id="issue">問題点</h2>
+<p>
+オドメトリはタイヤの回転角のみを使用するので、次のような問題があります。
+</p>
+
+<ul>
+<li>
+タイヤの滑りを検出できない<br />
+オドメトリはタイヤが滑らないことが前提となっています。
+そのため、障害物に当たってタイヤが空回りしたり、ロボットがドリフトして横滑りがおこったりということがあると
+正確に位置を推定できません。
+駆動輪とは別に、オドメトリ用のタイヤを付けることで、タイヤの空回りはある程度防ぐことができます。
+この際、駆動輪とオドメトリ用のタイヤは一直線上に並ぶようにしないと、横滑りが起こります。
+この方法でもドリフトは検出できないので、スピードの出しすぎには注意です。
+</li>
+<li>
+誤差が累積し、どんどん大きくなる<br />
+タイヤの滑りによる誤差、タイヤ径やロボットの大きさなどパラメータ誤差、数値計算による計算誤差など
+オドメトリには様々な誤差要因が存在します。
+オドメトリでは、スタート時からの積算で位置を推定するため、これらの誤差は時間とともに累積してしまします。
+そのため、ロボットが長距離を移動する場合、オドメトリ単体で高精度の位置推定を行うことは難しく、
+他の手法と併用することが必要となります。
+</li>
+</ul>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

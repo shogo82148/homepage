@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>最小二乗法 - Shogo Computing Laboratory</title>
+
+</head>
+
+<body>
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/least-squares-method/index.html&amp;ttl=最小二乗法" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/least-squares-method/index.html&amp;ttl=最小二乗法" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+
+
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#leastsquare">最小二乗法</a></li><li><a href="#linear">線形回帰</a></li><li><a href="#genaral">もっと複雑な関数で近似</a></li><li><a href="#svg">実際にやってみる</a></li></ul>
+</div>
+
+
+<h1>最小二乗法</h1>
+<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;最小二乗法</navi>
+
+
+
+
+<h2 id="leastsquare">最小二乗法</h2>
+<p>
+最小二乗法(最小自乗法とも書く)は、実験データのような誤差を含む値から、
+それにフィットするような関数を求める手法の一つです。
+</p>
+<p>
+例えば等速直線運動運動の観測実験を行なった結果、
+次のような実験データが得られたとします。
+</p>
+<table border="1">
+<caption>実験結果</caption>
+<tr><th>時間(s)</th><th>位置(m)</th></tr>
+<tr><td>0.0</td><td>1.0</td></tr>
+<tr><td>1.0</td><td>2.3</td></tr>
+<tr><td>2.0</td><td>3.4</td></tr>
+<tr><td>3.0</td><td>4.4</td></tr>
+<tr><td>4.0</td><td>5.9</td></tr>
+<tr><td>5.0</td><td>7.0</td></tr>
+</table>
+<p>
+この実験結果を時間をx軸、位置をy軸にとってグラフにプロットすると次のようになります。
+<div><object data="../../../../memo/algorithm/least-squares-method/lsm1.svg" type="image/svg+xml" ><img src="../../../../memo/algorithm/least-squares-method/lsm1.png"  alt="実験結果"/></object></div>
+この運動は等速直線運動なので、すべての点を通る直線が一本引けるはずです。
+このような直線を引ければ、速度や初期位置がわかるので、いろいろと便利です。
+</p>
+<p>
+しかし現実にはどうしても測定誤差が発生してしまうため、
+どんなに頑張って直線を引いても、図のようにデータポイントと直線は少しずれてしまいます。
+仕方がないので、できるだけデータポイントから外れないような直線を引くことにしましょう。
+最小二乗法はこのような直線を引く代表的な手法の一つです。
+</p>
+
+<h2 id="linear">線形回帰</h2>
+<p>
+「できるだけデータポイントから外れない」とはどういうことでしょう？
+もう少し数学的に表してみることにします。
+</p>
+<p>
+i番目のデータポイントを<img src="../../../../memo/algorithm/least-squares-method/ce6988121342d90ff4c10d6cf2959c29.gif" alt="$(x_i, y_i)$" width="33" height="12" class="equation" />、求めたい直線を<img src="../../../../memo/algorithm/least-squares-method/621ba49f56b99ea87bec2df30fa722ad.gif" alt="$y=ax+b$" width="55" height="10" class="equation" />と
+定義します。データポイントの数はnとします。
+<div><object data="../../../../memo/algorithm/least-squares-method/lsm2.svg" type="image/svg+xml" ><img src="../../../../memo/algorithm/least-squares-method/lsm2.png"  alt="誤差"/></object></div>
+すると、実際の測定値と予想される理論値との誤差を<img src="../../../../memo/algorithm/least-squares-method/94b0cc335c518f81ecf058f720a702f3.gif" alt="$y_i-(ax_i+b)$" width="69" height="12" class="equation" />と表すことができます。
+この誤差を小さくすればデータポイントと直線が近くなりそうです。
+</p>
+<p>
+一つのデータポイントにだけ近づけても仕方がないのでこの誤差の総和を取ります。
+しかし、ただ単純に足すだけだとプラスとマイナスが打ち消しあってしまいます。
+絶対値を取ってから足すのもいいのですが、絶対値というのは数学的に少し扱いが難しいので、
+二乗して総和をとることにしましょう。
+</p>
+<img src="../../../../memo/algorithm/least-squares-method/c1a5f8a9beeedd70e4633d71aea319af.gif" alt="\[J=\sum_{i=1}^n (y_i-(ax_i+b))^2\]" width="126" height="33" class="eqn" />
+<p>
+このJを最小化することが最小二乗法の目標です。
+</p>
+<p>
+Jを最小にするには「極値となる点では、微分した結果が0になる」ということを
+利用します。Jは下に凸な二次関数なのでこれで最小値が求まるはずです。
+今具体的に求めたいのはaとbの値なので、それぞれについて偏微分してみましょう。
+</p>
+<img src="../../../../memo/algorithm/least-squares-method/80a85b076ff71026d817edb05288bc19.gif" alt="\begin{eqnarray*} \frac{\partial J}{\partial a} &amp;=&amp;-2\sum_{i=1}^nx_i(y_i-(ax_i+b))\\ \frac{\partial J}{\partial b} &amp;=&amp;-2\sum_{i=1}^n(y_i-(ax_i+b)) \end{eqnarray*}" width="158" height="73" class="eqn" />
+<p>
+それぞれをイコール0と置いて整理すると、aとbに関する連立方程式となります。
+</p>
+<img src="../../../../memo/algorithm/least-squares-method/e876eb1cb8f7c12b58ce5d5b2df7080d.gif" alt="\begin{eqnarray*} a\sum_{i=1}^nx^2 + b\sum_{i=1}^nx_i &amp;=&amp;\sum_{i=1}^nx_iy_i\\ a\sum_{i=1}^nx^2 + bn &amp;=&amp;\sum_{i=1}^ny_i\\ \end{eqnarray*}" width="146" height="73" class="eqn" />
+<p>
+あとはこれを消去法なり代入法なりクラメルの公式なりを使って解くだけです。
+結論だけ書くと次のようになります。
+</p>
+<img src="../../../../memo/algorithm/least-squares-method/fc4641ce01133781aaba07d54980d01c.gif" alt="\begin{eqnarray*} a&amp;=&amp;\frac{\displaystyle n\sum_{i=1}^nx_iy_i-\sum_{i=1}^nx_i\sum_{i=1}^ny_i} {\displaystyle n\sum_{i=1}^nx_i^2-\left(\sum_{i=1}^nx_i\right)^2}\\ b&amp;=&amp;\frac{\displaystyle\sum_{i=1}^nx_i^2\sum_{i=1}^nx_iy_i-\sum_{i=1}^nx_i\sum_{i=1}^nx_iy_i} {\displaystyle n\sum_{i=1}^nx_i^2-\left(\sum_{i=1}^nx_i\right)^2}\\ \end{eqnarray*}" width="184" height="158" class="eqn" />
+
+<h2 id="genaral">もっと複雑な関数で近似</h2>
+<p>
+もっと複雑な関数で近似してみることを考えてみましょう。
+求めたい関数<img src="../../../../memo/algorithm/least-squares-method/7997339883ac20f551e7f35efff0a2b9.gif" alt="$f(x)$" width="23" height="12" class="equation" />がm個の既知の関数<img src="../../../../memo/algorithm/least-squares-method/7a139bed2899bd2b7f296202b31da967.gif" alt="$g_k(x)$" width="27" height="12" class="equation" />の
+線形結合で表されているとします。
+</p>
+<img src="../../../../memo/algorithm/least-squares-method/396c3921a67334f3cf2d2b9b2752f43e.gif" alt="\[ f(x) = \sum_{k=1}^m a_kg_k(x) \]" width="98" height="34" class="eqn" />
+<p>
+ここで、<img src="../../../../memo/algorithm/least-squares-method/888b6c2a06fc366952ac84a80c43f5f7.gif" alt="$a_k$" width="11" height="7" class="equation" />は関数を決定するためのパラメータです。
+この<img src="../../../../memo/algorithm/least-squares-method/888b6c2a06fc366952ac84a80c43f5f7.gif" alt="$a_k$" width="11" height="7" class="equation" />を求めることが最終目標です。
+</p>
+<p>
+<img src="../../../../memo/algorithm/least-squares-method/7997339883ac20f551e7f35efff0a2b9.gif" alt="$f(x)$" width="23" height="12" class="equation" />ですが、行列を使って次のように書くことができます。
+</p>
+<img src="../../../../memo/algorithm/least-squares-method/72e89535de9f48d78cd8cb8d10253c58.gif" alt="$f(x)=(g_1(x),g_2(x),\cdots,g_m(x))(a_1,a_2,\cdots,a_m)^T$" width="252" height="13" class="eqn" />
+<p>
+これを縦にn個だけ並べれば、<img src="../../../../memo/algorithm/least-squares-method/2253a2da1c70a0e566b934acaa99c323.gif" alt="$x=x_i$" width="33" height="7" class="equation" />における関数<img src="../../../../memo/algorithm/least-squares-method/7997339883ac20f551e7f35efff0a2b9.gif" alt="$f(x)$" width="23" height="12" class="equation" />の値を
+簡単に表すことが出来ます。
+</p>
+<img src="../../../../memo/algorithm/least-squares-method/211be4c77c8d589640cc2af43b128139.gif" alt="\begin{eqnarray*} \left(\begin{array}{c} f(x_1)\\f(x_2)\\\vdots\\f(x_n) \end{array}\right) &amp;=&amp; \left(\begin{array}{cccc} g_1(x_1) &amp; g_2(x_1) &amp; \cdots &amp; g_m(x_1) \\ g_1(x_2) &amp; g_2(x_2) &amp; \cdots &amp; g_m(x_2) \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ g_1(x_n) &amp; g_2(x_n) &amp; \cdots &amp; g_m(x_n) \\ \end{array}\right) \left(\begin{array}{c} a_1\\a_2\\\vdots\\a_m \end{array}\right) \\ &amp;=&amp;\bm{G}\bm{a} \end{eqnarray*}" width="309" height="79" class="eqn" />
+<p>ここで、
+<img src="../../../../memo/algorithm/least-squares-method/8ca31d0b02ad3801a56b3477f18938ff.gif" alt="$\bm{a}=(a_1,a_2,\cdots,a_m)^T$" width="110" height="13" class="eqn" />
+<img src="../../../../memo/algorithm/least-squares-method/011b58aa3b5e0615eafc06a390825e7f.gif" alt="\[\bm{G}=\left(\begin{array}{cccc} g_1(x_1) &amp; g_2(x_1) &amp; \cdots &amp; g_m(x_1) \\ g_1(x_2) &amp; g_2(x_2) &amp; \cdots &amp; g_m(x_2) \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ g_1(x_n) &amp; g_2(x_n) &amp; \cdots &amp; g_m(x_n) \\ \end{array}\right)\]" width="210" height="65" class="eqn" />
+と置きました。
+</p>
+<p>
+実際に測定した値を<img src="../../../../memo/algorithm/least-squares-method/44d328927e0faa95fbd3b8857e41050b.gif" alt="$\bm{y}=(y_1,y_2,\cdots,y_n)^T$" width="106" height="13" class="equation" />とすると
+誤差の総和Jは次のように表せます。
+</p>
+<img src="../../../../memo/algorithm/least-squares-method/462fe870ba0d6c45ba00761569ed5084.gif" alt="\begin{eqnarray*} J&amp;=&amp;(\bm{G}\bm{a}-\bm{y})^T(\bm{G}\bm{a}-\bm{y})\\ &amp;=&amp;\bm{a}^T\bm{G}^T\bm{G}\bm{a}-2\bm{a}^T\bm{G}^T\bm{y}+\bm{y}^T\bm{y} \end{eqnarray*}" width="172" height="32" class="eqn" />
+<p>
+これを最小化するためにパラメータaについて偏微分し、0とと置きます。
+</p>
+<img src="../../../../memo/algorithm/least-squares-method/4d69994783f8cbae225ed666101e953c.gif" alt="\[\frac{\partial J}{\partial\bm{a}}=2\bm{G}^T\bm{G}\bm{a}-2\bm{G}^T\bm{y}=\bm{0}\]" width="143" height="26" class="eqn" />
+<p>
+整理すると、解かなければならない連立方程式は
+<img src="../../../../memo/algorithm/least-squares-method/6bb0bb688b9010a30663a706fa38d7a3.gif" alt="\[ \bm{G}^T\bm{G}\bm{a}=\bm{G}^T\bm{y} \]" width="77" height="14" class="eqn" />
+となります。
+</p>
+
+<h2 id="svg">実際にやってみる</h2>
+<p>
+SVGを使ってグラフを描くJavascriptを作ってみました。
+黒い線が元の関数(直線, 2次関数, 三角関数から選択可)、
+赤い点が元関数にランダムノイズを加えたもの、
+青い線が最小二乗法によって求めた近似曲線です。
+</p>
+<p>
+SVGの描画には<a href="http://raphaeljs.com/">Raphaël</a>を
+行列計算に<a href="http://sylvester.jcoglan.com/">Sylvester</a>を使用しています。
+</p>
+
+<script type="text/javascript" src="../../../..//utils/jquery-1.4.2.min.js"> </script>
+<script type="text/javascript" src="../../../utils/raphael-min.js"></script>
+<script type="text/javascript" src="../../../utils/sylvester-min.js"></script>
+<script type="text/javascript" src="lsm.js"></script>
+
+<div id="Graph">
+</div>
+<div>
+元関数:
+<label><input type="radio" name="function" value="1" checked="checked" />一次関数</label>
+<label><input type="radio" name="function" value="2" />二次関数</label>
+<label><input type="radio" name="function" value="tri" />三角関数</label>
+</div>
+<div>
+誤差:
+<input type="range" id="error" max="20" min="0" />
+測定点の個数:
+<input type="range" id="number" max="100" min="2" value="10" />
+</div>
+<input type="hidden" id="parameter" value="" />
+<div>
+近似関数:
+<label><input type="radio" name="degree" value="1" checked="checked" />一次</label>
+<label><input type="radio" name="degree" value="2" />二次</label>
+<label><input type="radio" name="degree" value="3" />三次</label>
+<label><input type="radio" name="degree" value="4" />四次</label>
+<label><input type="radio" name="degree" value="5" />五次</label>
+<label><input type="radio" name="degree" value="10" />十次</label>
+<input type="button" id="refresh" value="更新" />
+</div>
+
+
+<ul class="toInfo">
+	<li><a href="./">サイトトップへ</a></li>
+</ul>
+
+</body>
+</html>

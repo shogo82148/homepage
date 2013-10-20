@@ -1,0 +1,381 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+<g id="contour">
+</g>
+<g id="positive" stroke="red" fill="red">
+</g>
+<g id="negative" stroke="blue" fill="blue">
+</g>
+<g>
+  <defs>
+    <linearGradient
+       id="linearGradient"
+       x1="0%"
+       y1="100%"
+       x2="0%"
+       y2="0%">
+      <stop
+         id="stop3630"
+         style="stop-color:#565656;stop-opacity:1"
+         offset="0" />
+      <stop
+         id="stop3632"
+         style="stop-color:#565656;stop-opacity:0"
+         offset="1" />
+    </linearGradient>
+</defs>
+    <line id="C_bar" 
+       stroke-width="2"
+       stroke="black"
+       x1="20" y1="285" x2="380" y2="285"
+       style="stroke-opacity:0.5;" />
+	<rect
+       width="10"
+       height="20"
+       rx="5"
+       ry="5"
+       x="0"
+       y="0"
+       id="C_button"
+       style="fill:url(#linearGradient);fill-opacity:0.8;stroke:#6c6c6c;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;" />
+    <line id="sigma_bar" 
+       stroke-width="2"
+       stroke="black"
+       x1="20" y1="260" x2="380" y2="260"
+       style="stroke-opacity:0.5;" />
+	<rect
+       width="10"
+       height="20"
+       rx="5"
+       ry="5"
+       x="0"
+       y="0"
+       id="sigma_button"
+       style="fill:url(#linearGradient);fill-opacity:0.8;stroke:#6c6c6c;stroke-width:1;stroke-miterlimit:4;stroke-opacity:1;" />
+</g>
+
+<script type="text/ecmascript"><![CDATA[
+	width = document.documentElement.getAttribute('width')-0;	//幅
+	height = document.documentElement.getAttribute('height')-0;		//高さ
+	ns = "http://www.w3.org/2000/svg";
+	
+	$ = function(id) {
+		return document.getElementById(id);
+	}
+	
+	//パラメータ取得
+	params = new Array();
+	if(document.defaultView.frameElement) {
+		params['alpha']=0.1;
+		var param_tags = document.defaultView.frameElement.getElementsByTagName("param");
+		for(var i=0;i<param_tags.length;i++) {
+			params[param_tags[i].getAttribute('name')] = param_tags[i].getAttribute('value');
+		}
+	}
+	
+	//設定用のバー
+	function Bar(bar, button) {
+		var is_button_down = false;
+		var b = this;
+		
+		this.bar = bar;
+		this.button = button;
+		this.x0 = bar.getAttribute("x1");
+		this.y0 = bar.getAttribute("y1");
+		this.dx = bar.getAttribute("x2") - this.x0;
+		this.dy = bar.getAttribute("y2") - this.y0;
+		this.len = Math.sqrt(this.dx*this.dx + this.dy*this.dy);
+		this.dx /= this.len;
+		this.dy /= this.len;
+		this.button_width = button.getAttribute("width");
+		this.button_height = button.getAttribute("height");
+		this.val = 0;
+		button.addEventListener("mousedown", function(e) {is_button_down=true;}, true);
+		document.addEventListener("mouseup", function(e) {is_button_down=false;}, true);
+		document.addEventListener("mousemove", function(e) {
+			if(!is_button_down) return;
+			var val = (e.clientX-b.x0)*b.dx + (e.clientY-b.y0)*b.dy;
+			b.setValue(val/b.len);
+		}, true);
+		this.setValue(0);
+	}
+	Bar.prototype.getValue = function () { return this.val; }
+	Bar.prototype.setValue = function (val) {
+		if(val<0) val = 0;
+		if(val>1) val = 1;
+		this.val = val;
+		val *= this.len;
+		this.button.setAttribute("x", this.x0 - this.button_width/2 + this.dx*val);
+		this.button.setAttribute("y", this.y0 - this.button_height/2 + this.dy*val);
+	}
+	
+	//Cパラメータの設定用バー
+	C_bar = new Bar($("C_bar"), $("C_button"));
+	sigma_bar = new Bar($("sigma_bar"), $("sigma_button"));
+	C_bar.setValue(0.5);
+	sigma_bar.setValue(0.5);
+	
+	C = params['C'] || 10;	//ソフトマージンパラメータ
+	learns_per_frame = params['learns'] || 2;	//一フレームあたりの学習回数
+	
+	draging_point = null;
+	document.addEventListener("mousemove", function(e) {
+		if(draging_point) draging_point.setX([e.clientX, e.clientY]);
+	}, false);
+	
+	//訓練データを表すクラス
+	function Train(x, y) {
+		var d = this;
+		this.y = y;
+		this.p = document.createElementNS(ns, "svg:circle");
+		this.p.setAttribute("r", "5");
+		this.p.addEventListener("mouseover", function(e) {d.p.setAttribute("r", "10");}, false);
+		this.p.addEventListener("mouseout", function(e) {this.setAttribute("r", "5");}, false);
+		this.p.addEventListener("mousedown", function(e) {draging_point = d;}, false);
+		this.p.addEventListener("mouseup", function(e) {draging_point = null;}, false);
+		$(y<0?'negative':'positive').appendChild(this.p);
+		this.setX(x);
+	}
+	Train.prototype.setX = function(x) {
+		this.x = x;
+		this.p.setAttribute("cx", x[0]);
+		this.p.setAttribute("cy", x[1]);
+	}
+	//カーネル関数
+	sigma = 50;
+	function Kernel(x1, x2) {
+		//線形カーネル
+		var k = 0;
+		for(var i=0;i<x1.length;i++) {
+			var d = x1[i]-x2[i]
+			k += d*d;
+		}
+		return Math.exp(-k/(2*sigma*sigma));
+	}
+	
+	dimension = 2;	//学習セットは二次元です
+	
+	//学習セットの作成
+	data = new Array();
+	//正
+	for(var i=0;i<10;i++) {
+		x = Math.random()*width;
+		y = Math.random()*height;
+		if(x<width/2 && y<height/2) y += height/2;
+		if(x>width/2 && y>height/2) y -= height/2;
+		data.push(new Train([x,y], +1));
+	}
+	//負
+	for(var i=0;i<10;i++) {
+		x = Math.random()*width;
+		y = Math.random()*height;
+		if(x<width/2 && y>height/2) y -= height/2;
+		if(x>width/2 && y<height/2) y += height/2;
+		data.push(new Train([x,y], -1));
+	}
+	
+	//初期化
+	alpha = new Array(data.length);
+	for(var i=0;i<alpha.length;i++) {
+		alpha[i] = 0;
+	}
+	
+	setInterval('animate();', 200);
+	var dAlpha = new Array(data.length);
+	w = new Array(dimension);
+	var dB;
+	last_contour = null;
+	
+	function animate() {
+		C = Math.pow(10,C_bar.getValue()*3-1);
+		sigma = sigma_bar.getValue()*90+10;
+		
+		//評価関数
+		function f(x, y) {
+			var ret = 0;
+			var vec = [x, y];
+			for(var i=0;i<data.length;i++) {
+				ret += alpha[i]*data[i].y*Kernel(vec, data[i].x);
+			}
+			return ret;
+		}
+		
+		//学習
+		for(var i=0;i<data.length*learns_per_frame;i++) {
+			learn();
+		}
+		
+		//サポートベクタの表示
+		var b = 0;
+		var num_mv = 0;
+		for(var i=0;i<data.length;i++) {
+			if(alpha[i]<1E-20) {
+				data[i].p.setAttribute('fill', 'white');
+			} else {
+				data[i].p.removeAttribute('fill');
+			}
+			if(1E-20<alpha[i] && alpha[i]<C-1E-20) {
+				b += data[i].y - f(data[i].x[0], data[i].x[1]);
+				num_mv++;
+			}
+		}
+		b/=num_mv;
+		
+
+		
+		//各点における評価を計算
+		var grid = new Array();
+		var step = 10;
+		for(var y=0;y<=height/step;y++) {
+			grid[y] = new Array();
+			for(var x=0;x<=width/step;x++) {
+				grid[y][x] = f(x*step, y*step)+b;
+			}
+		}
+		
+		//前回のパスを削除
+		if(last_contour) {
+			$('contour').removeChild(last_contour);
+		}
+		last_contour = document.createElementNS(ns, "svg:g");
+		
+		mkpath(last_contour, grid, step, 0, "black");
+		mkpath(last_contour, grid, step, 1, "red", '3,3');
+		mkpath(last_contour, grid, step, -1, "blue", '3,3');
+
+		$('contour').appendChild(last_contour);
+	}
+		
+	function learn() {
+		//適当な2変数を選択
+		var n = Math.floor(Math.random()*data.length);
+		var m;
+		do {
+			m = Math.floor(Math.random()*data.length);
+		} while(m==n);
+		var weight = 1;
+		
+		//選んだ2変数に関して最適化
+		var knn = Kernel(data[n].x, data[n].x);
+		var knm = Kernel(data[n].x, data[m].x);
+		var kmm = Kernel(data[m].x, data[m].x);
+		
+		function E(i) {
+			var ret = -data[i].y;
+			for(var j=0;j<data.length;j++) {
+				ret += alpha[j] * data[j].y * 
+                    Kernel(data[i].x, data[j].x);
+        	}
+        	return ret;
+        }
+        var delta = data[m].y*(E(n)-E(m))/(knn+kmm-2*knm);
+        if(alpha[m]+delta<0) {
+        	delta = -alpha[m];
+        }
+        if(alpha[n]-data[n].y*data[m].y*delta<0) {
+        	delta = data[n].y*data[m].y*alpha[n];
+        }
+        
+        //ソフトマージン
+        if(alpha[m]+delta>C) {
+        	delta = C-alpha[m];
+        }
+        if(alpha[n]-data[n].y*data[m].y*delta>C) {
+        	delta = data[n].y*data[m].y*(alpha[n]-C);
+        }
+        alpha[m] += delta;
+        alpha[n] -= data[n].y*data[m].y*delta;
+	}
+	
+	function mkpath(group, grid, step, threshold, color, dash) {
+		pathes = contour(grid, threshold);	//パスの座標を取得
+		for(i=0;i<pathes.length;i++) {
+			path = pathes[i];
+			str = "M " + path[0].x*step + " " + path[0].y*step + " ";
+			for(j=1;j<path.length;j++) {
+				str += path[j].x*step + " " + path[j].y*step + " ";
+			}
+			pathtag = document.createElementNS(ns, "svg:path");
+			pathtag.setAttribute('d', str);
+			pathtag.setAttribute('fill', 'none');
+			pathtag.setAttribute('stroke', color);
+			pathtag.setAttribute('stroke-width', '2');
+			if(dash) pathtag.setAttribute('stroke-dasharray', dash);
+			group.appendChild(pathtag);
+		}
+	}
+	
+	//等高線を描く関数
+	function contour(grid, threshold) {
+		var row;
+		//等高線の点を計算
+		var h = new Array(grid.length-1);	//横方向のエッジ
+		var v = new Array(grid.length-1);	//縦方向のエッジ
+		
+		//新しいパスを作成
+		function mkpath(hv,x,y) {
+			var path = new Array();
+			function addPoint(hv,x,y) {
+				if(!hv[y]) return false;
+				var p = hv[y][x];
+				if(!p) return false;
+				if(p.flag) return false;
+				path.push({x:p.x,y:p.y});
+				p.flag = 1;
+				return true;
+			}
+			var sx = x, sy = y;
+			hv[y][x].flag = 1;	//処理済みフラグ
+			path.push({x:hv[y][x].x, y:hv[y][x].y});
+			while(1) {
+				if(addPoint(h, x, y)) y--;
+				else if(addPoint(v, x, y)) x--;
+				else if(addPoint(h, x, y+1)) y++;
+				else if(addPoint(v, x+1, y)) x++;
+				else break;
+			}
+			return path;
+		}
+		
+		for(var y=0;y<grid.length;y++) {
+			row = grid[y];
+			h[y] = new Array(row.length);
+			v[y] = new Array(row.length);
+			for(var x=0;x<row.length;x++) {
+				//横方向
+				if(x+1 in row) {
+					if((row[x]-threshold)*(row[x+1]-threshold)<0) {
+						h[y][x] = {y:y, x:x+(threshold-row[x])/(row[x+1]-row[x]),flag:0};
+					}
+				}
+				//縦方向
+				if(y+1 in grid) {
+					if((grid[y][x]-threshold)*(grid[y+1][x]-threshold)<0) {
+						v[y][x] = {y:y+(threshold-grid[y][x])/(grid[y+1][x]-grid[y][x]),x:x,flag:0};
+					}
+				}
+			}
+		}
+		
+		//パスを作成
+		var pathes = Array();
+		for(var y=0;y<grid.length-1;y++) {
+			for(var x=0;x<row.length-1;x++) {
+				if(h[y][x] && !h[y][x].flag) {
+					//まだ処理していないパスを発見
+					//追加する
+					pathes.push(mkpath(h, x, y));
+				}
+				if(v[y][x] && !v[y][x].flag) {
+					//まだ処理していないパスを発見
+					//追加する
+					pathes.push(mkpath(v, x, y));
+				}
+			}
+		}
+		return pathes;
+	}
+]]></script>
+</svg>

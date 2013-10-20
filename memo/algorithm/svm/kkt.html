@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>KKT条件 - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/algorithm/svm/kkt.html" />
+
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/svm/kkt.html&amp;ttl=KKT条件" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/svm/kkt.html&amp;ttl=KKT条件" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#">Karush-Kuhn-Tucker条件</a></li><li><a href="#">参考</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>KKT条件</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;<a href="./">SVM</a>&gt;&gt;KKT条件</navi>
+			<div class="contentswrap">
+			
+
+
+
+
+<h2>Karush-Kuhn-Tucker条件</h2>
+<p>
+不等式制約条件を持つ関数最適化問題で極小値がとらなければならない条件です。
+</p>
+<p>
+<object data="./55a049b8f161ae7cfeb0197d75aff967.svg" type="image/svg+xml" standby="$n$" style="width:9pt;height:7pt;" class="equation"><img src="./55a049b8f161ae7cfeb0197d75aff967.gif" alt="$n$" width="7" height="5" class="equation" /></object>次元のベクトル<object data="./9f744f41d53aac7d6e1a3d5c894ee51a.svg" type="image/svg+xml" standby="$\bm x=(x_1, x_2, \cdots, x_n)$" style="width:104pt;height:13pt;" class="equation"><img src="./9f744f41d53aac7d6e1a3d5c894ee51a.gif" alt="$\bm x=(x_1, x_2, \cdots, x_n)$" width="102" height="12" class="equation" /></object>に関する最適化問題を考えます。
+<object data="./be7f90e918c0901efac394feccd24576.svg" type="image/svg+xml" standby="\[\min_{\bm x} f(\bm x)\]" style="width:48pt;height:18pt;" class="eqn"><img src="./be7f90e918c0901efac394feccd24576.gif" alt="\[\min_{\bm x} f(\bm x)\]" width="45" height="16" class="eqn" /></object>
+ただし、次の不等式制約条件を持つものとします。
+<object data="./383f9a090589be199cdbe90ce842c4ea.svg" type="image/svg+xml" standby="\[g_1(\bm x) \le 0, g_2(\bm x) \le 0,\cdots,g_m(\bm x) \le 0\]" style="width:188pt;height:13pt;" class="eqn"><img src="./383f9a090589be199cdbe90ce842c4ea.gif" alt="\[g_1(\bm x) \le 0, g_2(\bm x) \le 0,\cdots,g_m(\bm x) \le 0\]" width="185" height="12" class="eqn" /></object>
+<object data="./c07c548c186be3f350a288a6e54e633b.svg" type="image/svg+xml" standby="\[h_1(\bm x) = 0, h_2(\bm x) = 0,\cdots,h_l(\bm x) = 0\]" style="width:186pt;height:13pt;" class="eqn"><img src="./c07c548c186be3f350a288a6e54e633b.gif" alt="\[h_1(\bm x) = 0, h_2(\bm x) = 0,\cdots,h_l(\bm x) = 0\]" width="183" height="12" class="eqn" /></object>
+</p>
+<p>
+この問題を双対な問題に置き換えます。ラグランジュ乗数<object data="./1246b7f9d91a245f999cf4ff02c1df8e.svg" type="image/svg+xml" standby="$\lambda_i, \mu_j$" style="width:29pt;height:13pt;" class="equation"><img src="./1246b7f9d91a245f999cf4ff02c1df8e.gif" alt="$\lambda_i, \mu_j$" width="27" height="12" class="equation" /></object>を導入し、ラグランジュ関数を
+<object data="./ddfb350e3af61c7696905fc3dd9a1252.svg" type="image/svg+xml" standby="\[L(\bm x,\bm \lambda,\bm \mu)=f(\bm x)+\sum_{i=1}^n \lambda_i g_i(\bm x)+\sum_{j=1}^l \mu_j h_j(\bm x)\]" style="width:241pt;height:38pt;" class="eqn"><img src="./ddfb350e3af61c7696905fc3dd9a1252.gif" alt="\[L(\bm x,\bm \lambda,\bm \mu)=f(\bm x)+\sum_{i=1}^n \lambda_i g_i(\bm x)+\sum_{j=1}^l \mu_j h_j(\bm x)\]" width="239" height="36" class="eqn" /></object>
+と定義します。
+</p>
+<p>
+このとき極小値<object data="./30417a1a10dbdd5f641d2d8e8d1e8420.svg" type="image/svg+xml" standby="$\bm x^*$" style="width:14pt;height:10pt;" class="equation"><img src="./30417a1a10dbdd5f641d2d8e8d1e8420.gif" alt="$\bm x^*$" width="13" height="8" class="equation" /></object>は次の条件を満たさなければなりません。
+<object data="./fe56283aec1218ffd152547054d8609f.svg" type="image/svg+xml" standby="\[\nabla_{\bm x}L(\bm x^*,\bm \lambda,\bm \mu)=\nabla f(\bm x^*)+\sum_{i=1}^n \lambda_i\nabla g_i(\bm x^*)+\sum_{j=1}^l \mu_j\nabla h_j(\bm x^*)=\bm 0\]" style="width:333pt;height:38pt;" class="eqn"><img src="./fe56283aec1218ffd152547054d8609f.gif" alt="\[\nabla_{\bm x}L(\bm x^*,\bm \lambda,\bm \mu)=\nabla f(\bm x^*)+\sum_{i=1}^n \lambda_i\nabla g_i(\bm x^*)+\sum_{j=1}^l \mu_j\nabla h_j(\bm x^*)=\bm 0\]" width="329" height="36" class="eqn" /></object>
+<object data="./e1d02d8c4a356c82a2dd6b1ea76502a0.svg" type="image/svg+xml" standby="\[g_i(\bm x^*) \le 0, \lambda_i \ge 0, \lambda_i g_i(\bm x^*)=0 (i=1,2,\cdots,m)\]" style="width:248pt;height:13pt;" class="eqn"><img src="./e1d02d8c4a356c82a2dd6b1ea76502a0.gif" alt="\[g_i(\bm x^*) \le 0, \lambda_i \ge 0, \lambda_i g_i(\bm x^*)=0 (i=1,2,\cdots,m)\]" width="244" height="12" class="eqn" /></object>
+<object data="./c07c548c186be3f350a288a6e54e633b.svg" type="image/svg+xml" standby="\[h_1(\bm x) = 0, h_2(\bm x) = 0,\cdots,h_l(\bm x) = 0\]" style="width:186pt;height:13pt;" class="eqn"><img src="./c07c548c186be3f350a288a6e54e633b.gif" alt="\[h_1(\bm x) = 0, h_2(\bm x) = 0,\cdots,h_l(\bm x) = 0\]" width="183" height="12" class="eqn" /></object>
+</p>
+<p>
+この中で、<object data="./65629b23d70715b649ef7f49e973d969.svg" type="image/svg+xml" standby="$\lambda_i g_i(\bm x^*)=0$" style="width:67pt;height:13pt;" class="equation"><img src="./65629b23d70715b649ef7f49e973d969.gif" alt="$\lambda_i g_i(\bm x^*)=0$" width="65" height="12" class="equation" /></object>は相補性条件と言います。
+</p>
+
+<h2>参考</h2>
+<ul>
+<li><a href="http://ibisforest.org/index.php?KKT%E6%9D%A1%E4%BB%B6">朱鷺の杜Wiki KKT条件</a></li>
+<li><a href="http://www.orsj.or.jp/~wiki/wiki/index.php/%E3%80%8A%E6%9C%80%E9%81%A9%E6%80%A7%E6%9D%A1%E4%BB%B6%E3%80%8B">最適性条件</a></li>
+</ul>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

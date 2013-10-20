@@ -1,0 +1,95 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+<path id="interpolation" fill="none" stroke="black" stroke-width="2" />
+<g id="dataset" stroke="red" fill="red">
+</g>
+
+<script type="text/ecmascript"><![CDATA[
+	params = new Array();
+	if(document.defaultView.frameElement) {
+		params['alpha']=0.1;
+		var param_tags = document.defaultView.frameElement.getElementsByTagName("param");
+		for(var i=0;i<param_tags.length;i++) {
+			params[param_tags[i].getAttribute('name')] = param_tags[i].getAttribute('value');
+		}
+	}
+
+	width = document.documentElement.getAttribute('width')-0;	//幅
+	height = document.documentElement.getAttribute('height')-0;		//高さ
+	ns = "http://www.w3.org/2000/svg";
+	
+	$ = function(id) {
+		return document.getElementById(id);
+	}
+	
+	function toDrawX(x) {return (x+1)*width/2}
+	function toDrawY(y) {return (y+0.4)/2*height}
+	function toX(x) {return x/width*2-1}
+	function toY(y) {return y/height*2-0.4}
+	
+	draging_point = null;
+	document.addEventListener("mousemove", function(e) {
+		if(draging_point) draging_point.setPos(toX(e.clientX), toY(e.clientY));
+	}, false);
+	
+	//データを表すクラス
+	function Data(x, y) {
+		var d = this;
+		this.x = x;
+		this.y = y;
+		this.p = document.createElementNS(ns, "svg:circle");
+		this.p.setAttribute("r", "5");
+		this.p.addEventListener("mouseover", function(e) {d.p.setAttribute("r", "10");}, false);
+		this.p.addEventListener("mouseout", function(e) {this.setAttribute("r", "5");}, false);
+		this.p.addEventListener("mousedown", function(e) {draging_point = d;}, false);
+		this.p.addEventListener("mouseup", function(e) {draging_point = null;}, false);
+		this.setPos(x, y);
+		$('dataset').appendChild(this.p);
+	}
+	Data.prototype.setPos = function(x, y) {
+		this.x = x;
+		this.y = y;
+		this.p.setAttribute("cx", toDrawX(x));
+		this.p.setAttribute("cy", toDrawY(y));
+	}
+	
+	//学習セットの作成
+	data = new Array();
+	var samples = params['samples'] || 10;
+	for(var i=0;i<=samples;i++) {
+		x = (i-samples/2)/(samples/2+1);
+		if(params['function']=='1') {
+			y = 1/(1+25*x*x);
+		} else {
+			y = Math.exp(-x*x)*1.5-0.5;
+		}
+		data.push(new Data(x,y));
+	}
+	
+	setInterval('animate();', 50);
+	
+	function animate() {
+		var i, j, k;
+		var samples = 100;
+		var x, y, mul;
+		var path = "M";
+		for(i=0; i<=samples; i++) {
+			x = i/samples*2-1;
+			y = 0;
+			for(j=0; j<data.length; j++) {
+				mul = 1;
+				for(k=0; k<data.length; k++) {
+					if(j!=k) mul *= (x-data[k].x)/(data[j].x-data[k].x);
+				}
+				y += mul * data[j].y;
+			}
+			
+			path += " " + toDrawX(x) + " " + toDrawY(y);
+		}
+		
+		$('interpolation').setAttribute('d', path);
+	}
+]]></script>
+</svg>

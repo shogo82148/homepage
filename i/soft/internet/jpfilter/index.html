@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>日本語ドメイン変換プロキシ for Twitter - Shogo Computing Laboratory</title>
+
+<style>
+.suffix-sorted {
+    color: red;
+}
+.suffix-end {
+    background: #88F;
+}
+.suffix-a {
+    background: #8F8;
+}
+.suffix-b {
+    background: #8FF;
+}
+.suffix-c {
+    background: #F88;
+}
+.suffix-d {
+    background: #F8F;
+}
+.suffix-r {
+    background: #FF8;
+}
+.suffix td:nth-child(1) {
+    width: 2ex;
+    text-align: right;
+}
+.suffix td:nth-child(2) {
+    text-align: right;
+}
+.suffix td:nth-child(3) {
+    width: 15ex;
+    text-align: left;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/soft/internet/jpfilter/index.html&amp;ttl=日本語ドメイン変換プロキシ for Twitter" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/soft/internet/jpfilter/index.html&amp;ttl=日本語ドメイン変換プロキシ for Twitter" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+
+
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#intro">このソフトは何？</a></li><li><a href="#install">インストール方法</a></li><li><a href="#download">ダウンロード</a></li><li><a href="#tools">使用したツールなど</a><ul><li><a href="http://www.ruby-lang.org/ja/">Ruby</a></li><li><a href="http://sourceforge.jp/projects/ruexli/">ruexli</a></li><li><a href="http://exerb.sourceforge.jp/">Exerb</a></li></ul></li></ul>
+</div>
+
+
+<h1>日本語ドメイン変換プロキシ for Twitter</h1>
+<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">ソフト</a>&gt;&gt;<a href="../">インターネット</a>&gt;&gt;日本語ドメイン変換プロキシ for Twitter</navi>
+
+
+<h2 id="intro">このソフトは何？</h2>
+<p>
+日本語ドメインのURLをTwitterのつぶやきに書いても、現在のところほとんどのクライアントはURLと認識してくれません。
+そこで、つぶやきの中の日本語ドメインをPunycode表記に変換するプロキシを作ってみました。
+プロキシなので使用するクライアントを選びません。
+</p>
+<p>
+たとえば「http://日本語.jp」とつぶやくと「http://日本語.jp ( <a href="http://日本語.jp">http://xn--wgv71a119e.jp/</a> )」
+と変換されます。ほとんどのクライアントは、括弧の中のURLなら認識することができるので、このアドレスに簡単にアクセスできるようになります。
+この変換は表示する時に行われるため、投稿できる文字数が減ることはありません。
+</p>
+<p>
+このプロキシを使えば
+「<a href="http://跳.jp">とある経路の短縮経路(ショートカット) 跳.jp</a>」
+で短縮したURLにも簡単にアクセスすることができます。
+</p>
+
+<h2 id="install">インストール方法</h2>
+<p>
+圧縮ファイルを解凍し、jpfilter.exeを実行します。
+お使いのクライアントのプロキシ設定をホスト「localhost」ポート番号「8080」とすると、
+つぶやき中の日本語ドメインにPunycode表記のURLがつくようになります。
+</p>
+<p>
+IEの設定を読むようなクライアントの場合、普通のWebページを閲覧するときもこのプロクシを経由するため
+少し表示が遅くなります。
+そのような場合は、自動構成スクリプトに同梱したjpfilter.pacを指定し、Web閲覧時にはプロクシを経由しないようにしてください。
+</p>
+<p>
+現状では、ポート番号の変更・プログラムの終了はできません。
+勝手に改造していいので、誰かかっこいいGUI画面を作って！
+</p>
+<hr />
+
+<h2 id="download">ダウンロード</h2>
+<p>
+<a href="../../../../soft/internet/jpfilter/jpfilter.zip">jpfilter.zip(ZIP, 452.9KB)をダウンロード</a>
+</p>
+
+<h2 id="tools">使用したツールなど</h2>
+<h3><a href="http://www.ruby-lang.org/ja/">Ruby</a></h3>
+<p>
+標準ライブラリの「WEBRick」を使うと簡単にプロキシが作れるので、開発言語にはRubyを使用しました。
+作成の際して、「<a href="http://jp.rubyist.net/magazine/?0002-WEBrickProxy">WEBrickでプロキシサーバを作って遊ぶ</a>」を
+参考にさせていただきました。
+</p>
+<h3><a href="http://sourceforge.jp/projects/ruexli/">ruexli</a></h3>
+<p>
+日本語ドメインからPunycode表記への変換に、ruexliプロジェクトのpunycode4rパッケージを使用しました。
+</p>
+
+<h3><a href="http://exerb.sourceforge.jp/">Exerb</a></h3>
+<p>
+実行ファイルの作成に使用しました。
+</p>
+
+
+<ul class="toInfo">
+	<li><a href="./">サイトトップへ</a></li>
+</ul>
+
+</body>
+</html>

@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>最急降下法 - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/algorithm/steepest-descent/" />
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/steepest-descent/index.html&amp;ttl=最急降下法" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/steepest-descent/index.html&amp;ttl=最急降下法" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#one">一変数の最適化問題</a></li><li><a href="#proof">証明</a></li><li><a href="#multi">多変数の最適化問題</a></li><li><a href="#svg">実際にやってみよう</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>最急降下法</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;最急降下法</navi>
+			<div class="contentswrap">
+			
+
+
+<h2 id="one">一変数の最適化問題</h2>
+<p>
+「最急降下法」とは関数の最小値(または最大値)を求める手法です。
+単純で計算量が少ないのでよく使われる方法です。
+</p>
+<p>
+最適化したい関数を目的関数と呼びます。
+これを<object data="./7997339883ac20f551e7f35efff0a2b9.svg" type="image/svg+xml" standby="$f(x)$" style="width:25pt;height:13pt;" class="equation"><img src="./7997339883ac20f551e7f35efff0a2b9.gif" alt="$f(x)$" width="23" height="12" class="equation" /></object>としましょう。
+これを最小化を考えます。最大化したい場合は<object data="./7519ee285703d0ec55d60b90385a2719.svg" type="image/svg+xml" standby="$-f(x)$" style="width:34pt;height:13pt;" class="equation"><img src="./7519ee285703d0ec55d60b90385a2719.gif" alt="$-f(x)$" width="32" height="12" class="equation" /></object>の最小化をすればいいだけです。
+</p>
+<p>
+今、<object data="./332cc365a4987aacce0ead01b8bdcc0b.svg" type="image/svg+xml" standby="$x$" style="width:8pt;height:7pt;" class="equation"><img src="./332cc365a4987aacce0ead01b8bdcc0b.gif" alt="$x$" width="7" height="5" class="equation" /></object>が適当な値<object data="./5ef6a7263760e4096fc413d70b26c709.svg" type="image/svg+xml" standby="$x=x(t)$" style="width:45pt;height:13pt;" class="equation"><img src="./5ef6a7263760e4096fc413d70b26c709.gif" alt="$x=x(t)$" width="43" height="12" class="equation" /></object>としましょう。
+最急降下法では<object data="./332cc365a4987aacce0ead01b8bdcc0b.svg" type="image/svg+xml" standby="$x$" style="width:8pt;height:7pt;" class="equation"><img src="./332cc365a4987aacce0ead01b8bdcc0b.gif" alt="$x$" width="7" height="5" class="equation" /></object>を次のように更新します。
+<object data="./b2bc420d5590474e64e16e80687e19ef.svg" type="image/svg+xml" standby="$x(t+1)=x(t)-\alpha\displaystyle\frac{\partial f(x)}{\partial x}$" style="width:133pt;height:27pt;" class="eqn"><img src="./b2bc420d5590474e64e16e80687e19ef.gif" alt="$x(t+1)=x(t)-\alpha\displaystyle\frac{\partial f(x)}{\partial x}$" width="132" height="27" class="eqn" /></object>
+ここで、αは小さな正の定数です。これを繰り返すことで最小値に近づいていきます。
+</p>
+<p>
+αがあまり大きすぎると最小値を行き過ぎ、小さすぎるとなかなか収束しません。
+また、極小値があるとそこに収束してしまう場合があるのが問題です。
+</p>
+
+<h2 id="proof">証明</h2>
+<p>
+授業でこんな感じで習ったような、という覚え書き。
+僕の解釈も含まれているので、間違っているかも。
+</p>
+<p>
+変数xがtの関数であり、<object data="./5ef6a7263760e4096fc413d70b26c709.svg" type="image/svg+xml" standby="$x=x(t)$" style="width:45pt;height:13pt;" class="equation"><img src="./5ef6a7263760e4096fc413d70b26c709.gif" alt="$x=x(t)$" width="43" height="12" class="equation" /></object>とします。
+このとき、目的関数fをtについて微分してみましょう。
+<object data="./7710c0e40a4c42d75e6e36bad07d117b.svg" type="image/svg+xml" standby="$\displaystyle \frac{\mathrm{d}}{\mathrm{d}t}f(x(t))=\frac{\partial f(x)}{\partial x}\frac{\mathrm{d}x}{\mathrm{d}t}$" style="width:115pt;height:27pt;" class="eqn"><img src="./7710c0e40a4c42d75e6e36bad07d117b.gif" alt="$\displaystyle \frac{\mathrm{d}}{\mathrm{d}t}f(x(t))=\frac{\partial f(x)}{\partial x}\frac{\mathrm{d}x}{\mathrm{d}t}$" width="114" height="27" class="eqn" /></object>
+となります。ここでαを正の定数とし、<object data="./f92a2fed82f1dacdec6e4d5a05fbbf97.svg" type="image/svg+xml" standby="$x(t)$" style="width:22pt;height:13pt;" class="equation"><img src="./f92a2fed82f1dacdec6e4d5a05fbbf97.gif" alt="$x(t)$" width="20" height="12" class="equation" /></object>が
+<object data="./deeeb735f956126de362c73ec0639e88.svg" type="image/svg+xml" standby="$\displaystyle\frac{\mathrm{d}x}{\mathrm{d}t}=-\alpha\frac{\partial f(x)}{\partial x}$" style="width:81pt;height:27pt;" class="eqn"><img src="./deeeb735f956126de362c73ec0639e88.gif" alt="$\displaystyle\frac{\mathrm{d}x}{\mathrm{d}t}=-\alpha\frac{\partial f(x)}{\partial x}$" width="80" height="27" class="eqn" /></object>
+を満たすものとすると、
+<object data="./770ed8e3441bc7c4365d5b846f718b38.svg" type="image/svg+xml" standby="$\displaystyle\frac{\mathrm{d}}{\mathrm{d}t}f(x(t))=-\alpha\left(\frac{\partial f(x)}{\partial x}\right)^2$" style="width:141pt;height:33pt;" class="eqn"><img src="./770ed8e3441bc7c4365d5b846f718b38.gif" alt="$\displaystyle\frac{\mathrm{d}}{\mathrm{d}t}f(x(t))=-\alpha\left(\frac{\partial f(x)}{\partial x}\right)^2$" width="140" height="32" class="eqn" /></object>
+αも正、<object data="./8c5c1fa0cd1f6a4c4dc19cb310c38d6b.svg" type="image/svg+xml" standby="$\displaystyle\left(\frac{\partial f(x)}{\partial x}\right)^2$" style="width:57pt;height:33pt;" class="equation"><img src="./8c5c1fa0cd1f6a4c4dc19cb310c38d6b.gif" alt="$\displaystyle\left(\frac{\partial f(x)}{\partial x}\right)^2$" width="53" height="32" class="equation" /></object>も正なので、微分係数は常に負となります。
+従って関数fはtに関して減少関数となります。
+</p>
+<p>
+最急降下法はこのような関数<object data="./f92a2fed82f1dacdec6e4d5a05fbbf97.svg" type="image/svg+xml" standby="$x(t)$" style="width:22pt;height:13pt;" class="equation"><img src="./f92a2fed82f1dacdec6e4d5a05fbbf97.gif" alt="$x(t)$" width="20" height="12" class="equation" /></object>を数値解析的に求め、tを無限大とすることに対応しているわけです。
+</p>
+
+<h2 id="multi">多変数の最適化問題</h2>
+<p>
+最急降下法は最適化するべき変数が複数ある場合にも適用できます。
+目的関数fが、n個の変数<object data="./b98697d30f7b8b603e8dc0c5e82fba9e.svg" type="image/svg+xml" standby="$\bm{x}=[x_1,x_2,\dots,x_n]^\mathrm{T}$" style="width:108pt;height:15pt;" class="equation"><img src="./b98697d30f7b8b603e8dc0c5e82fba9e.gif" alt="$\bm{x}=[x_1,x_2,\dots,x_n]^\mathrm{T}$" width="106" height="13" class="equation" /></object>の関数だとします。
+このとき、
+<object data="./ec517249d6bd912e61aca0324a9ffea7.svg" type="image/svg+xml" standby="$\bm{x}(t+1)=\bm{x}(t)-\alpha\nabla f(\bm{x})=\bm{x}(t)-\alpha\left[\begin{array}{c}\displaystyle\frac{\partial f(x_1)}{\partial x_1}\\\vdots\\\displaystyle\frac{\partial f(x_n)}{\partial x_n}\end{array}\right]$" style="width:267pt;height:80pt;" class="eqn"><img src="./ec517249d6bd912e61aca0324a9ffea7.gif" alt="$\bm{x}(t+1)=\bm{x}(t)-\alpha\nabla f(\bm{x})=\bm{x}(t)-\alpha\left[\begin{array}{c}\displaystyle\frac{\partial f(x_1)}{\partial x_1}\\\vdots\\\displaystyle\frac{\partial f(x_n)}{\partial x_n}\end{array}\right]$" width="260" height="79" class="eqn" /></object>
+によって最適化できます。
+</p>
+
+<h2 id="svg">実際にやってみよう</h2>
+<p>
+一変数の場合について、実際にやってみました。
+例によって、SVGにJavascriptを埋め込んだ簡単なアニメーションです。
+黒い曲線が目的関数。赤い点たちが最急降下法によって求めた最適値です。
+初めは等間隔に並んでいた点が関数の最小値に近づいていきますが、極小値に収束するものがあることを確認できます。
+<a href="./steepest.svg">SVGファイルをダウンロードする</a>
+</p>
+<object data="./steepest.svg" type="image/svg+xml" width="400" height="300">
+<param name="alpha" value="0.002" />
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+<p>
+更新量を大きくしてみましょう。最小値を行き過ぎてしまって、なかなか収束しないことが確認できます。
+</p>
+<object data="./steepest.svg" type="image/svg+xml" width="400" height="300">
+<param name="alpha" value="0.05" />
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

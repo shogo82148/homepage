@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>ShMath - Shogo Computing Laboratory</title>
+<meta name="keywords" content="iAppli, 実数計算, ライブラリ, CLDC1.0" />
+<meta name="description" content="CLDC1.0しか動かない古いフューチャーフォンで実数計算を行うためのライブラリ" />
+
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/soft/iappli/ShMath/" />
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/soft/iappli/ShMath/index.html&amp;ttl=ShMath" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/soft/iappli/ShMath/index.html&amp;ttl=ShMath" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>ShMath</h1>
+			
+			<div class="contentswrap">
+			
+
+
+
+<h2 id="intro">このソフトは何？</h2>
+<p>
+携帯用のJava環境であるCLDC1.0では浮動小数点演算に対応していません。
+このソフトはそのような環境で実数計算を行うためのJavaクラスライブラリです。
+</p>
+
+<p>
+<small>
+ただ、docomoのiAppliのDoJa4.0プロファイル以降(FOMA901i以降)はCLDCのバージョンが1.1となっており、
+浮動小数点の演算が可能です。
+浮動小数点演算ができないのはmovaとFOMAの初期だけなので、そろそろ気にせず浮動小数点演算を使っても・・・。
+</small>
+</p>
+
+<h2 id="character">特徴</h2>
+<ul>
+<li>有効桁数18桁。倍精度浮動小数点(JavaやCでいうところのdouble)を越える精度</li>
+<li>分数の計算にも対応。1÷3は正確に3分の1になります</li>
+<li>三角関数・指数関数などの各種関数にも対応</li>
+<li>複素数の演算にも対応</li>
+</ul>
+
+<h2 id="usage">使い方</h2>
+<p>
+圧縮ファイルの中身はiアプリライブラリになっています。
+ライブラリを組み込みたいiアプリでプロジェクト-&gt;iアプリライブラリをクリックし、
+解凍したフォルダ内のbin/ShogoMath.jarを選択すればOKです。
+</p>
+
+<p>
+iアプリ以外で使う場合はJavaコンパイル時のクラスパスにbin/ShogoMath.jarを追加すればできると思います。
+よくわからなかったらソースファイルも一緒にコンパイルしてみてください。
+</p>
+
+<p>
+新しいオブジェクトの作成にはShReal.getRealメソッドを使用します。
+取得したオブジェクトに対してadd,sub,mul,divを使用することで四則演算が可能です。
+三角関数などはShRealクラスにjava.lang.Mathクラスとそっくりなメソッドがあるのでそれを使いましょう。
+詳しい使い方はソースを見て想像してください・・・。<small>ごめんなさい、そのうちドキュメントを用意します</small>
+</p>
+
+<h2 id="download">ダウンロード</h2>
+<p><a href="./ShMath.zip">ShMathをダウンロード(32.7KB)</a></p>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

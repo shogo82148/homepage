@@ -1,0 +1,147 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+<g stroke="black" stroke-width="2">
+	<line id="line1" stroke="red" />
+	<line id="line2" stroke="red" />
+	<line id="line3" stroke="blue" />
+	<line id="line4" stroke="blue" />
+	<circle id="circle1" fill="none" />
+	<circle id="circle2" fill="none" r="10"/>
+</g>
+<script type="text/ecmascript"><![CDATA[
+	var $ = function(id) {
+		return document.getElementById(id);
+	}
+	var line1 = $('line1'), line2=$('line2');
+	var line3 = $('line3'), line4=$('line4');
+	var circle1 = $('circle1'), circle2 = $('circle2');
+	var w = document.documentElement.getAttribute('width')-0;
+	var h = document.documentElement.getAttribute('height')-0;
+	
+	function Point() {
+		this.x = Math.random() * w;
+		this.y = Math.random() * h;
+	}
+	
+	function Circle() {
+		var minr = 20;
+		var maxr = w;
+		this.x = Math.random() * w;
+		this.y = Math.random() * h;
+		if(maxr>this.x) maxr = this.x;
+		if(maxr>this.y) maxr = this.y;
+		if(maxr>w-this.x) maxr = w-this.x;
+		if(maxr>h-this.y) maxr = h-this.y;
+		if(maxr<minr) maxr = minr;
+		this.r = Math.random() * (maxr-minr) + minr;
+	}
+	
+	function setLine(l, x1, y1, x2, y2) {
+		l.setAttribute('x1', x1);
+		l.setAttribute('y1', y1);
+		l.setAttribute('x2', x2);
+		l.setAttribute('y2', y2);
+	}
+	
+	function setCircle(c, x, y, r) {
+		c.setAttribute('cx', x);
+		c.setAttribute('cy', y);
+		c.setAttribute('r', r);
+	}
+	
+	var sc1 = new Circle(), ec1 = new Circle();
+	var sc2 = new Circle(), ec2 = new Circle();
+	var count = 0, maxcount = 30;
+	
+	setInterval('animate();', 100);
+	
+	function animate() {
+		var t = count / maxcount;
+		var tt = 1-t;
+		
+		var c1 = {
+			'x' : tt*sc1.x + t*ec1.x,
+			'y' : tt*sc1.y + t*ec1.y,
+			'r' : tt*sc1.r + t*ec1.r,
+		};
+		
+		var c2 = {
+			'x' : tt*sc2.x + t*ec2.x,
+			'y' : tt*sc2.y + t*ec2.y,
+			'r' : tt*sc2.r + t*ec2.r,
+		};
+		
+		var dx = c2.x - c1.x;
+		var dy = c2.y - c1.y;
+		var l2 = dx*dx + dy*dy;
+		var D;
+		
+		D = l2 - (c2.r+c1.r)*(c2.r+c1.r);
+		if(D>=0) {
+			var a, b;
+			var vx, vy, l;
+			D = Math.sqrt(D);
+			
+			a = c1.r*((c2.r+c1.r)*dx+D*dy)/l2 + c1.x;
+			b = c1.r*((c2.r+c1.r)*dy-D*dx)/l2 + c1.y;
+			vx = b-c1.y;
+			vy = -(a-c1.x);
+			l = (w+h)/Math.sqrt(vx*vx+vy*vy);
+			vx *= l; vy *= l;
+			setLine(line1, a-vx, b-vy, a+vx, b+vy);
+
+			a = c1.r*((c2.r+c1.r)*dx-D*dy)/l2 + c1.x;
+			b = c1.r*((c2.r+c1.r)*dy+D*dx)/l2 + c1.y;
+			vx = b-c1.y;
+			vy = -(a-c1.x);
+			l = (w+h)/Math.sqrt(vx*vx+vy*vy);
+			vx *= l; vy *= l;
+			setLine(line2, a-vx, b-vy, a+vx, b+vy);
+		} else {
+			setLine(line1, 0, 0, 0, 0);
+			setLine(line2, 0, 0, 0, 0);
+		}
+		
+		D = l2 - (c2.r-c1.r)*(c2.r-c1.r);
+		if(D>=0) {
+			var a, b;
+			var vx, vy, l;
+			D = Math.sqrt(D);
+			
+			a = c1.r*((c1.r-c2.r)*dx+D*dy)/l2 + c1.x;
+			b = c1.r*((c1.r-c2.r)*dy-D*dx)/l2 + c1.y;
+			vx = b-c1.y;
+			vy = -(a-c1.x);
+			l = (w+h)/Math.sqrt(vx*vx+vy*vy);
+			vx *= l; vy *= l;
+			setLine(line3, a-vx, b-vy, a+vx, b+vy);
+
+			a = c1.r*((c1.r-c2.r)*dx-D*dy)/l2 + c1.x;
+			b = c1.r*((c1.r-c2.r)*dy+D*dx)/l2 + c1.y;
+			vx = b-c1.y;
+			vy = -(a-c1.x);
+			l = (w+h)/Math.sqrt(vx*vx+vy*vy);
+			vx *= l; vy *= l;
+			setLine(line4, a-vx, b-vy, a+vx, b+vy);
+		} else {
+			setLine(line3, 0, 0, 0, 0);
+			setLine(line4, 0, 0, 0, 0);
+		}
+
+		
+		setCircle(circle1, c1.x, c1.y, c1.r);
+		setCircle(circle2, c2.x, c2.y, c2.r);
+		
+		count++;
+		if(count>maxcount) {
+			sc1 = ec1;
+			ec1 = new Circle();
+			sc2 = ec2;
+			ec2 = new Circle();
+			count = 0;
+		}
+	}
+]]></script>
+</svg>

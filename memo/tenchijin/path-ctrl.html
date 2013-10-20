@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>経路制御 - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/tenchijin/path-ctrl.html" />
+
+
+
+<link href="../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../">Home</a></li>
+			<li><a href="../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../soft/">ソフト</a></li>
+			<li><a href="../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/tenchijin/path-ctrl.html&amp;ttl=経路制御" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/tenchijin/path-ctrl.html&amp;ttl=経路制御" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#line">直線経路追従</a></li><li><a href="#curve">曲線経路追従</a></li><li><a href="#making-path">経路の設定</a><ul><li><a href="#line-path">直線+円弧経路</a></li><li><a href="#bezier">ベジエ曲線経路</a></li><li><a href="#clothoid">クロソイド曲線</a></li></ul></li></ul>
+</div>
+<div class="menuInfo">
+<p>2010年度NHK大学ロボコン「ロボ・ファラオ　ピラミッドを築け」の自動ロボット「天地人」の経路制御に関する資料です。</p>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>経路制御</h1>
+			<navi id="breadNavi"><a href="../../">HOME</a>&gt;&gt;<a href="../">メモ</a>&gt;&gt;<a href="./">天地人メモ</a>&gt;&gt;経路制御</navi>
+			<div class="contentswrap">
+			
+<a href="./ctrl-model.html">制御モデルの作成</a>でロボットの動きを数学的に表現しました。
+また、<a href="./odmetry.html">オドメトリ</a>ではロボットの自己位置推定法について考えました。
+ここでは、自己位置推定の結果をどのように利用して、ロボットを制御すればよいかを考えます。
+
+<h2 id="line">直線経路追従</h2>
+<p>
+問題を簡単にするため、まずはx軸上の直線経路の追従を考えます。
+<a href="./odmetry.html">オドメトリ</a>で触れたように、ロボットの座標は次のような方程式であらわされます。
+ただし、<object data="./eqn/430012000be89465b5b378dc4aa2cdf8.svg" type="image/svg+xml" standby="$v=V$" style="width:33pt;height:10pt;" class="equation"><img src="./eqn/430012000be89465b5b378dc4aa2cdf8.gif" alt="$v=V$" width="32" height="8" class="equation" /></object>(定数)としました。
+</p>
+<object data="./eqn/5a7b10aa78eeac4160b69497e70bb626.svg" type="image/svg+xml" standby="\begin{eqnarray*} \frac{\mathrm{d}x}{\mathrm{d}t} &amp; = &amp; V\cos\theta\\ \frac{\mathrm{d}y}{\mathrm{d}t} &amp; = &amp; V\sin\theta\\ \frac{\mathrm{d}\theta}{\mathrm{d}t} &amp; = &amp; \omega \end{eqnarray*}" style="width:68pt;height:85pt;" class="eqn"><img src="./eqn/5a7b10aa78eeac4160b69497e70bb626.gif" alt="\begin{eqnarray*} \frac{\mathrm{d}x}{\mathrm{d}t} &amp; = &amp; V\cos\theta\\ \frac{\mathrm{d}y}{\mathrm{d}t} &amp; = &amp; V\sin\theta\\ \frac{\mathrm{d}\theta}{\mathrm{d}t} &amp; = &amp; \omega \end{eqnarray*}" width="66" height="83" class="eqn" /></object>
+<p>
+この方程式には、非線形項(sinとかcos)が含まれるので、解析しやすいように<object data="./eqn/deceeaf6940a8c7a5a02373728002b0f.svg" type="image/svg+xml" standby="$y$" style="width:8pt;height:9pt;" class="equation"><img src="./eqn/deceeaf6940a8c7a5a02373728002b0f.gif" alt="$y$" width="6" height="7" class="equation" /></object>や<object data="./eqn/27e556cf3caa0673ac49a8f0de3c73ca.svg" type="image/svg+xml" standby="$\theta$" style="width:7pt;height:10pt;" class="equation"><img src="./eqn/27e556cf3caa0673ac49a8f0de3c73ca.gif" alt="$\theta$" width="6" height="8" class="equation" /></object>が十分に小さいという仮定の下
+線形近似を行います。
+</p>
+<object data="./eqn/a71c775ca598ed38c63391c1e903040c.svg" type="image/svg+xml" standby="\begin{eqnarray*} \frac{\mathrm{d}x}{\mathrm{d}t} &amp; = &amp; V\\ \frac{\mathrm{d}y}{\mathrm{d}t} &amp; = &amp; V\theta\\ \frac{\mathrm{d}\theta}{\mathrm{d}t} &amp; = &amp; \omega \end{eqnarray*}" style="width:48pt;height:85pt;" class="eqn"><img src="./eqn/a71c775ca598ed38c63391c1e903040c.gif" alt="\begin{eqnarray*} \frac{\mathrm{d}x}{\mathrm{d}t} &amp; = &amp; V\\ \frac{\mathrm{d}y}{\mathrm{d}t} &amp; = &amp; V\theta\\ \frac{\mathrm{d}\theta}{\mathrm{d}t} &amp; = &amp; \omega \end{eqnarray*}" width="46" height="83" class="eqn" /></object>
+<p>
+<a href="./ctrl-model.html">制御モデルの作成</a>の最後のほうでふれていますが、
+天地人では速度と向きの目標値を与えて、足回りを制御しています。
+速度制御器と向き制御器のゲインが十分に大きいと仮定すれば、目標値と実際の速度と向きは一致するとみなせます。
+ここで、向きから経路のずれまでの伝達関数を考えると次のようになります。
+</p>
+<object data="./eqn/cc9658afb123e5bc5728e079d6dd01d6.svg" type="image/svg+xml" standby="\[ \frac{Y(s)}{\Theta(s)} = \frac{V}{s} \]" style="width:54pt;height:30pt;" class="eqn"><img src="./eqn/cc9658afb123e5bc5728e079d6dd01d6.gif" alt="\[ \frac{Y(s)}{\Theta(s)} = \frac{V}{s} \]" width="53" height="28" class="eqn" /></object>
+<p>
+ロボットが直線上つまりy=0となるように制御すればよいので、
+この制御対象に対して次のようなフィードバックをかけてみます。
+</p>
+<object data="./eqn/a52bb5cc0b1ee6661374971a075504c7.svg" type="image/svg+xml" standby="\[ \theta = -(K_\mathrm{P}y + K_\mathrm{I}\int y\mathrm{d}t) \]" style="width:127pt;height:28pt;" class="eqn"><img src="./eqn/a52bb5cc0b1ee6661374971a075504c7.gif" alt="\[ \theta = -(K_\mathrm{P}y + K_\mathrm{I}\int y\mathrm{d}t) \]" width="125" height="27" class="eqn" /></object>
+<p>
+すると伝達関数は次のように変わりますね。
+</p>
+<object data="./eqn/b4094e4f2bc2b6ca1fdfe1cf013f1d1d.svg" type="image/svg+xml" standby="\begin{eqnarray*} G(s) &amp;=&amp; \frac{\frac{V}{s}(K_\mathrm{P}+\frac{K_\mathrm{I}}{s})}{1+\frac{V}{s}(K_\mathrm{P}+\frac{K_\mathrm{I}}{s})} \\ &amp;=&amp; \frac{VK_\mathrm{P}s+VK_\mathrm{I}}{s^2+VK_\mathrm{P}s+VK_\mathrm{I}} \end{eqnarray*}" style="width:140pt;height:65pt;" class="eqn"><img src="./eqn/b4094e4f2bc2b6ca1fdfe1cf013f1d1d.gif" alt="\begin{eqnarray*} G(s) &amp;=&amp; \frac{\frac{V}{s}(K_\mathrm{P}+\frac{K_\mathrm{I}}{s})}{1+\frac{V}{s}(K_\mathrm{P}+\frac{K_\mathrm{I}}{s})} \\ &amp;=&amp; \frac{VK_\mathrm{P}s+VK_\mathrm{I}}{s^2+VK_\mathrm{P}s+VK_\mathrm{I}} \end{eqnarray*}" width="138" height="64" class="eqn" /></object>
+<p>
+分母=0と置いて根が左半平面にくるように設計すれば、制御系を安定にすることができます。
+</p>
+
+<h2 id="curve">曲線経路追従</h2>
+<p>
+次に曲線経路追従について考えてみます。
+x軸上の直線経路ではy座標でフィードバックをかけましたが、
+曲線経路では経路とロボットの距離<object data="./eqn/2f2322dff5bde89c37bcae4116fe20a8.svg" type="image/svg+xml" standby="$l$" style="width:5pt;height:10pt;" class="equation"><img src="./eqn/2f2322dff5bde89c37bcae4116fe20a8.gif" alt="$l$" width="4" height="8" class="equation" /></object>でフィードバックをかけます。
+</p>
+<object data="./eqn/b46e2b766fdc1794ce10dda02dd52661.svg" type="image/svg+xml" standby="\[ \theta = -(K_\mathrm{P}l + K_\mathrm{I}\int l\mathrm{d}t) \]" style="width:122pt;height:28pt;" class="eqn"><img src="./eqn/b46e2b766fdc1794ce10dda02dd52661.gif" alt="\[ \theta = -(K_\mathrm{P}l + K_\mathrm{I}\int l\mathrm{d}t) \]" width="120" height="27" class="eqn" /></object>
+
+<table>
+<tr><td><object data="./curve-path.svg" type="image/svg+xml" ><img src="./curve-path.png"  alt="曲線経路の追従"/></object></td></tr>
+<tr><td>図1 曲線経路の追従</td></tr>
+</table>
+
+<p>
+さらに、経路上ではロボットの向きが経路の接線の向き<object data="./eqn/518cbd51ce66bd8a22d6dbccb5b21535.svg" type="image/svg+xml" standby="$\theta_\mathrm{P}$" style="width:14pt;height:12pt;" class="equation"><img src="./eqn/518cbd51ce66bd8a22d6dbccb5b21535.gif" alt="$\theta_\mathrm{P}$" width="12" height="10" class="equation" /></object>と一致するようにします。
+結果、ロボットの目標向き<object data="./eqn/9c22802694d6726a07b72f7bffec1ba6.svg" type="image/svg+xml" standby="$\theta_\mathrm{T}$" style="width:14pt;height:12pt;" class="equation"><img src="./eqn/9c22802694d6726a07b72f7bffec1ba6.gif" alt="$\theta_\mathrm{T}$" width="13" height="11" class="equation" /></object>
+</p>
+<object data="./eqn/cc13117c93a45bc4fe78ec6adcfc595d.svg" type="image/svg+xml" standby="\[ \theta_\mathrm{T} = \theta + \theta_\mathrm{P} \]" style="width:63pt;height:12pt;" class="eqn"><img src="./eqn/cc13117c93a45bc4fe78ec6adcfc595d.gif" alt="\[ \theta_\mathrm{T} = \theta + \theta_\mathrm{P} \]" width="61" height="10" class="eqn" /></object>
+
+<h2 id="making-path">経路の設定</h2>
+<p>
+追従する経路をどのように設定するかを考えてみましょう。
+天地人では次のような経路の設定方法をしました。
+</p>
+
+<h3 id="line-path">直線+円弧経路</h3>
+<p>
+数式が単純で、経路との距離や接線の方向が計算が簡単なので、実装が容易な方法です。
+ただし、一見なめらかな経路でも、直線と円弧のつなぎ目で曲率半径が大きく変わってしまいます。
+そのような部分ではロボットの角速度を急激に変化させる必要があるため、動きが乱れることがあります。
+</p>
+
+<h3 id="bezier">ベジエ曲線経路</h3>
+<p>
+<object data="./eqn/f9c4988898e7f532b9f826a75014ed3c.svg" type="image/svg+xml" standby="$N$" style="width:12pt;height:10pt;" class="equation"><img src="./eqn/f9c4988898e7f532b9f826a75014ed3c.gif" alt="$N$" width="11" height="8" class="equation" /></object>個の制御点を用いて作られる<object data="./eqn/e35caf405a5e9b4afd75a0d338c4dc12.svg" type="image/svg+xml" standby="$N-1$" style="width:33pt;height:11pt;" class="equation"><img src="./eqn/e35caf405a5e9b4afd75a0d338c4dc12.gif" alt="$N-1$" width="30" height="9" class="equation" /></object>次のパラメトリックな曲線です。
+天地人では、描画ソフトによく使われる3次ベジエ曲線を用いています。
+</p>
+<object data="./eqn/0312f37c464de00e864688ccf4fc7080.svg" type="image/svg+xml" standby="\[ \vec{P} = t^3\vec P_0 + 3t^2(1-t)\vec P_1 + 3t(1-t)^2\vec P_2 + (1-t)^3 \vec P_3 \]" style="width:271pt;height:16pt;" class="eqn"><img src="./eqn/0312f37c464de00e864688ccf4fc7080.gif" alt="\[ \vec{P} = t^3\vec P_0 + 3t^2(1-t)\vec P_1 + 3t(1-t)^2\vec P_2 + (1-t)^3 \vec P_3 \]" width="269" height="15" class="eqn" /></object>
+<p>
+なめらかな曲線を直感的に作成することができるので便利です。
+しかし、ロボットと経路の距離を数式で表すことが出来ないため、制御プログラムが複雑になります。
+天地人ではニュートン法による数値計算を行い距離を算出しています。
+</p>
+
+<h3 id="clothoid">クロソイド曲線</h3>
+<p>
+走行距離に比例して、曲率が変化する曲線です。
+経路追従時に、ロボットの角速度がなめらかに変化するため動きが乱れることがありません。
+急激なハンドル操作を防ぐために高速道路などにも使われている曲線です。
+</p>
+<p>
+しかし、クロソイド曲線を用いた経路設計は非常に複雑で、小規模のマイコンでリアルタイム処理を行うのは困難です。
+そこで、天地人では、予めパソコン上でクロソイド曲線を用いた経路を設計し、
+それをベジエ曲線で近似することで経路設計を行ないました。
+</p>
+<p>
+パソコン上の設計ツールも、手を抜いて既存の描画ソフトを使用しました。
+使用した描画ソフトはInkscapeです。
+Inkscape上での曲線はすべて3次のベジエ曲線で表現されているため、制御点の座標を読み取ればそのまま天地人へ入力することが出来ます。
+また、Inkscape標準の保存形式であるSVGはテキストベースであるため、これらの制御点を抽出するプログラムを容易に書くことが可能です。
+さらに、Inkscapeのパスエフェクト機能に「スピロスプライン」というエフェクトがあります。
+これは、幾つかの制御点を与えると、クロソイド曲線を使用して制御点を補完してくれる機能です。
+SVG形式で保存すると、クロソイド曲線での補完結果を自動的に3次のベジエ曲線で近似してくれるため、変換に面倒な計算は一切必要ありません。
+</p>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

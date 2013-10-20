@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>バケットソート - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/algorithm/suffix-array/bucket-sort.html" />
+
+
+
+<style>
+.suffix-sorted {
+    color: red;
+}
+.suffix-end {
+    background: #88F;
+}
+.suffix-a {
+    background: #8F8;
+}
+.suffix-b {
+    background: #8FF;
+}
+.suffix-c {
+    background: #F88;
+}
+.suffix-d {
+    background: #F8F;
+}
+.suffix-r {
+    background: #FF8;
+}
+td:nth-child(1) {
+    width: 2ex;
+    text-align: right;
+}
+td:nth-child(2) {
+    text-align: right;
+}
+td:nth-child(3) {
+    width: 15ex;
+    text-align: left;
+}
+
+</style>
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/suffix-array/bucket-sort.html&amp;ttl=バケットソート" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/suffix-array/bucket-sort.html&amp;ttl=バケットソート" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#">先頭の文字でソートする</a></li><li><a href="#">バケットソート</a></li><li><a href="#">問題点</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>バケットソート</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;<a href="./">Suffix Array</a>&gt;&gt;バケットソート</navi>
+			<div class="contentswrap">
+			
+
+
+
+
+
+
+
+<h2>先頭の文字でソートする</h2>
+<p>
+一度に Suffix をソートするのは大変です．
+そこで先頭の文字に着目し，まずは先頭の文字についてソートしてみます．
+</p>
+
+<table border="1">
+  <tr><th>No.</th><th>開始位置</th><th>Suffix</th></tr>
+  <tr><td>0</td><td>0</td><td><span class="suffix-sorted">a</span>bracadabra$</td></tr>
+  <tr><td>1</td><td>1</td><td><span class="suffix-sorted">b</span>racadabra$</td></tr>
+  <tr><td>2</td><td>2</td><td><span class="suffix-sorted">r</span>acadabra$</td></tr>
+  <tr><td>3</td><td>3</td><td><span class="suffix-sorted">a</span>cadabra$</td></tr>
+  <tr><td>4</td><td>4</td><td><span class="suffix-sorted">c</span>adabra$</td></tr>
+  <tr><td>5</td><td>5</td><td><span class="suffix-sorted">a</span>dabra$</td></tr>
+  <tr><td>6</td><td>6</td><td><span class="suffix-sorted">d</span>abra$</td></tr>
+  <tr><td>7</td><td>7</td><td><span class="suffix-sorted">a</span>bra$</td></tr>
+  <tr><td>8</td><td>8</td><td><span class="suffix-sorted">b</span>ra$</td></tr>
+  <tr><td>9</td><td>9</td><td><span class="suffix-sorted">r</span>a$</td></tr>
+  <tr><td>10</td><td>10</td><td><span class="suffix-sorted">a</span>$</td></tr>
+  <tr><td>11</td><td>11</td><td><span class="suffix-sorted">$</span></td></tr>
+</table>
+
+<p>
+すると，次の表で色分けしたように，先頭の文字が同じ Suffix のグループができます．
+このグループをバケットと呼ぶことにしましょう．
+</p>
+<table border="1">
+  <tr><th>No.</th><th>開始位置</th><th>Suffix</th></tr>
+  <tr class="suffix-end"><td>0</td><td>11</td><td><span class="suffix-sorted">$</span></td></tr>
+  <tr class="suffix-a"><td>1</td><td>0</td><td><span class="suffix-sorted">a</span>bracadabra$</td></tr>
+  <tr class="suffix-a"><td>2</td><td>3</td><td><span class="suffix-sorted">a</span>cadabra$</td></tr>
+  <tr class="suffix-a"><td>3</td><td>7</td><td><span class="suffix-sorted">a</span>bra$</td></tr>
+  <tr class="suffix-a"><td>4</td><td>5</td><td><span class="suffix-sorted">a</span>dabra$</td></tr>
+  <tr class="suffix-a"><td>5</td><td>10</td><td><span class="suffix-sorted">a</span>$</td></tr>
+  <tr class="suffix-b"><td>6</td><td>1</td><td><span class="suffix-sorted">b</span>racadabra$</td></tr>
+  <tr class="suffix-b"><td>7</td><td>8</td><td><span class="suffix-sorted">b</span>ra$</td></tr>
+  <tr class="suffix-c"><td>8</td><td>4</td><td><span class="suffix-sorted">c</span>adabra$</td></tr>
+  <tr class="suffix-d"><td>9</td><td>6</td><td><span class="suffix-sorted">d</span>abra$</td></tr>
+  <tr class="suffix-r"><td>10</td><td>2</td><td><span class="suffix-sorted">r</span>acadabra$</td></tr>
+  <tr class="suffix-r"><td>11</td><td>9</td><td><span class="suffix-sorted">r</span>a$</td></tr>
+</table>
+
+<p>
+ソートを進めていくとバケット内での順番は変わる可能性がありますが，
+バケットの外に出ていってしまうことはなく，各バケット独立にソートを行うことができます．
+各グループのサイズは元の配列より小さくなることが期待できるので，比較的簡単にソートできるはずです．
+</p>
+
+
+<h2>バケットソート</h2>
+<p>
+各 Suffix がバケット内のどこに入るかを知るのは大変ですが，
+どのバケットに入るかなら先頭の文字を見ればすぐにわかります．
+そして，各バケットの範囲は，文字毎の出現回数をカウントしておくことで簡単に知ることができます，
+</p>
+
+<p>
+例えば「abracadabra$」では「$」が1回，「a」が5回，「b」が2回，「c」が1回，「d」が1回，「r」が2回出現しています．
+このことから各バケットの位置は次のようになることがソートをしなくてもわかります，
+</p>
+
+<table border="1">
+  <tr><th>No.</th><th>開始位置</th><th>Suffix</th><th>バケット先頭位置</th></tr>
+  <tr class="suffix-end"><td>0</td><td>11</td><td /><td>←$の先頭=0</td></tr>
+  <tr class="suffix-a"><td>1</td><td>0</td><td /><td>←aの先頭=1</td></tr>
+  <tr class="suffix-a"><td>2</td><td>3</td><td /><td /></tr>
+  <tr class="suffix-a"><td>3</td><td>7</td><td /><td /></tr>
+  <tr class="suffix-a"><td>4</td><td>5</td><td /><td /></tr>
+  <tr class="suffix-a"><td>5</td><td>10</td><td /><td /></tr>
+  <tr class="suffix-b"><td>6</td><td>1</td><td /><td>←bの先頭=1+5=6</td></tr>
+  <tr class="suffix-b"><td>7</td><td>8</td><td /><td /></tr>
+  <tr class="suffix-c"><td>8</td><td>4</td><td /><td>←cの先頭=1+5+2=8</td></tr>
+  <tr class="suffix-d"><td>9</td><td>6</td><td /><td>←dの先頭=1+5+2+1=9</td></tr>
+  <tr class="suffix-r"><td>10</td><td>2</td><td /><td>←rの先頭=1+5+2+1+1=10</td></tr>
+  <tr class="suffix-r"><td>11</td><td>9</td><td /><td /></tr>
+</table>
+
+<p>
+あとは Suffix を該当するバケットの空いているところに入れていけば，先頭の文字に関するソートが完了します．
+出現回数のカウントも，Suffix をバケットに入れる処理も <object data="./1f08ccc9cd7309ba1e756c3d9345ad9f.svg" type="image/svg+xml" standby="$O(n)$" style="width:27pt;height:13pt;" class="equation"><img src="./1f08ccc9cd7309ba1e756c3d9345ad9f.gif" alt="$O(n)$" width="25" height="12" class="equation" /></object>と
+普通のソートより速くソートすることができます．
+</p>
+
+<h2>問題点</h2>
+<p>
+しかし，「各バケット内のソートをどうするか」という問題が以前残ります．
+バケットソートを再帰的に適用することにより高速化可能ですが，
+元の文字列に繰り返しが多いと再帰する回数が多くなってしまいあまり効率的ではありません．
+そのため，結局はマージソートやクイックソートなどの汎用ソートに頼ってしまうことになり，
+あまり速度が上がりません．
+</p>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

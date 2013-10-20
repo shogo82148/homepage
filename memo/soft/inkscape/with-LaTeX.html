@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>InkscapeをLaTeXと一緒に使う - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/soft/inkscape/with-LaTeX.html" />
+
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/soft/inkscape/with-LaTeX.html&amp;ttl=InkscapeをLaTeXと一緒に使う" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/soft/inkscape/with-LaTeX.html&amp;ttl=InkscapeをLaTeXと一緒に使う" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#latex">LaTeXエクステンションについて</a></li><li><a href="#install">エクステンションの使い方</a></li><li><a href="#setting">Windows上で使用法</a></li></ul>
+</div>
+
+<div class="menuInfo">
+	<p>
+	<a href="http://www.inkscape.org/index.php?lang=ja">Inkscpape</a>はオープンソース・ベクターグラフィックエディタです。
+	ベクター形式のきれいなグラフィックが描けます。
+	</p>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>InkscapeをLaTeXと一緒に使う</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">ソフト</a>&gt;&gt;<a href="./">Inkscape</a>&gt;&gt;InkscapeをLaTeXと一緒に使う</navi>
+			<div class="contentswrap">
+			
+
+<h2 id="latex">LaTeXエクステンションについて</h2>
+<p>
+InkscapeにはデフォルトでLaTeXと連携するためのエクステンションが入っているようです。
+これを使えば、Inkscapeできれいな数式を書くことができます。
+しかし、WindowsXP環境で使おうとしたらうまく動かなかったので、動かし方のメモ。
+Inkscape0.47で試した時のことを書いておきます。
+</p>
+
+
+<h2 id="install">エクステンションの使い方</h2>
+<p>
+デフォルトでLaTeXエクステンションが入っているといっても、
+当然ながらあらかじめLaTeXがインストールされている必要があります。
+加えて、<a href="http://www.pstoedit.net/pstoedit">pstoedit</a>も必要です。
+LaTeXとpstoeditをインストールして、パスを通しておきましょう。
+パスを通しておかないと、メニューに表示すらされないので注意。
+</p>
+
+<p>
+インストールが成功すれば、Inkscapeのメニューに「エクステンション(N)」→「レンダリング」→「Latex 数式...」が
+追加されます。
+メニューを選択すると数式の入力画面が現れるので、好きな数式を書いて適用を押します。
+うまくいけば画面上に数式が追加されるはずです。
+</p>
+
+<h2 id="setting">Windows上で使用法</h2>
+<p>
+上記の方法でうまくいくはず・・・はずなのですが、僕のWindowsXP環境ではうまくいかない。
+ネット上でこのことについて調べてみると、どうやら一時ファイルの格納先のパスに問題があって、
+LaTeXが正常に動いていないそうです。
+</p>
+<ul>
+<li><a href="http://www.empitsu.com/wp/?p=24">InkscapeでLaTeXの数式を入力する</a></li>
+</ul>
+
+<p>
+このページにもあるように、一時ファイルのパスを書き換えるとうまくいくようです。
+しかしながらこの方法でも、うまくいかない・・・。まだパスの設定をLaTeXが受け付けてくれません。
+試行錯誤していろいろいじったらうまく動きました。
+</p>
+<hr />
+<p>
+まず、あらかじめ一時ファイルの格納先のフォルダを作っておきます。
+ここでは「C:\temp\inkscape」とします。
+</p>
+<p>
+次に「C:\Program Files\Inkscape\share\extentions」フォルダ内にある「eqtexsvg.py」スクリプトを書き換えます。
+</p>
+<strong>extexsvg.tex(83行目)</strong>
+<div class="src_frame">
+<pre>
+#変更前
+base_dir = tempfile.mkdtemp(&quot;&quot;, &quot;inkscape-&quot;);
+#変更後
+base_dir = &quot;C:\\temp\\inkscape&quot;
+</pre>
+</div>
+
+<strong>extexsvg.tex(103行目)</strong>
+<div class="src_frame">
+<pre>
+#変更前
+os.rmdir(base_dir)
+#変更後
+#os.rmdir(base_dir)
+</pre>
+</div>
+
+<strong>extexsvg.tex(116行目)</strong>
+<div class="src_frame">
+<pre>
+#変更前
+os.system('dvips -q -f -E -D 600 -y 5000 -o &quot;%s&quot; &quot;%s&quot;' % (ps_file, dvi_file))
+#変更後
+os.system('dvips -q -f -E -Pdl -o ' + ps_file + ' ' + dvi_file))
+</pre>
+</div>
+
+<p>
+ポイントはbase_dirで設定するパスの最後に「\\」を付けないこと。「\\」がついているとうまく動きません。
+以上でちゃんと動くはず。
+</p>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

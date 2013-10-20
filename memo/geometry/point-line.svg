@@ -1,0 +1,90 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+<g stroke="black" stroke-width="2">
+	<line id="perpendicular" stroke="blue" />
+	<circle id="circle" stroke="red" fill="none" />
+	<line id="line" />
+	<line id="cross1" />
+	<line id="cross2" />
+</g>
+<script type="text/ecmascript"><![CDATA[
+	var $ = function(id) {
+		return document.getElementById(id);
+	}
+	var line = $('line');
+	var cross1 = $('cross1'), cross2 = $('cross2'), circle = $('circle');
+	var perpendicular = $('perpendicular');
+	var crosssize = 10;
+	var w = document.documentElement.getAttribute('width')-0;
+	var h = document.documentElement.getAttribute('height')-0;
+	
+	function Point() {
+		this.x = Math.random() * w;
+		this.y = Math.random() * h;
+	}
+	
+	function Line() {
+		this.x = Math.random() * w;
+		this.y = Math.random() * h;
+		this.theta = Math.random() * 2 * Math.PI;
+	}
+	
+	function setLine(l, x1, y1, x2, y2) {
+		l.setAttribute('x1', x1);
+		l.setAttribute('y1', y1);
+		l.setAttribute('x2', x2);
+		l.setAttribute('y2', y2);
+	}
+	
+	function setCircle(c, x, y, r) {
+		c.setAttribute('cx', x);
+		c.setAttribute('cy', y);
+		c.setAttribute('r', r);
+	}
+	
+	var sp = new Point(), ep = new Point();
+	var sl = new Line(), el = new Line();
+	var count = 0, maxcount = 30;
+	
+	setInterval('animate();', 100);
+	
+	function animate() {
+		var t = count / maxcount;
+		var tt = 1-t;
+		
+		var p = {
+			'x' : tt*sp.x + t*ep.x,
+			'y' : tt*sp.y + t*ep.y
+		}
+		var l = {
+			'x' : tt*sl.x + t*el.x,
+			'y' : tt*sl.y + t*el.y,
+			'theta' : tt*sl.theta + t*el.theta,
+		}
+		l.a = Math.cos(l.theta);
+		l.b = Math.sin(l.theta);
+		
+		setLine(cross1, p.x-crosssize, p.y-crosssize, p.x+crosssize, p.y+crosssize);
+		setLine(cross2, p.x-crosssize, p.y+crosssize, p.x+crosssize, p.y-crosssize);
+		setLine(line, l.x-(w+h)*l.a, l.y-(w+h)*l.b, l.x+(w+h)*l.a, l.y+(w+h)*l.b);
+		
+		var dx = p.x - l.x, dy = p.y - l.y;
+		var d = Math.abs(l.a*dy - l.b*dx);
+		var t = l.a*dx + l.b*dy;
+		
+		setCircle(circle, p.x, p.y, d);
+		setLine(perpendicular, p.x, p.y, l.x+t*l.a, l.y+t*l.b);
+		
+		count++;
+		if(count>maxcount) {
+			sp = ep;
+			sl = el;
+			ep = new Point();
+			el = new Line();
+			count = 0;
+		}
+	}
+]]></script>
+</svg>

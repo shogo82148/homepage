@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>Suffix Arrayとは - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/algorithm/suffix-array/introduction.html" />
+
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/suffix-array/introduction.html&amp;ttl=Suffix Arrayとは" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/suffix-array/introduction.html&amp;ttl=Suffix Arrayとは" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#">Suffix Array</a></li><li><a href="#">アルゴリズム</a></li><li><a href="#">やってみた</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>Suffix Arrayとは</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;<a href="./">Suffix Array</a>&gt;&gt;Suffix Arrayとは</navi>
+			<div class="contentswrap">
+			
+
+
+
+
+<h2>Suffix Array</h2>
+<p>
+接尾辞配列(Suffix Array)とは，接尾辞(Suffix)を辞書順にソートしたものです．
+</p>
+
+<p>
+例として「abracadabra$」という文字列を考えてみましょう．
+($は文字列の終わりを表す特殊な文字)
+Suffixとは，文字列のある位置から末尾までの文字列のことです．
+「abracadabra$」の場合，以下のように全部で11通りの Suffix があります．
+</p>
+<table border="1">
+  <tr><th>開始位置</th><th>Suffix</th></tr>
+  <tr><td>0</td><td>abracadabra$</td></tr>
+  <tr><td>1</td><td>bracadabra$</td></tr>
+  <tr><td>2</td><td>racadabra$</td></tr>
+  <tr><td>3</td><td>acadabra$</td></tr>
+  <tr><td>4</td><td>cadabra$</td></tr>
+  <tr><td>5</td><td>adabra$</td></tr>
+  <tr><td>6</td><td>dabra$</td></tr>
+  <tr><td>7</td><td>abra$</td></tr>
+  <tr><td>8</td><td>bra$</td></tr>
+  <tr><td>9</td><td>ra$</td></tr>
+  <tr><td>10</td><td>a$</td></tr>
+  <tr><td>11</td><td>$</td></tr>
+</table>
+
+<p>
+これを辞書順(ここではabc順)に並べ替えたものが Suffix Array です．
+</p>
+<table border="1">
+  <tr><th>開始位置</th><th>Suffix</th></tr>
+  <tr><td>11</td><td>$</td></tr>
+  <tr><td>10</td><td>a$</td></tr>
+  <tr><td>7</td><td>abra$</td></tr>
+  <tr><td>0</td><td>abracadabra$</td></tr>
+  <tr><td>3</td><td>acadabra$</td></tr>
+  <tr><td>5</td><td>adabra$</td></tr>
+  <tr><td>8</td><td>bra$</td></tr>
+  <tr><td>1</td><td>bracadabra$</td></tr>
+  <tr><td>4</td><td>cadabra$</td></tr>
+  <tr><td>6</td><td>dabra$</td></tr>
+  <tr><td>2</td><td>racadabra$</td></tr>
+  <tr><td>9</td><td>ra$</td></tr>
+</table>
+<p>
+Suffix は元の文字列と開始位置さえわかれば特定できるので，
+表の開始位置の列だけ覚えておけば Suffix Array を表すことができます．
+</p>
+
+<h2>アルゴリズム</h2>
+<p>
+もっとも簡単なアルゴリズムは Suffix Array の定義をそのまま実装することです．
+たいていの言語でソート関数が組み込まれているので，それを使うことができます．
+しかし，一般的なソートアルゴリズムはどんなに効率がいいものでも<object data="./ff514eba41c59f90c20d895e80719763.svg" type="image/svg+xml" standby="$O(n \log n)$" style="width:54pt;height:13pt;" class="equation"><img src="./ff514eba41c59f90c20d895e80719763.gif" alt="$O(n \log n)$" width="51" height="12" class="equation" /></object>回の Suffix の比較が必要となります．
+Suffix の比較には <object data="./1f08ccc9cd7309ba1e756c3d9345ad9f.svg" type="image/svg+xml" standby="$O(n)$" style="width:27pt;height:13pt;" class="equation"><img src="./1f08ccc9cd7309ba1e756c3d9345ad9f.gif" alt="$O(n)$" width="25" height="12" class="equation" /></object> の計算量が必要なので，全体で <object data="./aa9870286704e5b13ffbef6fbdd552a2.svg" type="image/svg+xml" standby="$O(n^2 \log n)$" style="width:59pt;height:14pt;" class="equation"><img src="./aa9870286704e5b13ffbef6fbdd552a2.gif" alt="$O(n^2 \log n)$" width="57" height="13" class="equation" /></object>の計算量となります．
+</p>
+<p>
+短い文章なら十分な速度ですが，長い文章では非効率です．
+次は少し工夫した<a hred="./bucket-sort.html">バケットソート</a>を見て見ることにしましょう．
+</p>
+
+<h2>やってみた</h2>
+<p>
+もっとも単純なアルゴリズムをJavaScriptで実装してみました．
+入力欄にテキストを入力すると Suffix Array を生成してくれます．
+さらに，検索欄にテキストを入力すると，先頭がその文字列で始まる Suffix を検索し，強調表示してくれます．
+このような Suffix は二分検索で高速に求めることができるので，全文検索などに応用することができます．
+</p>
+
+入力:<input id="text" type="text" size="50" value="abracadabra" /><br />
+検索:<input id="search" type="text" size="50" value="abra" />
+<div id="result" style="height:500px; overflow: auto;"></div>
+<script src="suffixarray.js"></script>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

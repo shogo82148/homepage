@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>数学的に考えてみる(ソフトマージンSVM) - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/algorithm/svm/csvm-detail.html" />
+
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/svm/csvm-detail.html&amp;ttl=数学的に考えてみる(ソフトマージンSVM)" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/svm/csvm-detail.html&amp;ttl=数学的に考えてみる(ソフトマージンSVM)" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#formalize">問題の定式化</a></li><li><a href="#dualform">双対問題への置き換え</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>数学的に考えてみる(ソフトマージンSVM)</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;<a href="./">SVM</a>&gt;&gt;数学的に考えてみる(ソフトマージンSVM)</navi>
+			<div class="contentswrap">
+			
+
+
+
+
+もっと数学的な説明が欲しい方のために、少しまとめてみました。
+
+<h2 id="formalize">問題の定式化</h2>
+<p>
+ハードマージンSVMではマージンの中にデータが入ることを許さず、次の条件を満たす必要がありました。
+<object data="./c4e97af43108bc2e1441f641c9d0f9f0.svg" type="image/svg+xml" standby="\[y_i(\bm w\cdot\bm x_i + b) \le 1\]" style="width:93pt;height:13pt;" class="eqn"><img src="./c4e97af43108bc2e1441f641c9d0f9f0.gif" alt="\[y_i(\bm w\cdot\bm x_i + b) \le 1\]" width="90" height="12" class="eqn" /></object>
+この条件では、データが線形分離不可能な場合に解が求まらない場合があります。
+そこで、この条件を次のように緩和します。
+<object data="./1454530e5db4bba7441978865b55a5f6.svg" type="image/svg+xml" standby="\[y_i(\bm w\cdot\bm x_i + b) \le 1 - \zeta_i\]" style="width:116pt;height:13pt;" class="eqn"><img src="./1454530e5db4bba7441978865b55a5f6.gif" alt="\[y_i(\bm w\cdot\bm x_i + b) \le 1 - \zeta_i\]" width="114" height="12" class="eqn" /></object>
+<object data="./3ff1cdd0ebfafe6301363d1142fd7bf2.svg" type="image/svg+xml" standby="$\zeta_i$" style="width:10pt;height:12pt;" class="equation"><img src="./3ff1cdd0ebfafe6301363d1142fd7bf2.gif" alt="$\zeta_i$" width="8" height="10" class="equation" /></object>はスラック変数と呼ばれるもので、先ほどの条件をどの程度違反しているかを表します。
+データがマージンの中に入ってしまったときは<object data="./44080dd5ca42d9d296e0306ec041f10e.svg" type="image/svg+xml" standby="$0&gt;\zeta_i\ge 1$" style="width:55pt;height:12pt;" class="equation"><img src="./44080dd5ca42d9d296e0306ec041f10e.gif" alt="$0&gt;\zeta_i\ge 1$" width="52" height="10" class="equation" /></object>、
+誤って分類してしまったときは<object data="./00caa3259348b2190d971a82fd1adf03.svg" type="image/svg+xml" standby="$\zeta_i&lt;1$" style="width:33pt;height:12pt;" class="equation"><img src="./00caa3259348b2190d971a82fd1adf03.gif" alt="$\zeta_i&lt;1$" width="30" height="10" class="equation" /></object>となります。
+</p>
+<p>
+ハードマージンSVMの目的関数にスラック変数をペナルティとして加えます。
+<object data="./603fe6dfbe34dc80ee1f2313ce8dc7a8.svg" type="image/svg+xml" standby="\[\frac{1}{2}||\bm w||^2 + C\sum_{i=1}^{n}\zeta_i\]" style="width:92pt;height:34pt;" class="eqn"><img src="./603fe6dfbe34dc80ee1f2313ce8dc7a8.gif" alt="\[\frac{1}{2}||\bm w||^2 + C\sum_{i=1}^{n}\zeta_i\]" width="89" height="33" class="eqn" /></object>
+<object data="./9b325b9e31e85137d1de765f43c0f8bc.svg" type="image/svg+xml" standby="$C$" style="width:11pt;height:10pt;" class="equation"><img src="./9b325b9e31e85137d1de765f43c0f8bc.gif" alt="$C$" width="10" height="8" class="equation" /></object>はどの程度誤りを許すかを表します。
+<object data="./9b325b9e31e85137d1de765f43c0f8bc.svg" type="image/svg+xml" standby="$C$" style="width:11pt;height:10pt;" class="equation"><img src="./9b325b9e31e85137d1de765f43c0f8bc.gif" alt="$C$" width="10" height="8" class="equation" /></object>が大きいほど誤りに対して厳しく、ハードマージンSVMに近づきます。
+</p>
+
+<h2 id="dualform">双対問題への置き換え</h2>
+<p>
+ハードマージンSVMと同様に双対問題へ置き換えます。
+ラグランジュの未定乗数<object data="./b9904f5c750190c26d3956d55b1025f7.svg" type="image/svg+xml" standby="$\alpha_i, \beta_i$" style="width:29pt;height:12pt;" class="equation"><img src="./b9904f5c750190c26d3956d55b1025f7.gif" alt="$\alpha_i, \beta_i$" width="27" height="10" class="equation" /></object>を導入し、
+<object data="./211880fd7eb35712244ce62aa32e0211.svg" type="image/svg+xml" standby="\[L=\frac{1}{2}||\bm w||^2+C\sum_{i=1}^{n}\zeta_i+\sum_{i=1}^{n}\alpha_i \left\{1-\zeta_i-y_i(\bm w\cdot\bm x_i + b)\right\}+\sum_{i=1}^{n}\beta_i(-\zeta_i)\]" style="width:364pt;height:34pt;" class="eqn"><img src="./211880fd7eb35712244ce62aa32e0211.gif" alt="\[L=\frac{1}{2}||\bm w||^2+C\sum_{i=1}^{n}\zeta_i+\sum_{i=1}^{n}\alpha_i \left\{1-\zeta_i-y_i(\bm w\cdot\bm x_i + b)\right\}+\sum_{i=1}^{n}\beta_i(-\zeta_i)\]" width="360" height="33" class="eqn" /></object>
+の最小化と置き換えます。
+<a href="kkt.html">KKT条件</a>から次の条件を満たす必要があります。
+<object data="./bf31ff7bf57016402f03261eecc8bb9b.svg" type="image/svg+xml" standby="\[\frac{\partial L}{\partial \bm w}=0, \frac{\partial L}{\partial b}=0, \frac{\partial L}{\partial \zeta_i}=0\]" style="width:134pt;height:28pt;" class="eqn"><img src="./bf31ff7bf57016402f03261eecc8bb9b.gif" alt="\[\frac{\partial L}{\partial \bm w}=0, \frac{\partial L}{\partial b}=0, \frac{\partial L}{\partial \zeta_i}=0\]" width="132" height="27" class="eqn" /></object>
+<object data="./a22e18b969f559aae1908a9a2e45a1d7.svg" type="image/svg+xml" standby="\[\alpha_i \ge 0, \beta_i \ge 0\]" style="width:73pt;height:12pt;" class="eqn"><img src="./a22e18b969f559aae1908a9a2e45a1d7.gif" alt="\[\alpha_i \ge 0, \beta_i \ge 0\]" width="71" height="10" class="eqn" /></object>
+これから
+<object data="./f871656e5cdf0409661bcdbe784ba737.svg" type="image/svg+xml" standby="\[\bm w = \sum_{i=1}^{n}\alpha_i y_i\bm x_i\]" style="width:80pt;height:34pt;" class="eqn"><img src="./f871656e5cdf0409661bcdbe784ba737.gif" alt="\[\bm w = \sum_{i=1}^{n}\alpha_i y_i\bm x_i\]" width="78" height="33" class="eqn" /></object>
+<object data="./38d2af3335708111922ac1ec59772d43.svg" type="image/svg+xml" standby="\[\frac{\partial}{\partial b}L(\bm w, b, \bm \alpha)=\sum_{i=1}^{n}\alpha_i y_i=0\]" style="width:146pt;height:34pt;" class="eqn"><img src="./38d2af3335708111922ac1ec59772d43.gif" alt="\[\frac{\partial}{\partial b}L(\bm w, b, \bm \alpha)=\sum_{i=1}^{n}\alpha_i y_i=0\]" width="144" height="33" class="eqn" /></object>
+<object data="./87a5a812d07c312562e25fab869c0170.svg" type="image/svg+xml" standby="\[\alpha_i+\beta_i=C\]" style="width:64pt;height:12pt;" class="eqn"><img src="./87a5a812d07c312562e25fab869c0170.gif" alt="\[\alpha_i+\beta_i=C\]" width="63" height="10" class="eqn" /></object>
+が得られます。すると<object data="./3ff1cdd0ebfafe6301363d1142fd7bf2.svg" type="image/svg+xml" standby="$\zeta_i$" style="width:10pt;height:12pt;" class="equation"><img src="./3ff1cdd0ebfafe6301363d1142fd7bf2.gif" alt="$\zeta_i$" width="8" height="10" class="equation" /></object>に関する項が打ち消し合って、結局ハードマージンSVMと同じ式が得られます。
+<object data="./e2252f0e6729f3f29b3b960cf492000d.svg" type="image/svg+xml" standby="\[L=\sum_{i=1}^{n}\alpha_i - \frac{1}{2}\sum_{i,j}\alpha_i\alpha_j y_i y_j \bm x_i \bm x_j\]" style="width:170pt;height:36pt;" class="eqn"><img src="./e2252f0e6729f3f29b3b960cf492000d.gif" alt="\[L=\sum_{i=1}^{n}\alpha_i - \frac{1}{2}\sum_{i,j}\alpha_i\alpha_j y_i y_j \bm x_i \bm x_j\]" width="168" height="35" class="eqn" /></object>
+ただし、<object data="./836b9a28045a86cbe56416015a169ba8.svg" type="image/svg+xml" standby="$\beta_i \ge 0$" style="width:34pt;height:12pt;" class="equation"><img src="./836b9a28045a86cbe56416015a169ba8.gif" alt="$\beta_i \ge 0$" width="32" height="10" class="equation" /></object>と<object data="./87a5a812d07c312562e25fab869c0170.svg" type="image/svg+xml" standby="\[\alpha_i+\beta_i=C\]" style="width:64pt;height:12pt;" class="equation"><img src="./87a5a812d07c312562e25fab869c0170.gif" alt="\[\alpha_i+\beta_i=C\]" width="63" height="10" class="equation" /></object>から、<object data="./5c6eb1bd2efdb0787365fc592d820448.svg" type="image/svg+xml" standby="$0 \le \alpha_i \le C$" style="width:60pt;height:11pt;" class="equation"><img src="./5c6eb1bd2efdb0787365fc592d820448.gif" alt="$0 \le \alpha_i \le C$" width="59" height="10" class="equation" /></object>という条件がつきます。
+制約条件が違うだけなので、クリッピングの条件を変えるだけでハードマージンSVMと同じように解けます。
+</p>
+<p>
+最後にサポートベクトルから<object data="./4bdc8d9bcfb35e1c9bfb51fc69687dfc.svg" type="image/svg+xml" standby="$b$" style="width:7pt;height:10pt;" class="equation"><img src="./4bdc8d9bcfb35e1c9bfb51fc69687dfc.gif" alt="$b$" width="5" height="8" class="equation" /></object>の値を求めるわけですが、このベクトルの選び方が少し違います。
+<object data="./9baa36ec8d9553fb2e88b69606bb626d.svg" type="image/svg+xml" standby="$\alpha_i=C$" style="width:38pt;height:11pt;" class="equation"><img src="./9baa36ec8d9553fb2e88b69606bb626d.gif" alt="$\alpha_i=C$" width="37" height="10" class="equation" /></object>のとき<object data="./08e099b752804619b41d71c119500915.svg" type="image/svg+xml" standby="$\zeta_i&lt;0$" style="width:33pt;height:12pt;" class="equation"><img src="./08e099b752804619b41d71c119500915.gif" alt="$\zeta_i&lt;0$" width="31" height="10" class="equation" /></object>となるため、<object data="./c4e97af43108bc2e1441f641c9d0f9f0.svg" type="image/svg+xml" standby="\[y_i(\bm w\cdot\bm x_i + b) \le 1\]" style="width:93pt;height:13pt;" class="eqn"><img src="./c4e97af43108bc2e1441f641c9d0f9f0.gif" alt="\[y_i(\bm w\cdot\bm x_i + b) \le 1\]" width="90" height="12" class="eqn" /></object>を満たしません。
+このようなベクトルからは<object data="./4bdc8d9bcfb35e1c9bfb51fc69687dfc.svg" type="image/svg+xml" standby="$b$" style="width:7pt;height:10pt;" class="equation"><img src="./4bdc8d9bcfb35e1c9bfb51fc69687dfc.gif" alt="$b$" width="5" height="8" class="equation" /></object>を直接求めることができないので、
+<object data="./793a4e8b748166099106fe17ff466911.svg" type="image/svg+xml" standby="$0&lt;\alpha_i&lt;C$" style="width:60pt;height:11pt;" class="equation"><img src="./793a4e8b748166099106fe17ff466911.gif" alt="$0&lt;\alpha_i&lt;C$" width="59" height="10" class="equation" /></object>となるようなベクトルを選ぶ必要があります。
+</p>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

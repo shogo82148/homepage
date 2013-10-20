@@ -1,0 +1,407 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>SA-IS - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/algorithm/suffix-array/sa-is.html" />
+
+
+
+<style>
+.suffix-sorted {
+    color: red;
+}
+.suffix-end {
+    background: #88F;
+}
+.suffix-a {
+    background: #8F8;
+}
+.suffix-b {
+    background: #8FF;
+}
+.suffix-c {
+    background: #F88;
+}
+.suffix-d {
+    background: #F8F;
+}
+.suffix-r {
+    background: #FF8;
+}
+.suffix td:nth-child(1) {
+    width: 2ex;
+    text-align: right;
+}
+.suffix td:nth-child(2) {
+    text-align: right;
+}
+.suffix td:nth-child(3) {
+    width: 15ex;
+    text-align: left;
+}
+.LMS-substring {
+    color: red;
+}
+.not-LMS-substring {
+    color: gray;
+}
+</style>
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/suffix-array/sa-is.html&amp;ttl=SA-IS" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/suffix-array/sa-is.html&amp;ttl=SA-IS" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#">Left-most-S(LMS)</a></li><li><a href="#">Induced Sorting</a></li><li><a href="#">LMS-substring</a></li><li><a href="#">LMS-substringをソートする</a></li><li><a href="#">まとめ</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>SA-IS</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;<a href="./">Suffix Array</a>&gt;&gt;SA-IS</navi>
+			<div class="contentswrap">
+			
+
+
+
+
+
+
+
+<a href="./two-stage.html">2段階ソート</a>では Suffix を
+L-type と S-type の2種類に分類することで高速化を図りました．
+しかし，結局 S-type のソートを行わなれけばならないという問題点がありました．
+この S-type のソートも線形時間で行なってしまうのが SA-ISです．
+
+<h2>Left-most-S(LMS)</h2>
+<p>
+<a href="./two-stage.html">2段階ソート</a>ではすべての S-type Suffix をソートしたわけですが，
+L-type をソートするためだけだったら，すべてをソートする必要はありません．
+S<sub>i</sub>の情報を使ってS<sub>i-1</sub>の位置を決めているので，
+「S<sub>i-1</sub>が L-type である S-type の Suffix S<sub>i</sub>」 だけソートできていればいいはずです．
+このような Suffix を LMS と呼びます．
+「abracadabra$」の場合は Suffix は以下のようになり，表で色をつけた Suffix が LMS となります．
+</p>
+
+<table border="1" class="suffix">
+  <tr><th>No.</th><th>開始位置</th><th>Suffix</th><th>タイプ</th></tr>
+  <tr><td>0</td><td>0</td><td>abracadabra$</td><td>S</td></tr>
+  <tr><td>1</td><td>1</td><td>bracadabra$</td><td>S</td></tr>
+  <tr><td>2</td><td>2</td><td>racadabra$</td><td>L</td></tr>
+  <tr class="suffix-a"><td>3</td><td>3</td><td>acadabra$</td><td>S</td></tr>
+  <tr><td>4</td><td>4</td><td>cadabra$</td><td>L</td></tr>
+  <tr class="suffix-a"><td>5</td><td>5</td><td>adabra$</td><td>S</td></tr>
+  <tr><td>6</td><td>6</td><td>dabra$</td><td>L</td></tr>
+  <tr class="suffix-a"><td>7</td><td>7</td><td>abra$</td><td>S</td></tr>
+  <tr><td>8</td><td>8</td><td>bra$</td><td>S</td></tr>
+  <tr><td>9</td><td>9</td><td>ra$</td><td>L</td></tr>
+  <tr><td>10</td><td>10</td><td>a$</td><td>L</td></tr>
+  <tr class="suffix-a"><td>11</td><td>11</td><td>$</td><td>S</td></tr>
+</table>
+
+
+<h2>Induced Sorting</h2>
+
+<p>
+この LMS をソートしバケットに分類して Suffix Array の表に入れます．
+このとき LMS は 各バケットの下の方に詰めます．
+(LMSでない S-type を考慮してないので，Suffix Array が完成したときのLMSの位置とは異なることに注意してください．
+しかし，「LMS の出現順」さえ合っていれば L-type の位置を決定することができるので，今は気にしない事にします．
+具体的な S-type の位置はまたあとで求めます．)
+</p>
+
+<table border="1" class="suffix">
+  <tr><th>No.</th><th>開始位置</th><th>Suffix</th><th>タイプ</th></tr>
+  <tr class="suffix-end"><td>0</td><td>11</td><td><span class="suffix-sorted">$</span></td><td>S</td></tr>
+  <tr class="suffix-a"><td>5</td><td /><td /><td>L</td></tr>
+  <tr class="suffix-a"><td>2</td><td /><td /><td>S</td></tr>
+  <tr class="suffix-a"><td>3</td><td>7</td><td><span class="suffix-sorted">a</span>bra$</td><td>S</td></tr>
+  <tr class="suffix-a"><td>4</td><td>3</td><td><span class="suffix-sorted">a</span>cadabra$</td><td>S</td></tr>
+  <tr class="suffix-a"><td>5</td><td>5</td><td><span class="suffix-sorted">a</span>dabra$</td><td>S</td></tr>
+  <tr class="suffix-b"><td>6</td><td /><td /><td>S</td></tr>
+  <tr class="suffix-b"><td>7</td><td>8</td><td><span class="suffix-sorted">b</span>ra$</td><td>S</td></tr>
+  <tr class="suffix-c"><td>8</td><td /><td /><td>L</td></tr>
+  <tr class="suffix-d"><td>9</td><td /><td /><td>L</td></tr>
+  <tr class="suffix-r"><td>10</td><td /><td /><td>L</td></tr>
+  <tr class="suffix-r"><td>11</td><td /><td /><td>L</td></tr>
+</table>
+
+<p>
+L-type の位置を決定する手順は<a href="./two-stage.html">2段階ソート</a>と全く同じです．
+「上から順番にSuffix S<sub>i</sub>を検索」「S<sub>i-1</sub>がL-typeならバケットの一番上の空きに挿入」
+という手順で求めることができます．
+</p>
+
+<table border="1" class="suffix">
+  <tr><th>No.</th><th>開始位置</th><th>Suffix</th><th>タイプ</th></tr>
+  <tr class="suffix-end"><td>0</td><td>11</td><td><span class="suffix-sorted">$</span></td><td>S</td></tr>
+  <tr class="suffix-a"><td>5</td><td>10</td><td><span class="suffix-sorted">a</span>$</td><td>L</td></tr>
+  <tr class="suffix-a"><td>2</td><td /><td /><td>S</td></tr>
+  <tr class="suffix-a"><td>3</td><td>7</td><td><span class="suffix-sorted">a</span>bra$</td><td>S</td></tr>
+  <tr class="suffix-a"><td>4</td><td>3</td><td><span class="suffix-sorted">a</span>cadabra$</td><td>S</td></tr>
+  <tr class="suffix-a"><td>5</td><td>5</td><td><span class="suffix-sorted">a</span>dabra$</td><td>S</td></tr>
+  <tr class="suffix-b"><td>6</td><td /><td /><td>S</td></tr>
+  <tr class="suffix-b"><td>7</td><td>8</td><td><span class="suffix-sorted">b</span>ra$</td><td>S</td></tr>
+  <tr class="suffix-c"><td>8</td><td>4</td><td><span class="suffix-sorted">c</span>adabra$</td><td>L</td></tr>
+  <tr class="suffix-d"><td>9</td><td>6</td><td><span class="suffix-sorted">d</span>abra$</td><td>L</td></tr>
+  <tr class="suffix-r"><td>10</td><td>2</td><td><span class="suffix-sorted">r</span>acadabra$</td><td>L</td></tr>
+  <tr class="suffix-r"><td>11</td><td>9</td><td><span class="suffix-sorted">r</span>a$</td><td>L</td></tr>
+</table>
+
+<p>
+これで L-type の位置が求まりました．
+次に S-type の位置を求めるのですが，実は L-type と走査方向が違うだけでほとんど同じ方法で求めることができます．
+上から検索，上の空きに挿入だったのを，
+「下から順番にSuffix S<sub>i</sub>を検索」「S<sub>i-1</sub>がL-typeならバケットの一番下の空きに挿入」
+とするだけです(ただし，前の操作で入れたLMSは無視する)．
+こうなる理由は L-type の時と不等号の向きを反対にすればわかると思います．
+</p>
+
+<p>
+ここまでで，ソート済みのLMSを使って「L-type の位置を求める，L-type の位置から S-type の位置を求める」という手順で
+Suffix Array が求まることが分かりました．
+この手順を Induced Sorting と呼びます．
+</p>
+
+
+<h2>LMS-substring</h2>
+<p>
+Induced Sorting で Suffix Array が求まることが分かりましたが，
+依然として「LMSをソートする」という問題が残っています．
+これを何とかすることを考えましょう．
+</p>
+
+<p>
+LMSから次のLMSまでの部分文字列を LMS-substring と呼びます．
+「abracadabra$」の場合，3・5・7・11文字目から始まる Suffix が LMS なので，
+3〜5(aca)，5〜7(ada)，7〜11文字目(abra$)が LMS-substring です．
+終端文字の「$」は厳密にはこの定義に当てはまりませんが，便宜上 LMS-substring 扱いしておきます．
+</p>
+
+<ul class="not-LMS-substring">
+  <li>abr<span class="LMS-substring">aca</span>dabra$</li>
+  <li>abrac<span class="LMS-substring">ada</span>bra$</li>
+  <li>abracad<span class="LMS-substring">abra$</span></li>
+  <li>abracadabra<span class="LMS-substring">$</span></li>
+</ul>
+
+<p>
+LMS-substring に小さいものから順番に番号を振っていきます．
+</p>
+
+<ol start="0">
+  <li>$</li>
+  <li>abra$</li>
+  <li>aca</li>
+  <li>ada</li>
+</ol>
+
+<p>
+  ここでつけた番号を LMS-substring を出現順に並べます．
+  例の場合は「aca」 「ada」「abra$」「$」の順番で出現しているので，
+  「2310」となります．
+</p>
+
+<p>
+  この「2310」という文字列に対して Suffix Array を構築してみましょう．
+</p>
+
+<table border="1" class="suffix">
+  <tr><th>No.</th><th>開始位置</th><th>Suffix</th><th>LMS-substring</th><th>LMS</th></tr>
+  <tr><td>0</td><td>3</td><td>0</td><td class="suffix-sorted">$</td><td>S<sub>11</sub></td></tr>
+  <tr><td>0</td><td>2</td><td>10</td><td class="suffix-sorted">abra<span class="not-LMS-substring">$</span>$</td><td>S<sub>7</sub></td></tr>
+  <tr><td>0</td><td>0</td><td>2310</td><td class="suffix-sorted">ac<span class="not-LMS-substring">a</span>ad<span class="not-LMS-substring">a</span>abra<span class="not-LMS-substring">$</span>$</td><td>S<sub>3</sub></td></tr>
+  <tr><td>0</td><td>1</td><td>310</td><td class="suffix-sorted">ad<span class="not-LMS-substring">a</span>abra<span class="not-LMS-substring">$</span>$</td><td>S<sub>5</sub></td></tr>
+</table>
+
+<p>
+  ここで0から3までの数字が，もともと LMS-substring であったことを思い出すと，
+  「2310」の Suffix は元の文字列の LMS Suffix と 1対1 に対応しており，
+   さらにその大小関係が変わっていないことが分かります．
+  つまり「元文字列の LMS をソートする」ことと「LMS-substring列の Suffix Array を構築する」ことは全く同じことをしていることになります．
+</p>
+
+<h2>LMS-substringをソートする</h2>
+
+<p>
+  「LMS をソート」と「LMS-substring 列の Suffix Array の構築」が同じであることが分かりました．
+  ここまで来ればあともう一歩．
+  最後に残った問題は 「LMS-substring をソートし，小さいものから順番に番号をつける」ことです．
+</p>
+
+<p>
+もう一度，Induced Sorting について考えてみましょう．
+一番はじめのステップで「LMSをソートする」必要がありますがこれは大変です．
+しかし，「LMSを『先頭の文字について』ソートする」のであれば
+<a href="bucket-sort.html">バケットソート</a>を使って簡単に実行できます．
+そこで，少し妥協して，LMSを「先頭の文字についてソート」したのち，Induced Sorting を適用してみます．
+</p>
+
+<table border="1" class="suffix">
+  <tr><th>No.</th><th>開始位置</th><th>Suffix</th><th>タイプ</th></tr>
+  <tr class="suffix-end"><td>0</td><td>11</td><td><span class="suffix-sorted">$</span></td><td>S</td></tr>
+  <tr class="suffix-a"><td>1</td><td /><td /><td>L</td></tr>
+  <tr class="suffix-a"><td>2</td><td /><td /><td>S</td></tr>
+  <tr class="suffix-a"><td>3</td><td>7</td><td><span class="suffix-sorted">a</span>bra$</td><td>S</td></tr>
+  <tr class="suffix-a"><td>4</td><td>5</td><td><span class="suffix-sorted">a</span>dabra$</td><td>S</td></tr>
+  <tr class="suffix-a"><td>5</td><td>3</td><td><span class="suffix-sorted">a</span>cadabra$</td><td>S</td></tr>
+  <tr class="suffix-b"><td>6</td><td /><td /><td>S</td></tr>
+  <tr class="suffix-b"><td>7</td><td /><td /><td>S</td></tr>
+  <tr class="suffix-c"><td>8</td><td /><td /><td>L</td></tr>
+  <tr class="suffix-d"><td>9</td><td /><td /><td>L</td></tr>
+  <tr class="suffix-r"><td>10</td><td /><td /><td>L</td></tr>
+  <tr class="suffix-r"><td>11</td><td /><td /><td>L</td></tr>
+</table>
+
+<p>
+Suffix の赤字になっている部分でソートしました．
+各バケットでLMSの開始位置が逆順になっていることに注意してください．
+この状態からInduced Sorting を実行してみます．
+</p>
+
+<table border="1" class="suffix">
+  <tr><th>No.</th><th>開始位置</th><th>Suffix</th><th>タイプ</th></tr>
+  <tr class="suffix-end"><td>0</td><td>11</td><td><span class="suffix-sorted">$</span></td><td>S</td></tr>
+  <tr class="suffix-a"><td>1</td><td>10</td><td><span class="suffix-sorted">a$</span></td><td>L</td></tr>
+  <tr class="suffix-a"><td>2</td><td>7</td><td><span class="suffix-sorted">abra$</span></td><td>S</td></tr>
+  <tr class="suffix-a"><td>3</td><td>0</td><td><span class="suffix-sorted">abra</span>cadabra$</td><td>S</td></tr>
+  <tr class="suffix-a"><td>4</td><td>3</td><td><span class="suffix-sorted">aca</span>dabra$</td><td>S</td></tr>
+  <tr class="suffix-a"><td>5</td><td>5</td><td><span class="suffix-sorted">ada</span>bra$</td><td>S</td></tr>
+  <tr class="suffix-b"><td>6</td><td>8</td><td><span class="suffix-sorted">bra$</span></td><td>S</td></tr>
+  <tr class="suffix-b"><td>7</td><td>1</td><td><span class="suffix-sorted">bra</span>cadabra$</td><td>S</td></tr>
+  <tr class="suffix-c"><td>8</td><td>4</td><td><span class="suffix-sorted">ca</span>dabra$</td><td>L</td></tr>
+  <tr class="suffix-d"><td>9</td><td>6</td><td><span class="suffix-sorted">da</span>bra$</td><td>L</td></tr>
+  <tr class="suffix-r"><td>10</td><td>9</td><td><span class="suffix-sorted">ra$</span></td><td>L</td></tr>
+  <tr class="suffix-r"><td>11</td><td>2</td><td><span class="suffix-sorted">ra</span>cadabra$</td><td>L</td></tr>
+</table>
+
+<p>
+  「S<sub>i</sub>が先頭 n 文字についてソートされていれば，S<sub>i-1</sub>は 先頭 n + 1 文字ソートされた位置に挿入される」ので，
+  Induced Sort の結果は赤字で示した部分についてソートされます．
+  ここで，LMS であった S<sub>3</sub>, S<sub>5</sub>, S<sub>7</sub>, S<sub>11</sub> に着目してみましょう．
+  それぞれ「aca」「ada」「abra$」「$」についてソートされています．
+</p>
+<p>
+  この文字列，どこかで見ましたね？
+  そう，LMS-substringです！
+  つまり，「LMSの先頭1文字についてソートし Induced Sort を行う」と
+  LMS-substring のソートができるのです．
+</p>
+
+
+<h2>まとめ</h2>
+<p>
+  ここまでのことを整理すると，以下の手順で Suffix Array を求めることができます．
+  <ol>
+    <li>LMS-substring のソートを行う
+      <ol>
+        <li>LMS の先頭1文字についてソートを行う</li>
+        <li>Induced Sort を行う</li>
+      </ol>
+    </li>
+    <li>LMSのソートを行う
+      <ol>
+        <li>LMS-substring に小さいものから順位付け</li>
+        <li>順位を LMS-substring の出現順に並べる</li>
+        <li>新たにできた文字列について Suffix Array を求める(Suffix Array を求める手順を再帰的に適用する)</li>
+      </ol>
+    </li>
+    <li>Induced Sort により Suffix Array を完成させる</li>
+  </ol>
+  それぞれの手順は，入力の長さについて線形時間で求まります．
+  途中LMS-substring列のSuffix Array を再起的に求める必要がありますが，
+  この長さは元文字列の半分以下です．
+  そのため線形時間で Suffix Array が構築できることが保証されています．
+</p>
+
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>

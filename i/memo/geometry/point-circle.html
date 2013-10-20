@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd"><html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>任意の点を通る円の接線を求める - Shogo Computing Laboratory</title>
+
+<style>
+.suffix-sorted {
+    color: red;
+}
+.suffix-end {
+    background: #88F;
+}
+.suffix-a {
+    background: #8F8;
+}
+.suffix-b {
+    background: #8FF;
+}
+.suffix-c {
+    background: #F88;
+}
+.suffix-d {
+    background: #F8F;
+}
+.suffix-r {
+    background: #FF8;
+}
+.suffix td:nth-child(1) {
+    width: 2ex;
+    text-align: right;
+}
+.suffix td:nth-child(2) {
+    text-align: right;
+}
+.suffix td:nth-child(3) {
+    width: 15ex;
+    text-align: left;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/geometry/point-circle.html&amp;ttl=任意の点を通る円の接線を求める" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/geometry/point-circle.html&amp;ttl=任意の点を通る円の接線を求める" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+
+
+
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="#tangent">接線の方程式を利用する</a></li><li><a href="#polar">極線の方程式を利用する</a></li><li><a href="#svg">実際にやってみよう</a></li></ul>
+</div>
+
+
+<h1>任意の点を通る円の接線を求める</h1>
+<navi id="breadNavi"><a href="../../">HOME</a>&gt;&gt;<a href="../">メモ</a>&gt;&gt;<a href="./">図形処理の基礎</a>&gt;&gt;任意の点を通る円の接線を求める</navi>
+
+
+<h2 id="tangent">接線の方程式を利用する</h2>
+<p>
+任意の点を通る円の接線を求めてみます。
+まずは、原点中心とした半径<img src="../../../memo/geometry/eqn/89f2e0d2d24bcf44db73aab8fc03252c.gif" alt="$r$" width="6" height="5" class="equation" />の円と、点P<img src="../../../memo/geometry/eqn/4c79f3d6249cd07cefd8aa91f751f7b8.gif" alt="$(x_\mathrm{P}, y_\mathrm{P})$" width="39" height="12" class="equation" />を考えましょう。
+</p>
+<object data="../../../memo/geometry/point-circle1.svg" type="image/svg+xml" ><img src="../../../memo/geometry/point-circle1.png"  alt="点と円"/></object>
+<p>
+この円周上の任意の点A<img src="../../../memo/geometry/eqn/8efec3137635d220b12b29600408fa5a.gif" alt="$(x_\mathrm{A},y_\mathrm{A})$" width="41" height="12" class="equation" />を通る接線は「<a href="./circle-tangent.html">円の接線を求める</a>」で求めたように
+</p>
+<img src="../../../memo/geometry/eqn/0253400d1554db39a2c4209b6b1a5cf3.gif" alt="\[ x_\mathrm{A}x + y_\mathrm{A}y - r^2 = 0 \]" width="103" height="13" class="eqn" />
+<p>
+です。この直線が点Pを通ることから
+</p>
+<img src="../../../memo/geometry/eqn/f7c37094d6fbd9a29e8d71d8b72c519c.gif" alt="\[ x_\mathrm{A}x_\mathrm{P} + y_\mathrm{A}y_\mathrm{P} - r^2 = 0 \]" width="117" height="13" class="eqn" />
+<p>
+が得られます。また、点Aは円周上の点であるので
+</p>
+<img src="../../../memo/geometry/eqn/e2cb43dfd108151aeeca868c512efc9d.gif" alt="\[ x_\mathrm{A}^2 + y_\mathrm{A}^2 = r^2 \]" width="69" height="15" class="eqn" />
+<p>
+です。したがって、次の連立方程式を点Aの座標について解けばよいことがわかります。
+</p>
+<img src="../../../memo/geometry/eqn/7d6ced1d30bbf5f2c40057edec54a6c8.gif" alt="\begin{eqnarray*} x_\mathrm{A}x_\mathrm{P} + y_\mathrm{A}y_\mathrm{P} - r^2 &amp;=&amp; 0 \\ x_\mathrm{A}^2 + y_\mathrm{A}^2 &amp;=&amp; r^2 \end{eqnarray*}" width="121" height="32" class="eqn" />
+<p>
+この連立方程式をよくみると、直線と円の交点を求める問題になっています。
+「<a href="./line-circle.html">直線と円の交点を求める</a>」の結果を使って具体的に求めると次のようになります。
+</p>
+<img src="../../../memo/geometry/eqn/0a672ca3747fd9ec243da2e3666dfa21.gif" alt="\begin{eqnarray*} x_\mathrm{A} &amp;=&amp; r\frac{x_\mathrm{P}r \pm y_\mathrm{P} \sqrt{(x_\mathrm{P}^2+y_\mathrm{P}^2)-r^2}}{x_\mathrm{P}^2+y_\mathrm{P}^2} \\ y_\mathrm{A} &amp;=&amp; r\frac{y_\mathrm{P}r\mp x_\mathrm{P} \sqrt{(x_\mathrm{P}^2+y_\mathrm{P}^2)-r^2}}{x_\mathrm{P}^2+y_\mathrm{P}^2} \end{eqnarray*}" width="173" height="66" class="eqn" />
+<p>
+こうして求めた点Aを通る接線が求めたい直線となります。
+</p>
+
+<h2 id="polar">極線の方程式を利用する</h2>
+<p>
+極線とは「一点から二次曲線に弦を無数に引いたとき、弦の両端における二本の接線の交点を結んでできる直線(大辞泉より)」です。
+円の場合、点Pを通る接線を引き、そのときできた2つの接点を結んだ直線、直線A-A'を「点Pを極とする極線」といいます。
+この極の方程式は次のようにあらわすことができます。
+</p>
+<img src="../../../memo/geometry/eqn/c012db96d34ea3ce619b8faff22d531a.gif" alt="\[ x_\mathrm{P}x + y_\mathrm{P}y - r^2 = 0 \]" width="101" height="13" class="eqn" />
+<p>
+「<a href="./circle-tangent.html">円の接線を求める</a>」で求めた接線の方程式とまったく同じ形ですね。
+この方程式は点Pが円周上にあるときは接線を、円周上にないときは極線をあらわすというわけです。
+</p>
+<p>
+極線は2つの接点を通るので、極線と円の交点が接点となります。したがって
+</p>
+<img src="../../../memo/geometry/eqn/c6f904317dac441472f96a6fe83be047.gif" alt="\begin{eqnarray*} x_\mathrm{P}x + y_\mathrm{P}y - r^2 &amp;=&amp; 0 \\ x^2 + y^2 &amp;=&amp; r^2 \end{eqnarray*}" width="107" height="31" class="eqn" />
+<p>
+の解が接点の座標です。よく見るとこれは接線の方程式を利用した場合と同じ形をしています。
+これからどちらの方法でも同じ結果が得られることが確認できました。
+</p>
+
+<h2 id="svg">実際にやってみよう</h2>
+<p>
+実際にやってみました。
+SVGにJavascriptを埋め込んで簡単なアニメーションを作ってみました。
+<a href="./point-circle.svg">SVGファイルをダウンロードする</a>
+</p>
+<object data="./point-circle.svg" type="image/svg+xml" width="400" height="300">
+残念ながら現在使用しているブラウザでは表示できません。
+IE以外のブラウザの最新版をダウンロードしてください。
+</object>
+
+
+<ul class="toInfo">
+	<li><a href="./">サイトトップへ</a></li>
+</ul>
+
+</body>
+</html>

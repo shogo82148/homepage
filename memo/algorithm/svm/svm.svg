@@ -1,0 +1,167 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+<g stroke="black">
+<line id="separation" stroke-width="2" />
+<line id="sepp" stroke-width="2" stroke-dasharray="3,3" stroke="red" />
+<line id="sepn" stroke-width="2" stroke-dasharray="3,3" stroke="blue" />
+</g>
+<g id="positive" stroke="red" fill="red">
+</g>
+<g id="negative" stroke="blue" fill="blue">
+</g>
+
+<script type="text/ecmascript"><![CDATA[
+	width = document.documentElement.getAttribute('width')-0;	//幅
+	height = document.documentElement.getAttribute('height')-0;		//高さ
+	ns = "http://www.w3.org/2000/svg";
+	
+	$ = function(id) {
+		return document.getElementById(id);
+	}
+	
+	//パラメータ取得
+	params = new Array();
+	if(document.defaultView.frameElement) {
+		params['alpha']=0.1;
+		var param_tags = document.defaultView.frameElement.getElementsByTagName("param");
+		for(var i=0;i<param_tags.length;i++) {
+			params[param_tags[i].getAttribute('name')] = param_tags[i].getAttribute('value');
+		}
+	}
+	
+	draging_point = null;
+	document.addEventListener("mousemove", function(e) {
+		if(draging_point) draging_point.setX([e.clientX, e.clientY]);
+	}, false);
+	
+	//訓練データを表すクラス
+	function Train(x, y) {
+		var d = this;
+		this.y = y;
+		this.p = document.createElementNS(ns, "svg:circle");
+		this.p.setAttribute("r", "5");
+		this.p.addEventListener("mouseover", function(e) {d.p.setAttribute("r", "10");}, false);
+		this.p.addEventListener("mouseout", function(e) {this.setAttribute("r", "5");}, false);
+		this.p.addEventListener("mousedown", function(e) {draging_point = d;}, false);
+		this.p.addEventListener("mouseup", function(e) {draging_point = null;}, false);
+		$(y<0?'negative':'positive').appendChild(this.p);
+		this.setX(x);
+	}
+	Train.prototype.setX = function(x) {
+		this.x = x;
+		this.p.setAttribute("cx", x[0]);
+		this.p.setAttribute("cy", x[1]);
+	}
+	//カーネル関数
+	function Kernel(x1, x2) {
+		//線形カーネル
+		var k = 0;
+		for(var i=0;i<x1.length;i++) {
+			k += x1[i]*x2[i];
+		}
+		return k;
+	}
+	
+	dimension = 2;	//学習セットは二次元です
+	
+	//学習セットの作成
+	data = new Array();
+	//正
+	for(var i=0;i<10;i++) {
+		data.push(new Train([width-Math.random()*(width/2-20),Math.random()*height], +1));
+	}
+	//負
+	for(var i=0;i<10;i++) {
+		data.push(new Train([Math.random()*(width/2-20),Math.random()*height], -1));
+	}
+	
+	//初期化
+	alpha = new Array(data.length);
+	for(var i=0;i<alpha.length;i++) {
+		alpha[i] = 0;
+	}
+	
+	setInterval('animate();', 100);
+	var dAlpha = new Array(data.length);
+	w = new Array(dimension);
+	var dB;
+	
+	function animate() {
+		for(var i=0;i<data.length;i++) {
+			learn();
+		}
+		//重みを求める
+		for(var i=0;i<dimension;i++) {
+			w[i] = 0;
+			for(var j=0;j<data.length;j++) {
+				w[i] += alpha[j]*data[j].y*data[j].x[i];
+			}
+		}
+		
+		//サポートベクタの表示
+		var b = 0;
+		var num_sv = 0;
+		for(var i=0;i<data.length;i++) {
+			if(alpha[i]<1E-20) {
+				data[i].p.setAttribute('fill', 'white');
+			} else {
+				data[i].p.removeAttribute('fill');
+				b += data[i].y - Kernel(w, data[i].x);
+				num_sv++;
+			}
+		}
+		b/=num_sv;
+		
+		//表示
+		function setLine(line, w, b) {
+			var norm = Math.sqrt(w[0]*w[0]+w[1]*w[1]);
+			var len = (width+height)/norm;
+			var x0 = -b*w[0]/norm/norm;
+			var y0 = -b*w[1]/norm/norm;
+			line.setAttribute('x1', x0-w[1]*len);
+			line.setAttribute('y1', y0+w[0]*len);
+			line.setAttribute('x2', x0+w[1]*len);
+			line.setAttribute('y2', y0-w[0]*len);
+		}
+		
+		setLine($('separation'), w, b);
+		setLine($('sepp'), w, b-1);
+		setLine($('sepn'), w, b+1);
+	}
+		
+	function learn() {
+		//適当な2変数を選択
+		var n = Math.floor(Math.random()*data.length);
+		var m;
+		do {
+			m = Math.floor(Math.random()*data.length);
+		} while(m==n);
+		var weight = 1;
+		
+		//選んだ2変数に関して最適化
+		var knn = Kernel(data[n].x, data[n].x);
+		var knm = Kernel(data[n].x, data[m].x);
+		var kmm = Kernel(data[m].x, data[m].x);
+		
+		function E(i) {
+			var ret = -data[i].y;
+			for(var j=0;j<data.length;j++) {
+				ret += alpha[j] * data[j].y * 
+                    Kernel(data[i].x, data[j].x);
+        	}
+        	return ret;
+        }
+        var delta = data[m].y*(E(n)-E(m))/(knn+kmm-2*knm);
+        if(alpha[m]+delta<0) {
+        	delta = -alpha[m];
+        }
+        if(alpha[n]-data[n].y*data[m].y*delta<0) {
+        	delta = data[n].y*data[m].y*alpha[n];
+        }
+        alpha[m] += delta;
+        alpha[n] -= data[n].y*data[m].y*delta;
+	}
+]]></script>
+</svg>

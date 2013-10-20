@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE html><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ja" lang="ja">
+<head>
+<meta name="verify-v1" content="TY2z5TYWaSMgOybOmc3kuihgEjir2ziDOHGG6JkeeyQ=" />
+<title>接尾辞配列(Suffix Array) - Shogo Computing Laboratory</title>
+<meta name="keywords" content="SCL, コンピュータ, プログラム" />
+<meta name="description" content="このページはShogoがコンピュータを使った実験を行う実験室です。Webアプリの実験、作ったソフトウェアの公開、コンピュータをちょっと便利に使う方法の紹介などをやっていきます。" />
+
+
+<link rel="alternate" media="handheld" type="text/html" href="http://sora-blue.net/~shogo82148/i/memo/algorithm/suffix-array/" />
+
+
+<link href="../../../stylet.css" rel="stylesheet" type="text/css" media="screen, projection, tv" />
+
+<script type="text/javascript">
+  window.___gcfg = {lang: 'ja'};
+
+  (function() {
+    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+    po.src = 'https://apis.google.com/js/plusone.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+  })();
+</script>
+</head>
+<body>
+
+<div id="page">
+	
+	<header id="header">
+		<div id="header_title"> <img src="../../../img/title.png" width="368" height="32" alt="Shogo Computing Laboratory" /> </div>
+		<div id="headinfo"> </div>
+		<div id="headerimg">
+			<p id="msg">私達にしか、できないことがある。</p>
+		</div>
+	</header>
+	
+	<navi id="menu">
+		<ul class="menu_f01">
+			<li><a href="../../../">Home</a></li>
+			<li><a href="../../../memo/" class="nowthis">メモ</a></li>
+			<li><a href="../../../soft/">ソフト</a></li>
+			<li><a href="../../../cgi-bin/bbs/epad.cgi">掲示板</a></li>
+			<li><a href="../../../sitemap.html">サイトマップ</a></li>
+			<li><a href="../../../link.html">リンク</a></li>
+		</ul>
+	</navi>
+	<div id="contents">
+		<aside id="menuL">
+
+<a href="http://analytics.qlook.net/" target="_blank">
+<img src="http://ec16090p.analytics.qlook.net/counter.png" id="ec16090p.analytics.qlook.net" alt="QLOOKアクセス解析" width="80" height="15" border="0" />
+</a>
+<script type="text/javascript" src="http://ec16090p.analytics.qlook.net/analyze.js" charset="UTF-8" defer="defer"></script>
+<noscript>
+<div><iframe src="http://ec16090p.analytics.qlook.net/analyze.html?url=http://sora-blue.net/~shogo82148/memo/algorithm/suffix-array/index.html&amp;ttl=接尾辞配列(Suffix Array)" title="QLOOKアクセス解析" style="width:1px;height:1px;">
+<img src="http://ec16090p.analytics.qlook.net/analyze.gif?guid=ON&amp;url=http://sora-blue.net/~shogo82148/memo/algorithm/suffix-array/index.html&amp;ttl=接尾辞配列(Suffix Array)" alt="QLOOKアクセス解析" width="1" height="1" />
+</iframe></div></noscript>
+
+			
+			
+
+
+
+<div class="subinfo">
+<p class="label">目次</p>
+<ul><li><a href="./introduction.html">Suffix Arrayとは</a></li><li><a href="./bucket-sort.html">バケットソート</a></li><li><a href="./two-stage.html">2段階ソート</a></li><li><a href="./sa-is.html">SA-IS</a></li><li><a href="./try-sa-is.html">SA-ISを試してみる</a></li><li><a href="#ref">参考</a></li></ul>
+</div>
+
+			<div>
+			<a href="http://twitter.com/share?count=horizontal&amp;via=shogo82148&amp;lang=ja" class="twitter-share-button">Tweet</a>
+			<script type="text/javascript" src="http://platform.twitter.com/widgets.js"> </script>
+			<a href="javascript:void(0);" onclick="window.open('http://mixi.jp/share.pl?u='+document.location.href+'&amp;k=9491126d3706fb8051fd6028c778b460a6158bc2','share',['width=632','height=456','location=yes','resizable=yes','toolbar=no','menubar=no','scrollbars=no','status=no'].join(','));">
+			<img src="http://img.mixi.jp/img/basic/mixicheck_entry/bt_check_1.png" alt="mixiチェック" /></a>
+			</div>
+			<div class="g-plusone" data-annotation="inline" data-width="200"></div>
+			<div>
+			<a href="http://www.twitter.com/shogo82148"><img src="http://twitter-badges.s3.amazonaws.com/follow_me-a.png" alt="Follow shogo82148 on Twitter" /></a>
+			</div>
+		</aside>
+		
+		<article id="main">
+			<h1>接尾辞配列(Suffix Array)</h1>
+			<navi id="breadNavi"><a href="../../../">HOME</a>&gt;&gt;<a href="../../">メモ</a>&gt;&gt;<a href="../">アルゴリズム</a>&gt;&gt;接尾辞配列(Suffix Array)</navi>
+			<div class="contentswrap">
+			
+
+
+
+<p>
+接尾辞配列(Suffix Array)は，全文検索などに用いられるデータ構造です．
+それ以外にも，単語の出現回数を高速に求められたり，
+データ圧縮に使えたりなど，様々な応用例が提案されています．
+</p>
+<p>
+2012年現在，SA-ISと呼ばれる手法がもっとも効率的に Suffix Array を求められるようです．
+その基礎となる考え方を１つずつ見ていくことにしましょう．
+</p>
+
+<h2 id="introduction"><a href="./introduction.html">Suffix Arrayとは</a></h2>
+<p>
+Suffix Array とはどんなものなのでしょう？
+定義にそった，もっとも簡単なアルゴリズムを紹介します．
+</p>
+
+<h2 id="bucket-sort"><a href="./bucket-sort.html">バケットソート</a></h2>
+<p>
+基数ソートとバケットソートは，ソートする対象の種類が有限で範囲がはっきりしている場合に
+非常に有効なソート手法です．
+これを使って Suffix Array を求めてみます．
+</p>
+
+<h2 id="two-stage"><a href="./two-stage.html">2段階ソート</a></h2>
+<p>
+隣り合った接尾辞の比較は非常に簡単にできます．
+ことのことを利用してソートを高速化します．
+</p>
+
+<h2 id="sa-is"><a href="./sa-is.html">SA-IS</a></h2>
+<p>
+<a href="./bucket-sort.html">バケットソート</a>，そして<a href="./two-stage.html">2段階ソート</a>の考え方をベースに
+さらなる高速化を行います．
+2012年現在，最速な Suffix Array の構築法のようです．
+</p>
+
+<h2 id="try-sa-is"><a href="./try-sa-is.html">SA-ISを試してみる</a></h2>
+
+
+<h2 id="ref">参考</h2>
+<ul>
+<li><a href="http://ja.wikipedia.org/wiki/%E6%8E%A5%E5%B0%BE%E8%BE%9E%E9%85%8D%E5%88%97">Wikipedia:接尾辞配列</a></li>
+<li><a href="http://homepage3.nifty.com/DO/suffix_array.htm">suffix array</a><br />いろんなアルゴリズムについての説明がある</li>
+<li><a href="http://d.hatena.ne.jp/echizen_tm/20100325/1269533804">SAIS(Suffix Array - Induced Sorting)</a></li>
+<li><a href="http://topcoder.g.hatena.ne.jp/iwiwi/20110720/1311168147">SA-IS - (iwi) ｛ 反省します - TopCoder部</a></li>
+<li><a href="http://www.cs.sysu.edu.cn/nong/index.files/Two%20Efficient%20Algorithms%20for%20Linear%20Suffix%20Array%20Construction.pdf">
+Two Efficient Algorithms for Linear Suffix Array Construction</a></li>
+<li><a href="http://code.google.com/p/esaxx/">esaxx</a><br />Suffix Array を求めるための C++ テンプレート</li>
+</ul>
+
+			</div>
+			<navi id="subnavi">
+				<ul class="toInfo">
+					<li><a href="../../../">サイトトップへ</a></li>
+				</ul>
+			</navi>
+		</article>
+		<hr />
+	</div>
+	
+	<footer id="footer">
+		<address>Copyright (c) Shogo(<a href="mailto:&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;">&#115;h&#111;go&#56;&#50;1&#52;&#56;&#64;&#103;&#109;ai&#108;.c&#111;&#109;</a>)</address>
+	</footer>
+	<div id="templatelink"> HTML &amp; CSS template by <a href="http://www.shoshinsha.com/hp/template/">CSSデザインテンプレート</a> </div>
+</div>
+
+<script type="text/javascript">
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+try {
+var pageTracker = _gat._getTracker("UA-4526627-3");
+pageTracker._trackPageview();
+} catch(err) {}
+</script>
+</body>
+</html>
